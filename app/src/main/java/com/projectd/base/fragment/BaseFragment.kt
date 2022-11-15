@@ -1,0 +1,47 @@
+package com.projectd.base.fragment
+
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.annotation.LayoutRes
+import androidx.databinding.DataBindingUtil
+import androidx.databinding.ViewDataBinding
+import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
+import com.projectd.base.App
+import com.projectd.ui.dialog.LoadingDialog
+import com.projectd.ui.home.HomeActivity
+import org.koin.android.ext.android.inject
+import org.koin.core.parameter.parametersOf
+
+open class BaseFragment<VB : ViewDataBinding>(@LayoutRes private val layoutRes: Int): Fragment() {
+
+    open var title: String = ""
+    open var hasLoadedOnce = false
+
+    protected var binding: VB? = null
+
+    protected val loadingDialog: LoadingDialog by inject() { parametersOf(requireActivity()) }
+    protected val app: App by lazy { App.getInstance() as App }
+    protected val homeActivity: HomeActivity by lazy { activity as HomeActivity }
+
+    protected fun navigateTo(id: Int) = findNavController().navigate(id)
+    protected fun navigateTo(id: Int, bundle: Bundle) = findNavController().navigate(id, bundle)
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        binding = DataBindingUtil.inflate(inflater, layoutRes, container, false)
+        binding?.lifecycleOwner = this
+        return binding?.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        //homeActivity.invalidateTickerPlayer()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding = null
+    }
+}

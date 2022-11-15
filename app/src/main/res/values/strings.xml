@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Project D</string>
+    <string name="label_no_data_found">No data found.</string>
+    <string name="label_no_permission">Not have permission.</string>
+</resources>

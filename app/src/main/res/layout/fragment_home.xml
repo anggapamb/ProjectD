@@ -425,7 +425,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/white_transparent"
-            android:visibility='@{updateVersion || banned != null || user.specialAccess.empty ? View.VISIBLE : View.GONE}'
+            android:visibility='@{updateVersion || banned != null ? View.VISIBLE : View.GONE}'
             tools:visibility="gone">
 
             <LinearLayout

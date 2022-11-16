@@ -17,5 +17,6 @@
     <fragment
         android:id="@+id/loginFragment"
         android:name="com.projectd.ui.login.LoginFragment"
-        android:label="LoginFragment" />
+        android:label="LoginFragment"
+        tools:layout="@layout/fragment_login"/>
 </navigation>

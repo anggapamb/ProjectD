@@ -2,4 +2,20 @@
     <string name="app_name">Project D</string>
     <string name="label_no_data_found">No data found.</string>
     <string name="label_no_permission">Not have permission.</string>
+    <string name="cd_icon_voice_email">cd_icon_voice_email</string>
+    <string name="text_tilde">~</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="hint_username">Username</string>
+    <string name="hint_password">Password</string>
+    <string name="button_login">Login</string>
+    <string name="cd_icon_find_in_page">cd_icon_find_in_page</string>
+    <string name="cd_prayer_reader_s_photo">prayer reader\'s photo</string>
+    <string name="label_live">LIVE</string>
+    <string name="cd_your_photo">your photo</string>
+    <string name="button_like_prayer">button like prayer</string>
+    <string name="button_play_prayer">button play_prayer</string>
+    <string name="cd_image_menu">image menu</string>
+    <string name="cd_photo_engineer">photo engineer</string>
+    <string name="cd_button_more">button more</string>
 </resources>

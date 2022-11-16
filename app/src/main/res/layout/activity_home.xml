@@ -1,10 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<layout xmlns:tools="http://schemas.android.com/tools"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ui.home.HomeActivity">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <data>
+
+        <variable
+            name="prayer"
+            type="com.projectd.data.model.Prayer" />
+
+        <import type="android.view.View" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:context=".ui.home.HomeActivity">
+
+        <LinearLayout
+            android:id="@+id/v_prayer_information"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#DDF8D1"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="4dp"
+            android:visibility='@{prayer == null ? View.GONE : View.VISIBLE}'>
+
+            <ImageView
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:adjustViewBounds="true"
+                android:src="@drawable/ic_baseline_voicemail_24"
+                app:tint="@color/text_bg_green"
+                android:contentDescription="icon voice email"
+                tools:ignore="HardcodedText" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:text='@{prayer.title}'
+                android:textColor="@color/text_bg_green"
+                android:textSize="@dimen/text_small"
+                tools:text="Lestari Taman Media" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/text_tilde"
+                android:textColor="@color/text_bg_green"
+                android:textSize="@dimen/text_small"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text='@{prayer.description}'
+                android:textColor="@color/text_bg_green"
+                android:textSize="@dimen/text_small"
+                tools:text="Doa pagi by Aliando" />
+
+        </LinearLayout>
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/nav_host_fragment"
+            android:name="androidx.navigation.fragment.NavHostFragment"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            app:defaultNavHost="true"
+            app:navGraph="@navigation/nav_graph"
+            tools:context=".ui.home.HomeActivity" />
+
+    </LinearLayout>
+
+</layout>

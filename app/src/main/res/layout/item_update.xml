@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="data"
+            type="com.projectd.data.model.Task" />
+        <import type="android.view.View" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="3dp">
+
+        <ImageView
+            android:id="@+id/iv_avatar"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="@drawable/bg_circle_placeholder"
+            app:imgCircleUrl='@{data.engineer.photo}'
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="AB"
+            android:contentDescription="@string/cd_photo_engineer" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            app:layout_constraintBottom_toBottomOf="@id/iv_avatar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/iv_avatar"
+            app:layout_constraintTop_toTopOf="@id/iv_avatar">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text='@{data.createdBy.equals("You") ? data.createdBy : data.engineer.shortName }'
+                android:textColor="@color/text_default"
+                android:textSize="@dimen/text_small"
+                android:textStyle="bold"
+                tools:text="Aliando" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="3dp"
+                android:layout_weight="1"
+                android:textColor="@color/text_default"
+                android:textSize="@dimen/text_small"
+                app:textUpdated='@{data}' />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/text_gray"
+                android:textSize="@dimen/text_smallest"
+                app:timeTo='@{data.updatedAt == null ? data.createdAt : data.updatedAt}'
+                tools:text="08:08" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_round_12_gray"
+            android:orientation="vertical"
+            android:paddingVertical="12dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/iv_avatar"
+            app:layout_constraintTop_toBottomOf="@id/iv_avatar">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="12dp"
+                    android:layout_weight="1"
+                    android:text='@{data.description}'
+                    android:textColor="@color/brand_50"
+                    android:textSize="@dimen/text_default"
+                    tools:text="This is task description" />
+
+                <ImageView
+                    android:id="@+id/btn_more"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:background="?selectableItemBackgroundBorderless"
+                    android:src="@drawable/ic_baseline_more_vert_24"
+                    android:visibility="gone"
+                    app:tint="@color/brand_50"
+                    tools:visibility="visible"
+                    android:contentDescription="@string/cd_button_more" />
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="12dp"
+                android:text="@{data.project.name}"
+                android:textColor="@color/brand_50"
+                android:textSize="@dimen/text_small"
+                android:textStyle="bold"
+                android:visibility="@{data.project == null ? View.GONE : View.VISIBLE}"
+                tools:text="Project Name" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="12dp"
+                android:layout_marginTop="4dp"
+                android:drawablePadding="3dp"
+                android:gravity="center_vertical"
+                android:text='@{"Verified by " + data.verified().shortName()}'
+                android:textColor="@color/brand_50"
+                android:textSize="@dimen/text_smallest"
+                android:visibility="@{data.verified() == null ? View.GONE : View.VISIBLE}"
+                app:drawableStartCompat="@drawable/ic_baseline_verified_24"
+                app:drawableTint="@color/text_bg_green"
+                tools:text="Verified by Aliando" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:layout_marginHorizontal="12dp"
+                android:layout_marginVertical="8dp"
+                android:background="@color/brand_25"
+                android:visibility="@{data.notes == null ? View.GONE : View.VISIBLE}" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="12dp"
+                android:alpha="0.75"
+                android:drawablePadding="3dp"
+                android:text='@{"Note: " + data.notes}'
+                android:textColor="@color/brand_50"
+                android:textSize="@dimen/text_smallest"
+                android:visibility="@{data.notes == null ? View.GONE : View.VISIBLE}"
+                tools:text="Note: This is note" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="12dp"
+                android:layout_marginTop="8dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_project_gray"
+                    android:paddingHorizontal="6dp"
+                    android:paddingVertical="3dp"
+                    android:textColor="@color/brand_50"
+                    android:textSize="@dimen/text_smallest"
+                    app:taskStatus='@{data}'
+                    tools:text="Process" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:background="@drawable/bg_project_gray"
+                    android:paddingHorizontal="6dp"
+                    android:paddingVertical="3dp"
+                    android:textColor="@color/brand_50"
+                    android:textSize="@dimen/text_smallest"
+                    app:taskLevel='@{data.level}'
+                    tools:text="Low" />
+
+            </LinearLayout>
+
+            <!--<HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:clipToPadding="false"
+                android:overScrollMode="never"
+                android:paddingHorizontal="12dp"
+                android:scrollIndicators="none"
+                android:scrollbars="none">
+
+
+
+            </HorizontalScrollView>-->
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

@@ -2,6 +2,10 @@ package com.projectd.injection
 
 import com.google.gson.Gson
 import com.projectd.data.Session
+import com.projectd.ui.dialog.LoadingDialog
+import com.projectd.ui.home.HomeViewModel
+import com.projectd.ui.login.LoginViewModel
+import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
@@ -12,23 +16,10 @@ object AppModule {
         //singleOf(::AudioHelper)
 
         single { activityContext ->
-            //LoadingDialog(activityContext.get())
+            LoadingDialog(activityContext.get())
         }
 
-//        viewModelOf(::LoginViewModel)
-//        viewModelOf(::RegisterViewModel)
-//        viewModelOf(::HomeViewModel)
-//        viewModelOf(::TaskViewModel)
-//        viewModelOf(::TaskAddViewModel)
-//        viewModelOf(::TaskChooserViewModel)
-//        viewModelOf(::TaskReportViewModel)
-//        viewModelOf(::ProjectChooserViewModel)
-//        viewModelOf(::ProjectViewModel)
-//        viewModelOf(::ProjectAddViewModel)
-//        viewModelOf(::ManagerChooserViewModel)
-//        viewModelOf(::TodayCheckViewModel)
-//        viewModelOf(::AbsentViewModel)
-//        viewModelOf(::UpdateProgressViewModel)
-//        viewModelOf(::TaskPovViewModel)
+        viewModelOf(::HomeViewModel)
+        viewModelOf(::LoginViewModel)
     }
 }

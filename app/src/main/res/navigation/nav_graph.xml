@@ -19,4 +19,19 @@
         android:name="com.projectd.ui.login.LoginFragment"
         android:label="LoginFragment"
         tools:layout="@layout/fragment_login"/>
+    <fragment
+        android:id="@+id/taskAddFragment"
+        android:name="com.projectd.ui.task.add.TaskAddFragment"
+        android:label="TaskAddFragment"
+        tools:layout="@layout/fragment_task_add"/>
+    <fragment
+        android:id="@+id/taskFragment"
+        android:name="com.projectd.ui.task.list.TaskFragment"
+        android:label="TaskFragment"
+        tools:layout="@layout/fragment_task"/>
+    <fragment
+        android:id="@+id/taskPovFragment"
+        android:name="com.projectd.ui.task.pov.TaskPovFragment"
+        android:label="TaskPovFragment"
+        tools:layout="@layout/fragment_task_pov"/>
 </navigation>

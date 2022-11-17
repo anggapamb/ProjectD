@@ -19,6 +19,7 @@ import com.crocodic.core.helper.DateTimeHelper
 import com.projectd.R
 import com.projectd.data.model.Absent
 import com.projectd.data.model.HomeMenu
+import com.projectd.data.model.Project
 import com.projectd.data.model.Task
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -311,6 +312,19 @@ class ViewBindingAdapter {
                 view.text = "${it.count}"
                 view.setTextColor(textColor)
                 view.setBackgroundResource(it.countBackground)
+            }
+        }
+
+        @JvmStatic
+        @BindingAdapter("projectLevel")
+        fun projectLevel(view: TextView, projectLevel: Int?) {
+            projectLevel?.let {
+                val text = when (it) {
+                    Project.HIGH -> "High"
+                    Project.MEDIUM -> "Medium"
+                    else -> "Low"
+                }
+                view.text = text
             }
         }
     }

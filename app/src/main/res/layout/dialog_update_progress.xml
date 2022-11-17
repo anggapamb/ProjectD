@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+        <variable
+            name="project"
+            type="com.projectd.data.model.Project" />
+
+        <variable
+            name="loading"
+            type="Boolean" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_round_12_white_top"
+        android:orientation="vertical"
+        android:paddingBottom="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:textColor="@color/text_default"
+            android:textSize="@dimen/text_large"
+            android:textStyle="bold" />
+
+        <SeekBar
+            android:id="@+id/seek_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp" />
+
+        <Button
+            style="@style/Theme.ProjectD.Button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:alpha='@{loading ? 0.5F : 1F}'
+            android:clickable='@{loading ? false : true}'
+            android:text="@string/button_update"
+            android:textSize="@dimen/text_default" />
+
+    </LinearLayout>
+
+</layout>

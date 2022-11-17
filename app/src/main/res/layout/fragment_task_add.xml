@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".ui.task.add.TaskAddFragment">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="8dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/title_add_task"
+                    android:textColor="@color/text_default"
+                    android:textSize="@dimen/text_xlarge"
+                    android:textStyle="bold" />
+
+                <Space
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1" />
+
+                <com.google.android.material.button.MaterialButton
+                    style="@style/Theme.ProjectD.Button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minHeight="48dp"
+                    android:text="@string/button_save"
+                    android:textAllCaps="false"
+                    android:textSize="@dimen/text_default" />
+
+            </LinearLayout>
+
+            <androidx.core.widget.NestedScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Theme.ProjectD.InputText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="16dp"
+                        android:hint="@string/hint_task">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/et_task"
+                            android:layout_width="match_parent"
+                            android:layout_height="128dp"
+                            android:gravity="start"
+                            android:inputType="textCapSentences|textMultiLine"
+                            android:textSize="@dimen/text_default" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/il_project"
+                        style="@style/Theme.ProjectD.InputText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="16dp"
+                        android:layout_marginTop="8dp"
+                        android:hint="@string/hint_project">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/et_project"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="text|textNoSuggestions"
+                            android:maxLength="32"
+                            android:textSize="@dimen/text_default" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <LinearLayout
+                        android:id="@+id/v_timeline"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:visibility="gone"
+                        tools:visibility="visible">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="16dp"
+                            android:layout_marginTop="8dp">
+
+                            <com.google.android.material.textfield.TextInputLayout
+                                style="@style/Theme.ProjectD.InputText"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:hint="@string/hint_start_date">
+
+                                <com.google.android.material.textfield.TextInputEditText
+                                    android:id="@+id/et_start_date"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:inputType="text|textNoSuggestions"
+                                    android:maxLength="32"
+                                    android:textSize="@dimen/text_default" />
+
+                            </com.google.android.material.textfield.TextInputLayout>
+
+                            <Space
+                                android:layout_width="12dp"
+                                android:layout_height="match_parent" />
+
+                            <com.google.android.material.textfield.TextInputLayout
+                                style="@style/Theme.ProjectD.InputText"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:hint="@string/hint_end_date">
+
+                                <com.google.android.material.textfield.TextInputEditText
+                                    android:id="@+id/et_end_date"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:inputType="text|textNoSuggestions"
+                                    android:maxLength="32"
+                                    android:textSize="@dimen/text_default" />
+
+                            </com.google.android.material.textfield.TextInputLayout>
+
+                        </LinearLayout>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="16dp"
+                            android:layout_marginTop="12dp"
+                            android:textColor="@color/text_red"
+                            android:textSize="@dimen/text_small"
+                            tools:text="*Please update engineer timeline" />
+
+                    </LinearLayout>
+
+                    <HorizontalScrollView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:clipToPadding="false"
+                        android:overScrollMode="never"
+                        android:paddingHorizontal="16dp"
+                        android:scrollIndicators="none"
+                        android:scrollbars="none">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="12dp"
+                                android:text="@string/label_load"
+                                android:textColor="@color/text_default"
+                                android:textSize="@dimen/text_default" />
+
+                            <RadioGroup
+                                android:id="@+id/rg_diff"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="12dp"
+                                android:orientation="horizontal">
+
+                                <com.google.android.material.radiobutton.MaterialRadioButton
+                                    android:id="@+id/rb_standby"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/rb_standby"
+                                    android:textColor="@color/text_default"
+                                    android:textSize="@dimen/text_default"
+                                    app:buttonTint="@color/brand_accent" />
+
+                                <com.google.android.material.radiobutton.MaterialRadioButton
+                                    android:id="@+id/rb_low"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="12dp"
+                                    android:text="@string/rb_low"
+                                    android:textColor="@color/text_default"
+                                    android:textSize="@dimen/text_default"
+                                    app:buttonTint="@color/brand_accent" />
+
+                                <com.google.android.material.radiobutton.MaterialRadioButton
+                                    android:id="@+id/rb_medium"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="12dp"
+                                    android:text="@string/rb_medium"
+                                    android:textColor="@color/text_default"
+                                    android:textSize="@dimen/text_default"
+                                    app:buttonTint="@color/brand_accent" />
+
+                                <com.google.android.material.radiobutton.MaterialRadioButton
+                                    android:id="@+id/rb_high"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="12dp"
+                                    android:text="@string/rb_high"
+                                    android:textColor="@color/text_default"
+                                    android:textSize="@dimen/text_default"
+                                    app:buttonTint="@color/brand_accent" />
+
+                            </RadioGroup>
+
+                        </LinearLayout>
+
+                    </HorizontalScrollView>
+
+                </LinearLayout>
+
+            </androidx.core.widget.NestedScrollView>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_margin="16dp"
+            android:background="@drawable/bg_round_12_red"
+            android:gravity="center"
+            android:padding="8dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/label_have_unfinished_task_last_day"
+                android:textColor="@color/text_bg_red"
+                android:textSize="@dimen/text_default" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:layout_marginStart="4dp"
+                android:background="@drawable/bg_project_red"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="6dp"
+                android:text="@string/button_copy_task_here"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_default"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+    </FrameLayout>
+
+</layout>

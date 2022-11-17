@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="data"
+            type="com.projectd.data.model.Task" />
+
+        <import type="android.view.View" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="3dp"
+        android:background="@drawable/bg_round_12_green"
+        android:orientation="vertical"
+        android:paddingVertical="12dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="12dp"
+                android:text='@{data.description}'
+                android:textColor="@color/text_bg_green"
+                android:textSize="@dimen/text_medium"
+                tools:text="This is task description" />
+
+            <ImageView
+                android:id="@+id/btn_more"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:background="?selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_baseline_more_vert_24"
+                android:visibility="gone"
+                app:tint="@color/text_bg_green"
+                tools:visibility="visible"
+                android:contentDescription="@string/cd_button_more" />
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="12dp"
+            android:text="@{data.project.name}"
+            android:textColor="@color/text_bg_green"
+            android:textSize="@dimen/text_small"
+            android:textStyle="bold"
+            android:visibility="@{data.project == null ? View.GONE : View.VISIBLE}"
+            tools:text="Project Name" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="12dp"
+            android:layout_marginTop="4dp"
+            android:drawablePadding="3dp"
+            android:gravity="center_vertical"
+            android:text='@{"Verified by " + data.verified().shortName()}'
+            android:textColor="@color/text_bg_green"
+            android:textSize="@dimen/text_smallest"
+            android:visibility="@{data.verified() == null ? View.GONE : View.VISIBLE}"
+            app:drawableStartCompat="@drawable/ic_baseline_verified_24"
+            app:drawableTint="@color/text_bg_green"
+            tools:text="Verified by Aliando" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:layout_marginHorizontal="12dp"
+            android:layout_marginVertical="8dp"
+            android:alpha="0.5"
+            android:background="@color/text_bg_green"
+            android:visibility="@{data.notes == null ? View.GONE : View.VISIBLE}" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="12dp"
+            android:alpha="0.75"
+            android:drawablePadding="3dp"
+            android:text='@{"Note: " + data.notes}'
+            android:textColor="@color/text_bg_green"
+            android:textSize="@dimen/text_smallest"
+            android:visibility="@{data.notes == null ? View.GONE : View.VISIBLE}"
+            tools:text="Note: This is note" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="12dp"
+            android:layout_marginTop="8dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_project_green"
+                android:paddingHorizontal="6dp"
+                android:paddingVertical="3dp"
+                android:textColor="@color/text_bg_green"
+                android:textSize="@dimen/text_smallest"
+                app:taskStatus='@{data}'
+                tools:text="Progress" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:background="@drawable/bg_project_green"
+                android:paddingHorizontal="6dp"
+                android:paddingVertical="3dp"
+                android:textColor="@color/text_bg_green"
+                android:textSize="@dimen/text_smallest"
+                app:taskLevel='@{data.level}'
+                tools:text="Low" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</layout>

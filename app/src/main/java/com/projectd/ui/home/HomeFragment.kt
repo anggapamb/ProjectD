@@ -1,29 +1,31 @@
 package com.projectd.ui.home
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.content.res.AppCompatResources
-import androidx.core.app.ActivityCompat
 import androidx.core.view.isVisible
 import com.crocodic.core.base.adapter.CoreListAdapter
+import com.crocodic.core.extension.snack
 import com.crocodic.core.helper.DateTimeHelper
 import com.projectd.R
 import com.projectd.base.fragment.BaseFragment
-import com.projectd.data.Cons
 import com.projectd.data.model.*
 import com.projectd.databinding.FragmentHomeBinding
 import com.projectd.databinding.ItemMainMenuBinding
 import com.projectd.databinding.ItemSecondMenuBinding
 import com.projectd.databinding.ItemUpdateBinding
+import com.projectd.ui.dialog.AbsentDialog
+import com.projectd.util.ViewBindingAdapter.Companion.openUrl
+import org.koin.android.ext.android.inject
 
 class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
 
+    private val viewModel: HomeViewModel by inject()
     private val menus = ArrayList<HomeMenu?>()
     private val addsMenus = ArrayList<AdditionalMenu?>()
     private val listTask = ArrayList<Task?>()
+    private var backPressed: Long = 0
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -31,10 +33,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
         initView()
         observe()
         dataDummy()
+        onBackPressedHandle()
     }
 
     private fun initView() {
         binding?.tvDateNow?.text = DateTimeHelper().datePrettyNow()
+        binding?.user = viewModel.user
 
         binding?.rvMenu?.adapter = CoreListAdapter<ItemMainMenuBinding, HomeMenu>(R.layout.item_main_menu)
             .initItem(menus) { position, data ->
@@ -47,14 +51,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
 
         binding?.rvMenuAdditional?.adapter = CoreListAdapter<ItemSecondMenuBinding, AdditionalMenu>(R.layout.item_second_menu)
             .initItem(addsMenus) { position, data ->
-//                when (data?.key) {
-//                    "today_check" -> navigateTo(R.id.actionTodayCheckFragment)
-//                    "absent" -> AbsentDialog().show(childFragmentManager, "absent")
-//                    /*"overtime" -> requireActivity().openUrl(Cons.URL.OVERTIME)
-//                    "leave" -> requireActivity().openUrl(Cons.URL.LEAVE)
-//                    "reimbursement" -> requireActivity().openUrl(Cons.URL.REIMBURSEMENT)*/
-//                    else -> requireActivity().openUrl(data?.link ?: return@initItem)
-//                }
+                when (data?.key) {
+                    //"today_check" -> navigateTo(R.id.actionTodayCheckFragment)
+                    "absent" -> AbsentDialog().show(childFragmentManager, "absent")
+                    /*"overtime" -> requireActivity().openUrl(Cons.URL.OVERTIME)
+                    "leave" -> requireActivity().openUrl(Cons.URL.LEAVE)
+                    "reimbursement" -> requireActivity().openUrl(Cons.URL.REIMBURSEMENT)*/
+                    else -> requireActivity().openUrl(data?.link ?: return@initItem)
+                }
             }
     }
 
@@ -65,15 +69,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
     }
 
     private fun dataDummy() {
-        /* user */
-        val user = User(
-            photo = "https://thumbs.dreamstime.com/b/beige-cat-placard-his-neck-says-bad-cat-prison-black-lineup-background-cat-placard-prison-167328390.jpg",
-            name = "Angga Pambudi",
-            username = "anggapamb",
-            specialAccess = listOf("rtask")
-        )
-        binding?.user = user
-
         /* prayer */
         val prayer = Prayer(
             image = "https://c-fa.cdn.smule.com/rs-s-sg-1/sing_google/performance/cover/db/76/244786ea-1547-4341-95f2-3f0951ac2598.jpg",
@@ -117,25 +112,24 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
         /* menu */
         val addMenus = arrayOf(
             AdditionalMenu(
-                image = "https://static.thenounproject.com/png/1049455-200.png",
-                label = "Today Check",
-                key = "today_check"
+                image = "https://cdn-icons-png.flaticon.com/512/2302/2302658.png",
+                label = "Absent",
+                key = "absent"
             ), AdditionalMenu(
                 image = "https://static.thenounproject.com/png/1049455-200.png",
                 label = "Today Check",
-                key = "today_check"
+                key = "today_check",
+                link = "https://google.com"
             ), AdditionalMenu(
                 image = "https://static.thenounproject.com/png/1049455-200.png",
                 label = "Today Check",
-                key = "today_check"
+                key = "today_check",
+                link = "https://google.com"
             ), AdditionalMenu(
                 image = "https://static.thenounproject.com/png/1049455-200.png",
                 label = "Today Check",
-                key = "today_check"
-            ), AdditionalMenu(
-                image = "https://static.thenounproject.com/png/1049455-200.png",
-                label = "Today Check",
-                key = "today_check"
+                key = "today_check",
+                link = "https://google.com"
             ),
         )
         addsMenus.addAll(addMenus)
@@ -200,5 +194,22 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
             ),
         )
         listTask.addAll(task)
+    }
+
+    fun popMsg(msg: String) = binding?.root?.snack(msg)
+
+    private fun onBackPressedHandle() {
+        requireActivity()
+            .onBackPressedDispatcher
+            .addCallback(requireActivity(), object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    if (backPressed + 2000 > System.currentTimeMillis()) {
+                        activity?.finishAffinity()
+                    } else {
+                        popMsg("Press back again to quit.")
+                    }
+                    backPressed = System.currentTimeMillis()
+                }
+            })
     }
 }

@@ -1,7 +1,9 @@
 package com.projectd.util
 
+import android.app.Activity
 import android.content.Intent
 import android.graphics.PorterDuff
+import android.net.Uri
 import android.view.View
 import android.webkit.WebChromeClient
 import android.webkit.WebResourceRequest
@@ -30,6 +32,15 @@ import kotlin.math.abs
 
 class ViewBindingAdapter {
     companion object {
+
+        fun Activity.openUrl(url: String) {
+            try {
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                startActivity(intent)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
 
         fun getEmoji(unicode: Int): String {
             return try {

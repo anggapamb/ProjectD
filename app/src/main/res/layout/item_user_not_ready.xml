@@ -35,7 +35,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text='@{data.name}'
+                android:text='@{data.nama}'
                 android:textColor="@color/brand_75"
                 android:textSize="@dimen/text_default"
                 android:textStyle="bold"
@@ -44,7 +44,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text='@{"Last active: " + data.lastSeen}'
+                android:text='@{"Last active: null"}'
                 android:textColor="@color/brand_50"
                 android:textSize="@dimen/text_small"
                 tools:text="Aliando" />

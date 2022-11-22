@@ -33,7 +33,11 @@ class App : Application(), LifecycleEventObserver {
 
         startKoin {
             androidContext(this@App)
-            modules(AppModule.modules)
+            modules(listOf(
+                AppModule.modules,
+                AppModule.viewModelModule,
+                AppModule.networkModule
+            ))
         }
 
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)

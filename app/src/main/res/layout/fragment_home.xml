@@ -86,7 +86,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="6dp"
-                            android:text='@{"(@" + user.username +")"}'
+                            android:text='@{"(@" + user.shortName() +")"}'
                             android:textColor="@color/text_default"
                             android:textSize="@dimen/text_small"
                             tools:text="\@aliando" />
@@ -244,7 +244,6 @@
                             android:textColor="@color/text_default"
                             android:textSize="@dimen/text_default"
                             android:textStyle="bold"
-                            android:visibility='@{user.specialAccess.contains("rtask") ? View.VISIBLE : View.GONE}'
                             tools:visibility="visible" />
 
                         <androidx.recyclerview.widget.RecyclerView
@@ -276,7 +275,6 @@
                             android:textColor="@color/text_default"
                             android:textSize="@dimen/text_default"
                             android:textStyle="bold"
-                            android:visibility='@{user.specialAccess.contains("rtask") ? View.VISIBLE : View.GONE}'
                             tools:visibility="visible" />
 
                         <LinearLayout
@@ -342,7 +340,6 @@
                         android:textColor="@color/text_default"
                         android:textSize="@dimen/text_default"
                         android:textStyle="bold"
-                        android:visibility='@{user.specialAccess.contains("rtask") ? View.VISIBLE : View.GONE}'
                         tools:visibility="visible" />
 
                     <androidx.recyclerview.widget.RecyclerView

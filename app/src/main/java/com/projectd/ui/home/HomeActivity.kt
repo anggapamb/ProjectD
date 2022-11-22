@@ -8,7 +8,6 @@ import com.projectd.base.activity.BaseActivity
 import com.projectd.data.Session
 import com.projectd.databinding.ActivityHomeBinding
 import org.koin.android.ext.android.inject
-import timber.log.Timber
 
 class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(R.layout.activity_home) {
 
@@ -20,7 +19,6 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(R.layout.a
         super.onCreate(savedInstanceState)
 
         if (session.getUser() == null) navController.navigate(R.id.actionLoginFragment)
-        Timber.d("CheckUser: ${session.getUser()}")
 
     }
 }

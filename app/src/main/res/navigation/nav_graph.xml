@@ -13,11 +13,6 @@
         <action
             android:id="@+id/actionLoginFragment"
             app:destination="@id/loginFragment" />
-        <action
-            android:id="@+id/actionHomeFragment"
-            app:destination="@id/homeFragment"
-            app:popUpTo="@id/nav_graph"
-            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/loginFragment"
@@ -39,4 +34,7 @@
         android:name="com.projectd.ui.task.pov.TaskPovFragment"
         android:label="TaskPovFragment"
         tools:layout="@layout/fragment_task_pov"/>
+    <action
+        android:id="@+id/actionHomeFragment"
+        app:destination="@id/homeFragment" />
 </navigation>

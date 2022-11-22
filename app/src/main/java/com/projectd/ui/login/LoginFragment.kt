@@ -52,9 +52,9 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(R.layout.fragment_login
 
     private fun login() {
         if (binding?.etUsername?.textOf()?.let { isValidEmail(it) } == true) {
+            loadingDialog.show("Wait..", true)
             viewModel.login(binding?.etUsername?.textOf(), binding?.etPassword?.textOf())
         } else {
-            loadingDialog.show("Wait..", true)
             binding?.root?.snack("Invalid email")
         }
     }

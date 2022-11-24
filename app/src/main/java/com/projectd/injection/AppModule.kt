@@ -35,7 +35,7 @@ object AppModule {
     }
 
     val viewModelModule = module {
-        viewModel { HomeViewModel() }
+        viewModel { HomeViewModel(get()) }
         viewModel { LoginViewModel(get()) }
     }
 

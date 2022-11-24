@@ -34,40 +34,56 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
 
         initView()
         observe()
+        getTaskToday()
         dataDummy()
-        onBackPressedHandle()
+        //onBackPressedHandle()
+    }
+
+    private fun observe() {
+        viewModel.listTask.observe(viewLifecycleOwner) {
+            listTask.clear()
+            binding?.rvUpdate?.adapter?.notifyDataSetChanged()
+            listTask.addAll(it)
+            binding?.rvUpdate?.adapter?.notifyItemInserted(0)
+            binding?.vEmpty?.isVisible = listTask.isEmpty()
+        }
     }
 
     private fun initView() {
         binding?.tvDateNow?.text = DateTimeHelper().datePrettyNow()
         binding?.user = viewModel.user
 
+        listTask.let { tasks ->
+            binding?.rvUpdate?.adapter = object : CoreListAdapter<ItemUpdateBinding, Task>(R.layout.item_update) {
+                override fun onBindViewHolder(
+                    holder: ItemViewHolder<ItemUpdateBinding, Task>,
+                    position: Int
+                ) {
+                    holder.binding.data = tasks[position]
+                    holder.binding.yourName = viewModel.user?.shortName()
+                }
+            }.initItem(tasks)
+        }
+
         binding?.rvMenu?.adapter = CoreListAdapter<ItemMainMenuBinding, HomeMenu>(R.layout.item_main_menu)
             .initItem(menus) { position, data ->
-//                when (data?.key) {
-//                    "task" -> navigateTo(R.id.actionTaskFragment)
-//                    "project" -> navigateTo(R.id.actionProjectFragment)
-//                    "export_task" -> viewModel.exportTodayTask()
-//                }
+                when (data?.key) {
+                    "task" -> navigateTo(R.id.actionTaskFragment)
+                    "project" -> navigateTo(R.id.actionProjectFragment)
+                }
             }
 
         binding?.rvMenuAdditional?.adapter = CoreListAdapter<ItemSecondMenuBinding, AdditionalMenu>(R.layout.item_second_menu)
             .initItem(addsMenus) { position, data ->
                 when (data?.key) {
-                    //"today_check" -> navigateTo(R.id.actionTodayCheckFragment)
                     "absent" -> AbsentDialog().show(childFragmentManager, "absent")
-                    /*"overtime" -> requireActivity().openUrl(Cons.URL.OVERTIME)
-                    "leave" -> requireActivity().openUrl(Cons.URL.LEAVE)
-                    "reimbursement" -> requireActivity().openUrl(Cons.URL.REIMBURSEMENT)*/
                     else -> requireActivity().openUrl(data?.link ?: return@initItem)
                 }
             }
     }
 
-    private fun observe() {
-        listTask.let { tasks ->
-            binding?.rvUpdate?.adapter = CoreListAdapter<ItemUpdateBinding, Task>(R.layout.item_update).initItem(tasks)
-        }
+    private fun getTaskToday() {
+        viewModel.taskToday()
     }
 
     private fun dataDummy() {
@@ -81,15 +97,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
 
         /* homeMenu */
         val homeMenu = arrayOf(
-            HomeMenu(
-                icon = R.drawable.ic_baseline_inbox_24,
-                color = R.color.text_bg_blue,
-                background = AppCompatResources.getDrawable(requireContext(), R.drawable.bg_round_12_blue),
-                label = "Inbox",
-                key = "inbox",
-                count = 0,
-                countBackground = R.drawable.bg_circle_blue
-            ),
             HomeMenu(
                 icon = R.drawable.ic_baseline_playlist_add_check_24,
                 color = R.color.text_bg_green,
@@ -109,6 +116,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
                 countBackground = R.drawable.bg_circle_yellow
             )
         )
+        menus.clear()
         menus.addAll(homeMenu)
 
         /* menu */
@@ -140,62 +148,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
         /* absent */
         val absent = Absent(description = "Ijin Work From Home")
         binding?.absent = absent
-
-        /* task */
-        val task = arrayOf(
-            Task(
-                engineer = Task.User(
-                    photo = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ0y1PpEz2R27LVDEXmvaFag3DqVevjSHW_0w&usqp=CAU",
-                    name = "Uzumaki Naruto",
-                    username = "naruto",
-                    role = "Engineer"),
-                createdBy = "You",
-                description = "Membuat jalan",
-                project = Task.Project(name = "Pengecoran Jalan Anyer - Panarukan"),
-                notes = "Membangun jalan raya dari Anyer sampai Panarukan"
-            ),Task(
-                engineer = Task.User(
-                    photo = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ0y1PpEz2R27LVDEXmvaFag3DqVevjSHW_0w&usqp=CAU",
-                    name = "Uzumaki Naruto",
-                    username = "naruto",
-                    role = "Engineer"),
-                createdBy = "You",
-                description = "Membuat jalan",
-                project = Task.Project(name = "Pengecoran Jalan Anyer - Panarukan"),
-                notes = "Membangun jalan raya dari Anyer sampai Panarukan"
-            ),Task(
-                engineer = Task.User(
-                    photo = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ0y1PpEz2R27LVDEXmvaFag3DqVevjSHW_0w&usqp=CAU",
-                    name = "Uzumaki Naruto",
-                    username = "naruto",
-                    role = "Engineer"),
-                createdBy = "You",
-                description = "Membuat jalan",
-                project = Task.Project(name = "Pengecoran Jalan Anyer - Panarukan"),
-                notes = "Membangun jalan raya dari Anyer sampai Panarukan"
-            ),Task(
-                engineer = Task.User(
-                    photo = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ0y1PpEz2R27LVDEXmvaFag3DqVevjSHW_0w&usqp=CAU",
-                    name = "Uzumaki Naruto",
-                    username = "naruto",
-                    role = "Engineer"),
-                createdBy = "You",
-                description = "Membuat jalan",
-                project = Task.Project(name = "Pengecoran Jalan Anyer - Panarukan"),
-                notes = "Membangun jalan raya dari Anyer sampai Panarukan"
-            ),Task(
-                engineer = Task.User(
-                    photo = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ0y1PpEz2R27LVDEXmvaFag3DqVevjSHW_0w&usqp=CAU",
-                    name = "Uzumaki Naruto",
-                    username = "naruto",
-                    role = "Engineer"),
-                createdBy = "You",
-                description = "Membuat jalan",
-                project = Task.Project(name = "Pengecoran Jalan Anyer - Panarukan"),
-                notes = "Membangun jalan raya dari Anyer sampai Panarukan"
-            ),
-        )
-        listTask.addAll(task)
     }
 
     fun popMsg(msg: String) = binding?.root?.snack(msg)

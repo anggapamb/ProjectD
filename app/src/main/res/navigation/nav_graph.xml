@@ -13,6 +13,12 @@
         <action
             android:id="@+id/actionLoginFragment"
             app:destination="@id/loginFragment" />
+        <action
+            android:id="@+id/actionProjectFragment"
+            app:destination="@id/projectFragment" />
+        <action
+            android:id="@+id/actionTaskFragment"
+            app:destination="@id/taskFragment" />
     </fragment>
     <fragment
         android:id="@+id/loginFragment"
@@ -37,4 +43,9 @@
     <action
         android:id="@+id/actionHomeFragment"
         app:destination="@id/homeFragment" />
+    <fragment
+        android:id="@+id/projectFragment"
+        android:name="com.projectd.ui.project.list.ProjectFragment"
+        android:label="ProjectFragment"
+        tools:layout="@layout/fragment_project"/>
 </navigation>

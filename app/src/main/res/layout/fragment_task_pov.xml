@@ -5,7 +5,7 @@
     <data>
         <variable
             name="user"
-            type="com.projectd.data.model.Task.User" />
+            type="com.projectd.data.model.User" />
 
         <variable
             name="division"

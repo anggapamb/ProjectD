@@ -30,7 +30,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(R.layout.fragment_login
 
         observe()
         setEnabledButton()
-        onBackPressedHandle()
+        //onBackPressedHandle()
     }
 
     private fun observe() {

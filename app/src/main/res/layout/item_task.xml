@@ -29,7 +29,7 @@
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="12dp"
-                android:text='@{data.description}'
+                android:text='@{data.taskName}'
                 android:textColor="@color/text_bg_green"
                 android:textSize="@dimen/text_medium"
                 tools:text="This is task description" />
@@ -52,7 +52,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="12dp"
-            android:text="@{data.project.name}"
+            android:text="@{data.project}"
             android:textColor="@color/text_bg_green"
             android:textSize="@dimen/text_small"
             android:textStyle="bold"
@@ -66,10 +66,10 @@
             android:layout_marginTop="4dp"
             android:drawablePadding="3dp"
             android:gravity="center_vertical"
-            android:text='@{"Verified by " + data.verified().shortName()}'
+            android:text='@{"Verified by " + data.verifiedBy}'
             android:textColor="@color/text_bg_green"
             android:textSize="@dimen/text_smallest"
-            android:visibility="@{data.verified() == null ? View.GONE : View.VISIBLE}"
+            android:visibility='@{data.verified.equals("0") ? View.GONE : View.VISIBLE}'
             app:drawableStartCompat="@drawable/ic_baseline_verified_24"
             app:drawableTint="@color/text_bg_green"
             tools:text="Verified by Aliando" />
@@ -81,7 +81,7 @@
             android:layout_marginVertical="8dp"
             android:alpha="0.5"
             android:background="@color/text_bg_green"
-            android:visibility="@{data.notes == null ? View.GONE : View.VISIBLE}" />
+            android:visibility="@{data.description == null ? View.GONE : View.VISIBLE}" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -89,10 +89,10 @@
             android:layout_marginHorizontal="12dp"
             android:alpha="0.75"
             android:drawablePadding="3dp"
-            android:text='@{"Note: " + data.notes}'
+            android:text='@{"Note: " + data.description}'
             android:textColor="@color/text_bg_green"
             android:textSize="@dimen/text_smallest"
-            android:visibility="@{data.notes == null ? View.GONE : View.VISIBLE}"
+            android:visibility="@{data.description == null ? View.GONE : View.VISIBLE}"
             tools:text="Note: This is note" />
 
         <LinearLayout
@@ -121,7 +121,7 @@
                 android:paddingVertical="3dp"
                 android:textColor="@color/text_bg_green"
                 android:textSize="@dimen/text_smallest"
-                app:taskLevel='@{data.level}'
+                app:taskLevel='@{data.load}'
                 tools:text="Low" />
 
         </LinearLayout>

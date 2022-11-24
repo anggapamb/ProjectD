@@ -47,5 +47,14 @@
         android:id="@+id/projectFragment"
         android:name="com.projectd.ui.project.list.ProjectFragment"
         android:label="ProjectFragment"
-        tools:layout="@layout/fragment_project"/>
+        tools:layout="@layout/fragment_project">
+        <action
+            android:id="@+id/actionProjectAddFragment"
+            app:destination="@id/projectAddFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/projectAddFragment"
+        android:name="com.projectd.ui.project.add.ProjectAddFragment"
+        android:label="ProjectAddFragment"
+        tools:layout="@layout/fragment_project_add"/>
 </navigation>

@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
         <variable
@@ -9,8 +11,7 @@
         <import type="android.view.View" />
     </data>
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
@@ -37,9 +38,11 @@
                 android:layout_weight="1" />
 
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_save"
                 style="@style/Theme.ProjectD.Button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:enabled="false"
                 android:minHeight="48dp"
                 android:text="@string/button_save"
                 android:textAllCaps="false"
@@ -179,16 +182,17 @@
                         android:orientation="horizontal">
 
                         <com.google.android.material.radiobutton.MaterialRadioButton
-                            android:id="@+id/rb_medium"
+                            android:id="@+id/rb_medium_add_project"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/rb_medium"
+                            android:checked="true"
                             android:textColor="@color/text_default"
                             android:textSize="@dimen/text_default"
                             app:buttonTint="@color/brand_accent" />
 
                         <com.google.android.material.radiobutton.MaterialRadioButton
-                            android:id="@+id/rb_high"
+                            android:id="@+id/rb_high_add_project"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="12dp"

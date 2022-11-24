@@ -10,6 +10,7 @@ import com.projectd.data.Session
 import com.projectd.ui.dialog.LoadingDialog
 import com.projectd.ui.home.HomeViewModel
 import com.projectd.ui.login.LoginViewModel
+import com.projectd.ui.project.list.ProjectViewModel
 import org.koin.dsl.module
 import java.util.concurrent.TimeUnit
 import javax.net.ssl.SSLContext
@@ -37,6 +38,7 @@ object AppModule {
     val viewModelModule = module {
         viewModel { HomeViewModel(get()) }
         viewModel { LoginViewModel(get()) }
+        viewModel { ProjectViewModel(get()) }
     }
 
     val networkModule = module {

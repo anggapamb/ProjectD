@@ -178,15 +178,12 @@ class ViewBindingAdapter {
         @BindingAdapter("timeTo")
         fun timeTo(view: TextView, timeTo: String?) {
             timeTo?.let {
-                // TODO: formatting date 
-                val calendar = Calendar.getInstance().apply { time =  DateTimeHelper().toDate(it)}
-                Timber.d("CheckDateAdapter = $calendar")
+                val calendar = Calendar.getInstance().apply { time = DateTimeHelper().toDateTime(it) }
                 val timeTarget = calendar.timeInMillis
                 val timeCurrent = Calendar.getInstance().timeInMillis
                 val timeDifferent = timeTarget - timeCurrent
 
                 var diff = abs(timeDifferent)
-                Timber.d("CheckDiffTimeAdapter: $diff")
 
                 val diffDay = diff / (24 * 60 * 60 * 1000)
                 diff -= (diffDay * 24 * 60 * 60 * 1000) //will give you remaining milli seconds relating to hours, minutes and seconds
@@ -211,9 +208,8 @@ class ViewBindingAdapter {
                 }
 
                 if (diffDay > 1 || diffHours > 2) {
-                    text = DateTimeHelper().convert(timeTo, "yyyy-MM-dd", "HH:mm")
+                    text = DateTimeHelper().convert(timeTo, "yyyy-MM-dd HH:mm:ss", "HH:mm")
                     view.text = text
-                    Timber.d("CekDateTime Task: $text")
                     return@let
                 }
 
@@ -241,7 +237,6 @@ class ViewBindingAdapter {
                     text = "just now"
                 }
 
-                Timber.d("CheckTextResultDate = $text")
                 view.text = text
             }
         }

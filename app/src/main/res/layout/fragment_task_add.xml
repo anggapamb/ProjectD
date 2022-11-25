@@ -33,11 +33,13 @@
                     android:layout_weight="1" />
 
                 <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_save"
                     style="@style/Theme.ProjectD.Button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:minHeight="48dp"
                     android:text="@string/button_save"
+                    android:enabled="false"
                     android:textAllCaps="false"
                     android:textSize="@dimen/text_default" />
 
@@ -93,7 +95,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:visibility="gone"
                         tools:visibility="visible">
 
                         <LinearLayout
@@ -184,7 +185,7 @@
                                 android:orientation="horizontal">
 
                                 <com.google.android.material.radiobutton.MaterialRadioButton
-                                    android:id="@+id/rb_standby"
+                                    android:id="@+id/rb_standby_task"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="@string/rb_standby"
@@ -193,7 +194,8 @@
                                     app:buttonTint="@color/brand_accent" />
 
                                 <com.google.android.material.radiobutton.MaterialRadioButton
-                                    android:id="@+id/rb_low"
+                                    android:id="@+id/rb_low_task"
+                                    android:checked="true"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginStart="12dp"
@@ -203,7 +205,7 @@
                                     app:buttonTint="@color/brand_accent" />
 
                                 <com.google.android.material.radiobutton.MaterialRadioButton
-                                    android:id="@+id/rb_medium"
+                                    android:id="@+id/rb_medium_task"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginStart="12dp"
@@ -213,7 +215,7 @@
                                     app:buttonTint="@color/brand_accent" />
 
                                 <com.google.android.material.radiobutton.MaterialRadioButton
-                                    android:id="@+id/rb_high"
+                                    android:id="@+id/rb_high_task"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginStart="12dp"

@@ -29,12 +29,20 @@
         android:id="@+id/taskAddFragment"
         android:name="com.projectd.ui.task.add.TaskAddFragment"
         android:label="TaskAddFragment"
-        tools:layout="@layout/fragment_task_add"/>
+        tools:layout="@layout/fragment_task_add">
+        <action
+            android:id="@+id/actionProjectAddFragment"
+            app:destination="@id/projectAddFragment" />
+    </fragment>
     <fragment
         android:id="@+id/taskFragment"
         android:name="com.projectd.ui.task.list.TaskFragment"
         android:label="TaskFragment"
-        tools:layout="@layout/fragment_task"/>
+        tools:layout="@layout/fragment_task">
+        <action
+            android:id="@+id/actionTaskAddFragment"
+            app:destination="@id/taskAddFragment" />
+    </fragment>
     <fragment
         android:id="@+id/taskPovFragment"
         android:name="com.projectd.ui.task.pov.TaskPovFragment"

@@ -28,6 +28,7 @@ class ProjectAddFragment : BaseFragment<FragmentProjectAddBinding>(R.layout.frag
     private var selectedStartDate: String? = null
     private var selectedEndDate: String? = null
     private var selectedManager: Manager? = null
+    private var pdShortName = ""
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -78,6 +79,7 @@ class ProjectAddFragment : BaseFragment<FragmentProjectAddBinding>(R.layout.frag
     private fun showManager() {
         ManagerChooserDialog(manager, {
             selectedManager = it
+            pdShortName = it?.shortName().toString()
             binding?.etPd?.setText(it?.name)
         }) { clearFocus() }.show(childFragmentManager, "manager")
     }
@@ -144,7 +146,7 @@ class ProjectAddFragment : BaseFragment<FragmentProjectAddBinding>(R.layout.frag
     private fun addProject() {
         loadingDialog.show("Wait", true)
         viewModel.addProject(binding?.etProjectName?.textOf(), binding?.etDescription?.textOf(), selectedStartDate, selectedEndDate,
-            binding?.etPd?.textOf(), difficult, viewModel.user?.shortName())
+            pdShortName, difficult, viewModel.user?.shortName())
     }
 
     override fun onClick(p0: View?) {

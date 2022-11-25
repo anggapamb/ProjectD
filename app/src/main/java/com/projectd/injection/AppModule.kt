@@ -8,10 +8,13 @@ import com.projectd.api.ApiService
 import com.projectd.ui.dialog.ManagerChooserDialog.ManagerChooserViewModel
 import com.projectd.data.Session
 import com.projectd.ui.dialog.LoadingDialog
+import com.projectd.ui.dialog.ProjectChooserDialog.ProjectChooserViewModel
 import com.projectd.ui.home.HomeViewModel
 import com.projectd.ui.login.LoginViewModel
 import com.projectd.ui.project.add.ProjectAddViewModel
 import com.projectd.ui.project.list.ProjectViewModel
+import com.projectd.ui.task.add.TaskAddViewModel
+import com.projectd.ui.task.list.TaskViewModel
 import org.koin.dsl.module
 import java.util.concurrent.TimeUnit
 import javax.net.ssl.SSLContext
@@ -42,6 +45,9 @@ object AppModule {
         viewModel { ProjectViewModel(get()) }
         viewModel { ManagerChooserViewModel(get()) }
         viewModel { ProjectAddViewModel(get()) }
+        viewModel { TaskViewModel(get()) }
+        viewModel { ProjectChooserViewModel(get()) }
+        viewModel { TaskAddViewModel(get()) }
     }
 
     val networkModule = module {

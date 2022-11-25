@@ -26,7 +26,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
     private val menus = ArrayList<HomeMenu?>()
     private val addsMenus = ArrayList<AdditionalMenu?>()
     private val listTask = ArrayList<Task?>()
-    private var backPressed: Long = 0
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -36,7 +35,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
         observe()
         getTaskToday()
         dataDummy()
-        //onBackPressedHandle()
     }
 
     private fun observe() {
@@ -148,22 +146,5 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
         /* absent */
         val absent = Absent(description = "Ijin Work From Home")
         binding?.absent = absent
-    }
-
-    fun popMsg(msg: String) = binding?.root?.snack(msg)
-
-    private fun onBackPressedHandle() {
-        requireActivity()
-            .onBackPressedDispatcher
-            .addCallback(requireActivity(), object : OnBackPressedCallback(true) {
-                override fun handleOnBackPressed() {
-                    if (backPressed + 2000 > System.currentTimeMillis()) {
-                        activity?.finishAffinity()
-                    } else {
-                        popMsg("Press back again to quit.")
-                    }
-                    backPressed = System.currentTimeMillis()
-                }
-            })
     }
 }

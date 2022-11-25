@@ -5,11 +5,12 @@ import com.crocodic.core.helper.okhttp.SSLTrust
 import com.google.gson.Gson
 import com.projectd.BuildConfig
 import com.projectd.api.ApiService
-import com.projectd.data.Cons
+import com.projectd.ui.dialog.ManagerChooserDialog.ManagerChooserViewModel
 import com.projectd.data.Session
 import com.projectd.ui.dialog.LoadingDialog
 import com.projectd.ui.home.HomeViewModel
 import com.projectd.ui.login.LoginViewModel
+import com.projectd.ui.project.add.ProjectAddViewModel
 import com.projectd.ui.project.list.ProjectViewModel
 import org.koin.dsl.module
 import java.util.concurrent.TimeUnit
@@ -39,6 +40,8 @@ object AppModule {
         viewModel { HomeViewModel(get()) }
         viewModel { LoginViewModel(get()) }
         viewModel { ProjectViewModel(get()) }
+        viewModel { ManagerChooserViewModel(get()) }
+        viewModel { ProjectAddViewModel(get()) }
     }
 
     val networkModule = module {

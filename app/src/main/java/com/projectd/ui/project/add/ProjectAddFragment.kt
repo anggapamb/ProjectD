@@ -4,21 +4,30 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import android.widget.Toast
 import androidx.core.util.Pair
-import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
+import com.crocodic.core.api.ApiStatus
+import com.crocodic.core.extension.textOf
 import com.crocodic.core.helper.DateTimeHelper
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.projectd.R
 import com.projectd.base.fragment.BaseFragment
+import com.projectd.data.model.Manager
 import com.projectd.databinding.FragmentProjectAddBinding
+import com.projectd.ui.dialog.ManagerChooserDialog
+import kotlinx.coroutines.launch
 import java.util.*
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class ProjectAddFragment : BaseFragment<FragmentProjectAddBinding>(R.layout.fragment_project_add), View.OnClickListener {
 
-    private val viewModel: ProjectAddViewModel by viewModels()
+    private val viewModel: ProjectAddViewModel by viewModel()
     private var difficult = MEDIUM
-    var selectedStartDate: String? = null
+    private var selectedStartDate: String? = null
     var selectedEndDate: String? = null
+    var selectedManager: Manager? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -26,26 +35,54 @@ class ProjectAddFragment : BaseFragment<FragmentProjectAddBinding>(R.layout.frag
         binding?.btnSave?.setOnClickListener(this)
 
         initView()
+        observe()
         setEnabledButton()
     }
 
     private fun initView() {
         binding?.etStartDate?.setOnFocusChangeListener { _, b ->
-            if (b) showDatePicker(true)
+            if (b) showDatePicker()
         }
 
         binding?.etEndDate?.setOnFocusChangeListener { _, b ->
-            if (b) showDatePicker(false)
+            if (b) showDatePicker()
         }
 
-        // TODO: show manager dialog
+        binding?.etPd?.setOnFocusChangeListener { _, b ->
+            if (b) showManager()
+        }
     }
 
-    private fun addProject() {
+    private fun observe() {
+        lifecycleScope.launch {
+            viewModel.apiResponse.collect {
+                when (it.status) {
+                    ApiStatus.SUCCESS -> {
+                        loadingDialog.dismiss()
+                        Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
+                        findNavController().navigateUp()
+                    }
 
+                    ApiStatus.ERROR -> {
+                        loadingDialog.dismiss()
+                        Toast.makeText(requireContext(), "error", Toast.LENGTH_SHORT).show()
+                    }
+
+                    else -> {}
+                }
+            }
+
+        }
     }
 
-    private fun showDatePicker(start: Boolean) {
+    private fun showManager() {
+        ManagerChooserDialog(manager, {
+            selectedManager = it
+            binding?.etPd?.setText(it?.name)
+        }) { clearFocus() }.show(childFragmentManager, "manager")
+    }
+
+    private fun showDatePicker() {
         val dateRangePicker = MaterialDatePicker.Builder.dateRangePicker()
             .setTitleText("Select dates")
             .setSelection(Pair(MaterialDatePicker.thisMonthInUtcMilliseconds(), MaterialDatePicker.todayInUtcMilliseconds()))
@@ -104,6 +141,12 @@ class ProjectAddFragment : BaseFragment<FragmentProjectAddBinding>(R.layout.frag
         }
     }
 
+    private fun addProject() {
+        loadingDialog.show("Wait", true)
+        viewModel.addProject(binding?.etProjectName?.textOf(), binding?.etDescription?.textOf(), binding?.etStartDate?.textOf(), binding?.etEndDate?.textOf(),
+            binding?.etPd?.textOf(), difficult, viewModel.user?.shortName())
+    }
+
     override fun onClick(p0: View?) {
         when (p0) {
             binding?.btnSave -> addProject()
@@ -113,5 +156,7 @@ class ProjectAddFragment : BaseFragment<FragmentProjectAddBinding>(R.layout.frag
     companion object {
         const val MEDIUM = "medium"
         const val HARD = "hard"
+
+        const val manager = "Manager"
     }
 }

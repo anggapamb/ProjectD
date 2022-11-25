@@ -30,7 +30,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(R.layout.fragment_login
 
         observe()
         setEnabledButton()
-        //onBackPressedHandle()
+        onBackPressedHandle()
     }
 
     private fun observe() {
@@ -79,7 +79,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(R.layout.fragment_login
             .onBackPressedDispatcher
             .addCallback(requireActivity(), object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
-                    activity?.finishAffinity()
+                    requireActivity().finishAffinity()
                 }
             })
     }

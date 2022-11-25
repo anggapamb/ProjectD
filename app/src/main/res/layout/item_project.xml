@@ -7,13 +7,6 @@
         <variable
             name="data"
             type="com.projectd.data.model.Project" />
-        <variable
-            name="role"
-            type="String" />
-
-        <variable
-            name="division"
-            type="String" />
     </data>
 
     <LinearLayout
@@ -33,7 +26,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="12dp"
                 android:layout_weight="1"
-                android:text='@{data.name}'
+                android:text='@{data.projectName}'
                 android:textColor="@color/text_bg_yellow"
                 android:textSize="@dimen/text_medium"
                 android:textStyle="bold"
@@ -69,7 +62,7 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="12dp"
             android:layout_marginTop="8dp"
-            android:text='@{data.prettyTimeline(role, division)}'
+            android:text='@{data.prettyTimeline()}'
             android:textColor="@color/text_bg_yellow"
             android:textSize="@dimen/text_small"
             android:textStyle="bold"
@@ -89,7 +82,7 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="12dp"
             android:layout_marginTop="12dp"
-            android:text='@{"Progress: " + data.progress(role, division) + "%"}'
+            android:text="Progress 80%"
             android:textColor="@color/text_bg_yellow"
             android:textSize="@dimen/text_small"
             android:textStyle="bold"
@@ -100,7 +93,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="12dp"
-            android:progress='@{data.progress(role, division)}' />
+            android:progress='80' />
 
         <HorizontalScrollView
             android:layout_width="match_parent"
@@ -122,7 +115,7 @@
                     android:background="@drawable/bg_project_yellow"
                     android:paddingHorizontal="6dp"
                     android:paddingVertical="3dp"
-                    android:text='@{data.pd.shortName()}'
+                    android:text='@{data.projectDirector}'
                     android:textColor="@color/text_bg_yellow"
                     android:textSize="@dimen/text_smallest"
                     tools:text="Riki" />
@@ -136,7 +129,7 @@
                     android:paddingVertical="3dp"
                     android:textColor="@color/text_bg_yellow"
                     android:textSize="@dimen/text_smallest"
-                    app:projectLevel='@{data.level}'
+                    app:projectLevel='@{data.difficulty}'
                     tools:text="Low" />
 
             </LinearLayout>

@@ -72,7 +72,7 @@
                         android:layout_height="wrap_content"
                         android:inputType="text"
                         android:maxLength="32"
-                        android:text='@{project.name}'
+                        android:text='@{project.projectName}'
                         android:textSize="@dimen/text_default" />
 
                 </com.google.android.material.textfield.TextInputLayout>
@@ -155,7 +155,7 @@
                         android:layout_height="wrap_content"
                         android:inputType="text|textNoSuggestions"
                         android:maxLength="32"
-                        android:text='@{project.pd.shortName()}'
+                        android:text='@{project.projectDirector}'
                         android:textSize="@dimen/text_default" />
 
                 </com.google.android.material.textfield.TextInputLayout>

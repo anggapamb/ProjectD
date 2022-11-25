@@ -28,6 +28,10 @@ interface ApiService {
         @Field("start_date") start_date: String?,
         @Field("end_date") end_date: String?,
         @Field("project_director") project_director: String?,
-        @Field("difficulty") difficulty: String?
+        @Field("difficulty") difficulty: String?,
+        @Field("createdBy") createdBy: String?,
     ): String
+
+    @GET("users/managers")
+    suspend fun managers(): String
 }

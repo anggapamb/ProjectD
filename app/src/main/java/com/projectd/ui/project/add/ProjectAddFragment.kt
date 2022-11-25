@@ -26,8 +26,8 @@ class ProjectAddFragment : BaseFragment<FragmentProjectAddBinding>(R.layout.frag
     private val viewModel: ProjectAddViewModel by viewModel()
     private var difficult = MEDIUM
     private var selectedStartDate: String? = null
-    var selectedEndDate: String? = null
-    var selectedManager: Manager? = null
+    private var selectedEndDate: String? = null
+    private var selectedManager: Manager? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -143,7 +143,7 @@ class ProjectAddFragment : BaseFragment<FragmentProjectAddBinding>(R.layout.frag
 
     private fun addProject() {
         loadingDialog.show("Wait", true)
-        viewModel.addProject(binding?.etProjectName?.textOf(), binding?.etDescription?.textOf(), binding?.etStartDate?.textOf(), binding?.etEndDate?.textOf(),
+        viewModel.addProject(binding?.etProjectName?.textOf(), binding?.etDescription?.textOf(), selectedStartDate, selectedEndDate,
             binding?.etPd?.textOf(), difficult, viewModel.user?.shortName())
     }
 

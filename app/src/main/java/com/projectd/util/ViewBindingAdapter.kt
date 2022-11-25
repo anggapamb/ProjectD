@@ -334,10 +334,10 @@ class ViewBindingAdapter {
 
         @JvmStatic
         @BindingAdapter("projectLevel")
-        fun projectLevel(view: TextView, projectLevel: Int?) {
+        fun projectLevel(view: TextView, projectLevel: String?) {
             projectLevel?.let {
                 val text = when (it) {
-                    Project.HIGH -> "High"
+                    Project.HARD -> "Hard"
                     Project.MEDIUM -> "Medium"
                     else -> "Low"
                 }

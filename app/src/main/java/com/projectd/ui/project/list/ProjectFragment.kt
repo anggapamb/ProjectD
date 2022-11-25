@@ -3,17 +3,19 @@ package com.projectd.ui.project.list
 import android.os.Bundle
 import android.view.View
 import androidx.core.view.isVisible
-import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import com.crocodic.core.base.adapter.CoreListAdapter
 import com.projectd.R
 import com.projectd.base.fragment.BaseFragment
 import com.projectd.data.model.Project
 import com.projectd.databinding.FragmentProjectBinding
 import com.projectd.databinding.ItemProjectBinding
+import kotlinx.coroutines.launch
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class ProjectFragment : BaseFragment<FragmentProjectBinding>(R.layout.fragment_project), View.OnClickListener {
 
-    private val viewModel: ProjectViewModel by viewModels()
+    private val viewModel: ProjectViewModel by viewModel()
     private val listProject = ArrayList<Project?>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -23,6 +25,7 @@ class ProjectFragment : BaseFragment<FragmentProjectBinding>(R.layout.fragment_p
 
         initView()
         observe()
+        viewModel.allProject()
     }
 
     private fun initView() {
@@ -38,7 +41,15 @@ class ProjectFragment : BaseFragment<FragmentProjectBinding>(R.layout.fragment_p
     }
 
     private fun observe() {
-        binding?.vEmpty?.isVisible = listProject.isEmpty()
+        lifecycleScope.launch {
+            viewModel.dataProjects.observe(viewLifecycleOwner) {
+                listProject.clear()
+                binding?.rvProject?.adapter?.notifyDataSetChanged()
+                listProject.addAll(it)
+                binding?.rvProject?.adapter?.notifyItemInserted(0)
+                binding?.vEmpty?.isVisible = listProject.isEmpty()
+            }
+        }
     }
 
     override fun onClick(p0: View?) {

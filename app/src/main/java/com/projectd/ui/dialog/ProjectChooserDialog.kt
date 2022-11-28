@@ -69,6 +69,7 @@ class ProjectChooserDialog(private val onSelect: (Project?) -> Unit, private val
                     binding?.rvProject?.adapter?.notifyDataSetChanged()
                     listProject.addAll(allListProject)
                     binding?.rvProject?.adapter?.notifyItemInserted(0)
+                    binding?.vEmpty?.isVisible = listProject.isEmpty()
                 }
                 else {
                     val search = allListProject.filter { it?.projectName?.contains(p0.toString(), true) == true }
@@ -76,6 +77,7 @@ class ProjectChooserDialog(private val onSelect: (Project?) -> Unit, private val
                     binding?.rvProject?.adapter?.notifyDataSetChanged()
                     listProject.addAll(search)
                     binding?.rvProject?.adapter?.notifyItemInserted(0)
+                    binding?.vEmpty?.isVisible = listProject.isEmpty()
                 }
             }
 
@@ -90,9 +92,9 @@ class ProjectChooserDialog(private val onSelect: (Project?) -> Unit, private val
                 binding?.rvProject?.adapter?.notifyDataSetChanged()
                 listProject.addAll(it)
                 allListProject.addAll(it)
-                listProject.sortByDescending { list -> list?.id }
                 binding?.rvProject?.adapter?.notifyItemInserted(0)
                 binding?.vEmpty?.isVisible = listProject.isEmpty()
+                binding?.progressRvProject?.isVisible = false
             }
         }
     }
@@ -118,7 +120,7 @@ class ProjectChooserDialog(private val onSelect: (Project?) -> Unit, private val
 
                     override suspend fun onError(response: ApiResponse) {
                         super.onError(response)
-                        dataProjects.postValue(null)
+                        dataProjects.postValue(emptyList())
                     }
 
                 }

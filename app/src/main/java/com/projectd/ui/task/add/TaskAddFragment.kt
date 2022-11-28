@@ -112,7 +112,7 @@ class TaskAddFragment : BaseFragment<FragmentTaskAddBinding>(R.layout.fragment_t
     }
 
     private fun addTask() {
-        viewModel.addTask(binding?.etTask?.textOf(), binding?.etProject?.textOf(), selectedStartDate, selectedEndDate, load, viewModel.user?.shortName(), viewModel.user?.photo!!)
+        viewModel.addTask(binding?.etTask?.textOf(), binding?.etProject?.textOf(), selectedStartDate, selectedEndDate, load, viewModel.user?.shortName(), viewModel.user?.photo)
     }
 
     override fun onClick(p0: View?) {

@@ -2,12 +2,10 @@ package com.projectd.ui.home
 
 import android.os.Bundle
 import android.view.View
-import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import com.crocodic.core.base.adapter.CoreListAdapter
-import com.crocodic.core.extension.snack
 import com.crocodic.core.helper.DateTimeHelper
 import com.projectd.R
 import com.projectd.base.fragment.BaseFragment
@@ -42,9 +40,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
             listTask.clear()
             binding?.rvUpdate?.adapter?.notifyDataSetChanged()
             listTask.addAll(it)
-            listTask.sortByDescending { list -> list?.id }
             binding?.rvUpdate?.adapter?.notifyItemInserted(0)
             binding?.vEmpty?.isVisible = listTask.isEmpty()
+            binding?.progressRvUpdate?.isVisible = false
         }
     }
 

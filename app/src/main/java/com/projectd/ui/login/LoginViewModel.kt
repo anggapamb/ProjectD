@@ -15,25 +15,28 @@ class LoginViewModel(private val apiService: ApiService) : BaseViewModel() {
 
     fun login(email: String?, password: String?) = viewModelScope.launch {
 
-        _apiResponse.send(ApiResponse(ApiStatus.LOADING, message = "Logging in..."))
+        if (email.isNullOrEmpty() || password.isNullOrEmpty()) {
+            _apiResponse.send(ApiResponse(ApiStatus.ERROR, message = "Please complete from."))
+        } else {
+            _apiResponse.send(ApiResponse(ApiStatus.LOADING, message = "Logging in..."))
+            ApiObserver(
+                block = {apiService.login(email, password)},
+                toast = true,
+                responseListener = object : ApiObserver.ResponseListener {
+                    override suspend fun onSuccess(response: JSONObject) {
+                        val message = response.getString("message")
+                        val data = response.getJSONObject("data").toObject<User>(gson)
+                        session.saveUser(data)
+                        _apiResponse.send(ApiResponse(ApiStatus.SUCCESS, message = message))
+                    }
 
-        ApiObserver(
-            block = {apiService.login(email, password)},
-            toast = true,
-            responseListener = object : ApiObserver.ResponseListener {
-                override suspend fun onSuccess(response: JSONObject) {
-                    val message = response.getString("message")
-                    val data = response.getJSONObject("data").toObject<User>(gson)
-                    session.saveUser(data)
-                    _apiResponse.send(ApiResponse(ApiStatus.SUCCESS, message = message))
+                    override suspend fun onError(response: ApiResponse) {
+                        val message = response.rawResponse?.let { JSONObject(it) }?.getString("message")
+                        _apiResponse.send(ApiResponse(ApiStatus.ERROR, message = message))
+                    }
                 }
-
-                override suspend fun onError(response: ApiResponse) {
-                    val message = response.rawResponse?.let { JSONObject(it) }?.getString("message")
-                    _apiResponse.send(ApiResponse(ApiStatus.ERROR, message = message))
-                }
-            }
-        )
+            )
+        }
     }
 
 }

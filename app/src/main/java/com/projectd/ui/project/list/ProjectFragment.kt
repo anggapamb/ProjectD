@@ -46,9 +46,9 @@ class ProjectFragment : BaseFragment<FragmentProjectBinding>(R.layout.fragment_p
                 listProject.clear()
                 binding?.rvProject?.adapter?.notifyDataSetChanged()
                 listProject.addAll(it)
-                listProject.sortByDescending { list -> list?.id }
                 binding?.rvProject?.adapter?.notifyItemInserted(0)
                 binding?.vEmpty?.isVisible = listProject.isEmpty()
+                binding?.progressRvProject?.isVisible = false
             }
         }
     }

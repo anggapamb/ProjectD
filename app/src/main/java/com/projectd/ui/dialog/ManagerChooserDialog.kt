@@ -57,9 +57,9 @@ class ManagerChooserDialog(private val title :String, private val onSelect: (Man
             listManager.clear()
             binding?.rvManager?.adapter?.notifyDataSetChanged()
             listManager.addAll(it)
-            listManager.sortBy { list -> list?.name }
             binding?.rvManager?.adapter?.notifyItemInserted(0)
             binding?.vEmpty?.isVisible = listManager.isEmpty()
+            binding?.progressRvManager?.isVisible = false
         }
     }
 
@@ -84,7 +84,7 @@ class ManagerChooserDialog(private val title :String, private val onSelect: (Man
 
                     override suspend fun onError(response: ApiResponse) {
                         super.onError(response)
-                        dataManagers.postValue(null)
+                        dataManagers.postValue(emptyList())
                     }
 
                 }

@@ -20,8 +20,11 @@ class ProjectAddViewModel(private val apiService: ApiService): BaseViewModel() {
         difficult: String?,
         createdBy: String?) = viewModelScope.launch {
 
+        if (projectName.isNullOrEmpty() || description.isNullOrEmpty() || startDate.isNullOrEmpty() || endDate.isNullOrEmpty() || projectDirector.isNullOrEmpty()
+            || difficult.isNullOrEmpty() || createdBy.isNullOrEmpty()) {
+            _apiResponse.send(ApiResponse(ApiStatus.ERROR, message = "Please complete from."))
+        } else {
             _apiResponse.send(ApiResponse(ApiStatus.LOADING, message = "Submitting..."))
-
             ApiObserver(
                 block = {apiService.addProject(projectName, description, startDate, endDate, projectDirector, difficult, createdBy)},
                 toast = true,
@@ -38,6 +41,7 @@ class ProjectAddViewModel(private val apiService: ApiService): BaseViewModel() {
                 }
 
             )
+        }
     }
 
 }

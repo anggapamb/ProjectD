@@ -27,7 +27,7 @@ class HomeViewModel(private val apiService: ApiService) : BaseViewModel() {
 
                 override suspend fun onError(response: ApiResponse) {
                     super.onError(response)
-                    listTask.postValue(null)
+                    listTask.postValue(emptyList())
                 }
 
             }

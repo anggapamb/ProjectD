@@ -27,7 +27,7 @@ class ProjectViewModel(private val apiService: ApiService): BaseViewModel() {
 
                 override suspend fun onError(response: ApiResponse) {
                     super.onError(response)
-                    dataProjects.postValue(null)
+                    dataProjects.postValue(emptyList())
                 }
             }
 

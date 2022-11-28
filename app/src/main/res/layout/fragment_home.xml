@@ -354,6 +354,13 @@
                         tools:itemCount="3"
                         tools:listitem="@layout/item_update" />
 
+                    <ProgressBar
+                        android:id="@+id/progress_rv_update"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="24dp"/>
+
                 </LinearLayout>
 
             </com.amar.library.ui.StickyScrollView>

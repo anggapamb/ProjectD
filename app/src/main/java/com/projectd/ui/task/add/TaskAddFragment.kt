@@ -1,8 +1,6 @@
 package com.projectd.ui.task.add
 
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.View
 import android.widget.Toast
 import androidx.core.util.Pair
@@ -25,7 +23,7 @@ class TaskAddFragment : BaseFragment<FragmentTaskAddBinding>(R.layout.fragment_t
     private val viewModel: TaskAddViewModel by viewModel()
     private var selectedStartDate: String? = null
     private var selectedEndDate: String? = null
-    private var load = LOAD.LOW
+    private var load: String? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -34,55 +32,40 @@ class TaskAddFragment : BaseFragment<FragmentTaskAddBinding>(R.layout.fragment_t
 
         initView()
         observe()
-        setEnabledButton()
     }
 
     private fun observe() {
         lifecycleScope.launch {
             viewModel.apiResponse.collect {
-                when (it.status) {
-                    ApiStatus.SUCCESS -> {
-                        loadingDialog.dismiss()
-                        Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
-                        findNavController().navigateUp()
-                    }
-
-                    ApiStatus.ERROR -> {
-                        loadingDialog.dismiss()
-                        Toast.makeText(requireContext(), "error", Toast.LENGTH_SHORT).show()
-                    }
-
-                    else -> {}
+                loadingDialog.show(it.message, it.status == ApiStatus.LOADING)
+                if (it.status == ApiStatus.SUCCESS) {
+                    loadingDialog.dismiss()
+                    Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
+                    findNavController().navigateUp()
                 }
             }
         }
     }
 
     private fun initView() {
-        binding?.etProject?.setOnFocusChangeListener { view, b ->
+        binding?.etProject?.setOnFocusChangeListener { _, b ->
             if (b) showProject()
         }
 
-        binding?.etStartDate?.setOnFocusChangeListener { view, b ->
+        binding?.etStartDate?.setOnFocusChangeListener { _, b ->
             if (b) showDatePicker()
         }
 
-        binding?.etEndDate?.setOnFocusChangeListener { view, b ->
+        binding?.etEndDate?.setOnFocusChangeListener { _, b ->
             if (b) showDatePicker()
         }
-    }
 
-    private fun setEnabledButton() {
-        binding?.etTask?.addTextChangedListener(watcher)
-        binding?.etProject?.addTextChangedListener(watcher)
-        binding?.etStartDate?.addTextChangedListener(watcher)
-        binding?.etEndDate?.addTextChangedListener(watcher)
         binding?.rgDiff?.setOnCheckedChangeListener { _, i ->
             when (i) {
-                R.id.rb_standby_task -> load = LOAD.STANDBY
-                R.id.rb_low_task -> load = LOAD.LOW
-                R.id.rb_medium_task -> load = LOAD.MEDIUM
-                R.id.rb_high_task -> load = LOAD.HIGH
+                R.id.rb_standby_task -> { load = LOAD.STANDBY }
+                R.id.rb_low_task -> { load = LOAD.LOW }
+                R.id.rb_medium_task -> { load = LOAD.MEDIUM }
+                R.id.rb_high_task -> { load = LOAD.HIGH }
             }
         }
     }
@@ -128,17 +111,7 @@ class TaskAddFragment : BaseFragment<FragmentTaskAddBinding>(R.layout.fragment_t
         binding?.etEndDate?.clearFocus()
     }
 
-    private val watcher: TextWatcher = object : TextWatcher {
-        override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
-        override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
-        override fun afterTextChanged(s: Editable) {
-            binding?.btnSave?.isEnabled = !(binding?.etProject?.text?.length == 0 || binding?.etTask?.text?.length == 0
-                    || binding?.etStartDate?.text?.length == 0 || binding?.etEndDate?.text?.length == 0)
-        }
-    }
-
     private fun addTask() {
-        loadingDialog.show("Wait", true)
         viewModel.addTask(binding?.etTask?.textOf(), binding?.etProject?.textOf(), selectedStartDate, selectedEndDate, load, viewModel.user?.shortName(), viewModel.user?.photo!!)
     }
 

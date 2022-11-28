@@ -12,6 +12,9 @@ import org.json.JSONObject
 class TaskAddViewModel(private val apiService: ApiService): BaseViewModel() {
 
     fun addTask(task: String?, project: String?, startD: String?, endD: String?, load: String?, createBy: String?, photo: String) = viewModelScope.launch {
+
+        _apiResponse.send(ApiResponse(ApiStatus.LOADING, message = "Submitting..."))
+
         ApiObserver(
             block = {apiService.addTask(task, project, startD, endD, load, createBy, photo)},
             toast = false,
@@ -22,8 +25,8 @@ class TaskAddViewModel(private val apiService: ApiService): BaseViewModel() {
                 }
 
                 override suspend fun onError(response: ApiResponse) {
-                    super.onError(response)
-                    _apiResponse.send(ApiResponse(ApiStatus.ERROR))
+                    val message = response.rawResponse?.let { JSONObject(it) }?.getString("message")
+                    _apiResponse.send(ApiResponse(ApiStatus.ERROR, message = message))
                 }
 
             }

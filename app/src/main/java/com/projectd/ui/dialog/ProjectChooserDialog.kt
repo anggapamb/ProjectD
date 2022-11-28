@@ -2,6 +2,8 @@ package com.projectd.ui.dialog
 
 import android.content.DialogInterface
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -30,6 +32,7 @@ class ProjectChooserDialog(private val onSelect: (Project?) -> Unit, private val
     private var binding: DialogProjectChooserBinding? = null
     private val viewModel: ProjectChooserViewModel by viewModel()
     private val listProject = ArrayList<Project?>()
+    private val allListProject = ArrayList<Project?>()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.dialog_project_chooser, container, false)
@@ -54,14 +57,39 @@ class ProjectChooserDialog(private val onSelect: (Project?) -> Unit, private val
         binding?.btnAddProject?.setOnClickListener {
             addProject()
         }
+
+        binding?.etSearch?.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+
+            override fun afterTextChanged(p0: Editable?) {
+                if (binding?.etSearch?.text?.length == 0) {
+                    listProject.clear()
+                    binding?.rvProject?.adapter?.notifyDataSetChanged()
+                    listProject.addAll(allListProject)
+                    binding?.rvProject?.adapter?.notifyItemInserted(0)
+                }
+                else {
+                    val search = allListProject.filter { it?.projectName?.contains(p0.toString(), true) == true }
+                    listProject.clear()
+                    binding?.rvProject?.adapter?.notifyDataSetChanged()
+                    listProject.addAll(search)
+                    binding?.rvProject?.adapter?.notifyItemInserted(0)
+                }
+            }
+
+        })
     }
 
     private fun observe() {
         lifecycleScope.launch {
             viewModel.dataProjects.observe(viewLifecycleOwner) {
                 listProject.clear()
+                allListProject.clear()
                 binding?.rvProject?.adapter?.notifyDataSetChanged()
                 listProject.addAll(it)
+                allListProject.addAll(it)
                 binding?.rvProject?.adapter?.notifyItemInserted(0)
                 binding?.vEmpty?.isVisible = listProject.isEmpty()
             }

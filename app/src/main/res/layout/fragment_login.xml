@@ -47,7 +47,7 @@
                     android:id="@+id/et_username"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="text"
+                    android:inputType="textEmailAddress"
                     android:maxLength="32"
                     android:textColor="@color/text_default"
                     android:textSize="@dimen/text_default" />
@@ -78,7 +78,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
-                android:enabled="false"
                 android:text="@string/button_login"
                 android:textSize="@dimen/text_default" />
 

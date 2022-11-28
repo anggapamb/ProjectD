@@ -14,9 +14,12 @@ import org.json.JSONObject
 class LoginViewModel(private val apiService: ApiService) : BaseViewModel() {
 
     fun login(email: String?, password: String?) = viewModelScope.launch {
+
+        _apiResponse.send(ApiResponse(ApiStatus.LOADING, message = "Logging in..."))
+
         ApiObserver(
             block = {apiService.login(email, password)},
-            toast = false,
+            toast = true,
             responseListener = object : ApiObserver.ResponseListener {
                 override suspend fun onSuccess(response: JSONObject) {
                     val message = response.getString("message")
@@ -26,8 +29,8 @@ class LoginViewModel(private val apiService: ApiService) : BaseViewModel() {
                 }
 
                 override suspend fun onError(response: ApiResponse) {
-                    super.onError(response)
-                    _apiResponse.send(ApiResponse(ApiStatus.ERROR, message = "error"))
+                    val message = response.rawResponse?.let { JSONObject(it) }?.getString("message")
+                    _apiResponse.send(ApiResponse(ApiStatus.ERROR, message = message))
                 }
             }
         )

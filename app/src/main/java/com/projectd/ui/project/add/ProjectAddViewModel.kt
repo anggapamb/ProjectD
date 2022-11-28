@@ -20,9 +20,11 @@ class ProjectAddViewModel(private val apiService: ApiService): BaseViewModel() {
         difficult: String?,
         createdBy: String?) = viewModelScope.launch {
 
+            _apiResponse.send(ApiResponse(ApiStatus.LOADING, message = "Submitting..."))
+
             ApiObserver(
                 block = {apiService.addProject(projectName, description, startDate, endDate, projectDirector, difficult, createdBy)},
-                toast = false,
+                toast = true,
                 responseListener = object : ApiObserver.ResponseListener {
                     override suspend fun onSuccess(response: JSONObject) {
                         val message = response.getString("message")
@@ -30,8 +32,8 @@ class ProjectAddViewModel(private val apiService: ApiService): BaseViewModel() {
                     }
 
                     override suspend fun onError(response: ApiResponse) {
-                        super.onError(response)
-                        _apiResponse.send(ApiResponse(ApiStatus.ERROR))
+                        val message = response.rawResponse?.let { JSONObject(it) }?.getString("message")
+                        _apiResponse.send(ApiResponse(ApiStatus.ERROR, message = message))
                     }
                 }
 

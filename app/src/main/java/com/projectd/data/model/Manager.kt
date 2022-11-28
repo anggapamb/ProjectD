@@ -50,4 +50,9 @@ data class Manager(
         return name
     }
 
+    fun oneName(): String {
+        val spName = name?.split(" ")
+        return "${spName?.get(0)}"
+    }
+
 }

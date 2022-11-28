@@ -1,8 +1,6 @@
 package com.projectd.ui.project.add
 
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.View
 import android.widget.Toast
 import androidx.core.util.Pair
@@ -18,13 +16,13 @@ import com.projectd.data.model.Manager
 import com.projectd.databinding.FragmentProjectAddBinding
 import com.projectd.ui.dialog.ManagerChooserDialog
 import kotlinx.coroutines.launch
-import java.util.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.util.*
 
 class ProjectAddFragment : BaseFragment<FragmentProjectAddBinding>(R.layout.fragment_project_add), View.OnClickListener {
 
     private val viewModel: ProjectAddViewModel by viewModel()
-    private var difficult = MEDIUM
+    private var difficult: String? = null
     private var selectedStartDate: String? = null
     private var selectedEndDate: String? = null
     private var selectedManager: Manager? = null
@@ -37,7 +35,6 @@ class ProjectAddFragment : BaseFragment<FragmentProjectAddBinding>(R.layout.frag
 
         initView()
         observe()
-        setEnabledButton()
     }
 
     private fun initView() {
@@ -52,34 +49,32 @@ class ProjectAddFragment : BaseFragment<FragmentProjectAddBinding>(R.layout.frag
         binding?.etPd?.setOnFocusChangeListener { _, b ->
             if (b) showManager()
         }
+
+        binding?.rgDiff?.setOnCheckedChangeListener { _, i ->
+            when (i) {
+                R.id.rb_medium_add_project -> difficult = MEDIUM
+                R.id.rb_high_add_project -> difficult = HARD
+            }
+        }
     }
 
     private fun observe() {
         lifecycleScope.launch {
             viewModel.apiResponse.collect {
-                when (it.status) {
-                    ApiStatus.SUCCESS -> {
-                        loadingDialog.dismiss()
-                        Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
-                        findNavController().navigateUp()
-                    }
-
-                    ApiStatus.ERROR -> {
-                        loadingDialog.dismiss()
-                        Toast.makeText(requireContext(), "error", Toast.LENGTH_SHORT).show()
-                    }
-
-                    else -> {}
+                loadingDialog.show(it.message, it.status == ApiStatus.LOADING)
+                if (it.status == ApiStatus.SUCCESS) {
+                    loadingDialog.dismiss()
+                    Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
+                    findNavController().navigateUp()
                 }
             }
-
         }
     }
 
     private fun showManager() {
         ManagerChooserDialog(manager, {
             selectedManager = it
-            pdShortName = it?.shortName().toString()
+            pdShortName = it?.oneName().toString()
             binding?.etPd?.setText(it?.name)
         }) { clearFocus() }.show(childFragmentManager, "manager")
     }
@@ -119,32 +114,7 @@ class ProjectAddFragment : BaseFragment<FragmentProjectAddBinding>(R.layout.frag
         binding?.etPd?.clearFocus()
     }
 
-    private fun setEnabledButton() {
-        binding?.etProjectName?.addTextChangedListener(watcher)
-        binding?.etDescription?.addTextChangedListener(watcher)
-        binding?.etStartDate?.addTextChangedListener(watcher)
-        binding?.etEndDate?.addTextChangedListener(watcher)
-        binding?.etPd?.addTextChangedListener(watcher)
-        binding?.rgDiff?.setOnCheckedChangeListener { _, i ->
-            when (i) {
-                R.id.rb_medium_add_project -> difficult = MEDIUM
-                R.id.rb_high_add_project -> difficult = HARD
-            }
-        }
-    }
-
-    private val watcher: TextWatcher = object : TextWatcher {
-        override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
-        override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
-        override fun afterTextChanged(s: Editable) {
-            binding?.btnSave?.isEnabled =
-                !(binding?.etProjectName?.text?.length == 0 || binding?.etDescription?.text?.length == 0 || binding?.etStartDate?.text?.length == 0 ||
-                        binding?.etEndDate?.text?.length == 0 || binding?.etPd?.text?.length == 0)
-        }
-    }
-
     private fun addProject() {
-        loadingDialog.show("Wait", true)
         viewModel.addProject(binding?.etProjectName?.textOf(), binding?.etDescription?.textOf(), selectedStartDate, selectedEndDate,
             pdShortName, difficult, viewModel.user?.shortName())
     }

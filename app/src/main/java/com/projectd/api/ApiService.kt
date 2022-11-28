@@ -34,4 +34,16 @@ interface ApiService {
 
     @GET("users/managers")
     suspend fun managers(): String
+
+    @FormUrlEncoded
+    @POST("task/add")
+    suspend fun addTask(
+        @Field("task_name") task_name: String?,
+        @Field("project") project: String?,
+        @Field("start_date") start_date: String?,
+        @Field("end_date") end_date: String?,
+        @Field("load") load: String?,
+        @Field("createdBy") createdBy: String?,
+        @Field("photo") photo: String?
+    ): String
 }

@@ -42,7 +42,6 @@
                 style="@style/Theme.ProjectD.Button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:enabled="false"
                 android:minHeight="48dp"
                 android:text="@string/button_save"
                 android:textAllCaps="false"
@@ -186,7 +185,6 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/rb_medium"
-                            android:checked="true"
                             android:textColor="@color/text_default"
                             android:textSize="@dimen/text_default"
                             app:buttonTint="@color/brand_accent" />

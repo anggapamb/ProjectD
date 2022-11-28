@@ -1,22 +1,17 @@
 package com.projectd.ui.login
 
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.crocodic.core.api.ApiStatus
-import com.crocodic.core.extension.snack
 import com.crocodic.core.extension.textOf
 import com.projectd.R
 import com.projectd.base.fragment.BaseFragment
 import com.projectd.databinding.FragmentLoginBinding
-import com.projectd.util.isValidEmail
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
-
 
 class LoginFragment : BaseFragment<FragmentLoginBinding>(R.layout.fragment_login), View.OnClickListener {
 
@@ -29,49 +24,23 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(R.layout.fragment_login
         binding?.btnLogin?.setOnClickListener(this)
 
         observe()
-        setEnabledButton()
         onBackPressedHandle()
     }
 
     private fun observe() {
         lifecycleScope.launch {
             viewModel.apiResponse.collect {
-                when (it.status) {
-                    ApiStatus.SUCCESS -> {
-                        loadingDialog.dismiss()
-                        navigateTo(R.id.actionHomeFragment)
-                    }
-                    ApiStatus.ERROR -> {
-                        loadingDialog.dismiss()
-                    }
-                    else -> {}
+                loadingDialog.show(it.message, it.status == ApiStatus.LOADING)
+                if (it.status == ApiStatus.SUCCESS) {
+                    loadingDialog.dismiss()
+                    navigateTo(R.id.actionHomeFragment)
                 }
             }
         }
     }
 
     private fun login() {
-        if (binding?.etUsername?.textOf()?.let { isValidEmail(it) } == true) {
-            loadingDialog.show("Wait..", true)
-            viewModel.login(binding?.etUsername?.textOf(), binding?.etPassword?.textOf())
-        } else {
-            binding?.root?.snack("Invalid email")
-        }
-    }
-
-
-
-    private fun setEnabledButton() {
-        binding?.etUsername?.addTextChangedListener(watcher)
-        binding?.etPassword?.addTextChangedListener(watcher)
-    }
-
-    private val watcher: TextWatcher = object : TextWatcher {
-        override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
-        override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
-        override fun afterTextChanged(s: Editable) {
-            binding?.btnLogin?.isEnabled = !(binding?.etUsername?.text?.length == 0 || binding?.etPassword?.text?.length == 0)
-        }
+        viewModel.login(binding?.etUsername?.textOf(), binding?.etPassword?.textOf())
     }
 
     private fun onBackPressedHandle() {

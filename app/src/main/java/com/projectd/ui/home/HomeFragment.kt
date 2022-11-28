@@ -42,6 +42,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
             listTask.clear()
             binding?.rvUpdate?.adapter?.notifyDataSetChanged()
             listTask.addAll(it)
+            listTask.sortByDescending { list -> list?.id }
             binding?.rvUpdate?.adapter?.notifyItemInserted(0)
             binding?.vEmpty?.isVisible = listTask.isEmpty()
         }

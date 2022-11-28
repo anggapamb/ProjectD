@@ -90,6 +90,7 @@ class ProjectChooserDialog(private val onSelect: (Project?) -> Unit, private val
                 binding?.rvProject?.adapter?.notifyDataSetChanged()
                 listProject.addAll(it)
                 allListProject.addAll(it)
+                listProject.sortByDescending { list -> list?.id }
                 binding?.rvProject?.adapter?.notifyItemInserted(0)
                 binding?.vEmpty?.isVisible = listProject.isEmpty()
             }

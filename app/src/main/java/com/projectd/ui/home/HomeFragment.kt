@@ -1,11 +1,14 @@
 package com.projectd.ui.home
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import com.crocodic.core.base.adapter.CoreListAdapter
+import com.crocodic.core.data.CoreSession
+import com.crocodic.core.extension.tos
 import com.crocodic.core.helper.DateTimeHelper
 import com.projectd.R
 import com.projectd.base.fragment.BaseFragment
@@ -26,10 +29,18 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
     private val menus = ArrayList<HomeMenu?>()
     private val addsMenus = ArrayList<AdditionalMenu?>()
     private val listTask = ArrayList<Task?>()
+    private val session: CoreSession by inject()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         requireActivity().window.statusBarColor = ContextCompat.getColor(requireContext(), R.color.white)
+
+        // TODO: ini besok dihapus
+        binding?.ivAvatar?.setOnClickListener {
+            session.clearAll()
+            requireActivity().tos("Logout")
+            navigateTo(R.id.actionLoginFragment)
+        }
 
         initView()
         observe()
@@ -69,12 +80,30 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
                         }
                     }
 
+                    holder.binding.btnMore.setOnClickListener {
+                        val moreDialogItems = arrayOf("Verify Task")
+                        AlertDialog.Builder(requireContext()).apply {
+                            setItems(moreDialogItems) { dialog, which ->
+                                dialog.dismiss()
+                                when (which) {
+                                    0 -> {
+                                        if (data?.verified == "0") {
+                                            viewModel.verifyTask(data.id.toString(), viewModel.user?.token) { getTaskToday() }
+                                        } else {
+                                            requireActivity().tos("Task has been verified by ${data?.verifiedBy}")
+                                        }
+                                    }
+                                }
+                            }
+                        }.show()
+                    }
+
                 }
             }.initItem(tasks)
         }
 
         binding?.rvMenu?.adapter = CoreListAdapter<ItemMainMenuBinding, HomeMenu>(R.layout.item_main_menu)
-            .initItem(menus) { position, data ->
+            .initItem(menus) { _, data ->
                 when (data?.key) {
                     "task" -> navigateTo(R.id.actionTaskFragment)
                     "project" -> navigateTo(R.id.actionProjectFragment)
@@ -82,7 +111,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
             }
 
         binding?.rvMenuAdditional?.adapter = CoreListAdapter<ItemSecondMenuBinding, AdditionalMenu>(R.layout.item_second_menu)
-            .initItem(addsMenus) { position, data ->
+            .initItem(addsMenus) { _, data ->
                 when (data?.key) {
                     "absent" -> AbsentDialog().show(childFragmentManager, "absent")
                     else -> requireActivity().openUrl(data?.link ?: return@initItem)

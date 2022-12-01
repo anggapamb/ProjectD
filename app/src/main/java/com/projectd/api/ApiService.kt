@@ -4,6 +4,7 @@ import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Path
 
 interface ApiService {
 
@@ -45,5 +46,20 @@ interface ApiService {
         @Field("load") load: String?,
         @Field("createdBy") createdBy: String?,
         @Field("photo") photo: String?
+    ): String
+
+    @FormUrlEncoded
+    @POST("task/update-status/{idTask}")
+    suspend fun updateTask(
+        @Path("idTask") idTask: String?,
+        @Field("status") status: String?,
+        @Field("description") description: String?
+    ): String
+
+    @FormUrlEncoded
+    @POST("task/update-verified/{idTask}")
+    suspend fun verifyTask(
+        @Path("idTask") idTask: String?,
+        @Field("token") token: String?
     ): String
 }

@@ -34,4 +34,21 @@ class HomeViewModel(private val apiService: ApiService) : BaseViewModel() {
         )
     }
 
+    fun verifyTask(idTask: String?, token: String?, onResponse: () -> Unit) = viewModelScope.launch {
+        ApiObserver(
+            block = {apiService.verifyTask(idTask, token)},
+            toast = false,
+            responseListener = object : ApiObserver.ResponseListener {
+                override suspend fun onSuccess(response: JSONObject) {
+                    onResponse.invoke()
+                }
+
+                override suspend fun onError(response: ApiResponse) {
+                    onResponse.invoke()
+                }
+
+            }
+        )
+    }
+
 }

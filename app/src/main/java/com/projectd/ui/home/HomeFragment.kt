@@ -9,12 +9,14 @@ import com.crocodic.core.base.adapter.CoreListAdapter
 import com.crocodic.core.helper.DateTimeHelper
 import com.projectd.R
 import com.projectd.base.fragment.BaseFragment
+import com.projectd.data.Cons
 import com.projectd.data.model.*
 import com.projectd.databinding.FragmentHomeBinding
 import com.projectd.databinding.ItemMainMenuBinding
 import com.projectd.databinding.ItemSecondMenuBinding
 import com.projectd.databinding.ItemUpdateBinding
 import com.projectd.ui.dialog.AbsentDialog
+import com.projectd.ui.dialog.TaskReportDialog
 import com.projectd.util.ViewBindingAdapter.Companion.openUrl
 import org.koin.android.ext.android.inject
 
@@ -56,8 +58,17 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
                     holder: ItemViewHolder<ItemUpdateBinding, Task>,
                     position: Int
                 ) {
-                    holder.binding.data = tasks[position]
+                    val data = tasks[position]
+                    holder.binding.data = data
                     holder.binding.yourName = viewModel.user?.shortName()
+                    holder.binding.btnMore.isVisible = (viewModel.user?.isLeader == "true" || viewModel.user?.devision == Cons.ROLE.MANAGER)
+
+                    holder.itemView.setOnClickListener {
+                        if (data?.createdBy == viewModel.user?.shortName()) {
+                            TaskReportDialog(data) { getTaskToday() }.show(childFragmentManager, "report")
+                        }
+                    }
+
                 }
             }.initItem(tasks)
         }

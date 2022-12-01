@@ -5,6 +5,10 @@
     <data>
 
         <variable
+            name="data"
+            type="com.projectd.data.model.Task" />
+
+        <variable
             name="loading"
             type="Boolean" />
 
@@ -26,6 +30,7 @@
             android:textColor="@color/text_default"
             android:textSize="@dimen/text_large"
             android:textStyle="bold"
+            android:text='@{data.taskName}'
             tools:text="Fixing issue log" />
 
         <TextView
@@ -34,6 +39,7 @@
             android:layout_marginHorizontal="16dp"
             android:textColor="@color/text_gray"
             android:textSize="@dimen/text_small"
+            android:text='@{data.project}'
             tools:text="Project Name" />
 
         <TextView
@@ -113,6 +119,7 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <Button
+            android:id="@+id/btn_submit"
             style="@style/Theme.ProjectD.Button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

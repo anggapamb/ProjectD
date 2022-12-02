@@ -15,7 +15,7 @@
         android:layout_height="96dp"
         android:layout_marginHorizontal="6dp"
         android:paddingVertical="12dp"
-        app:bgInt='@{data.background}'>
+        android:background="@drawable/bg_round_12_blue">
 
         <TextView
             android:id="@+id/tv_label"
@@ -24,7 +24,7 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:singleLine="true"
-            android:text='@{data.label}'
+            android:text='@{data.name}'
             android:textSize="@dimen/text_smallest"
             android:textStyle="bold"
             app:colorIntSrc='@{data.color}'
@@ -37,7 +37,7 @@
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:adjustViewBounds="true"
-            app:imgUrl='@{data.image}'
+            app:imgUrl='@{data.icon}'
             app:layout_constraintBottom_toTopOf="@id/tv_label"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

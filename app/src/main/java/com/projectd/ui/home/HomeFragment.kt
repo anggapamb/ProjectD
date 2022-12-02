@@ -27,13 +27,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
 
     private val viewModel: HomeViewModel by inject()
     private val menus = ArrayList<HomeMenu?>()
-    private val addsMenus = ArrayList<AdditionalMenu?>()
     private val listTask = ArrayList<Task?>()
+    private val listAdditionalMenu = ArrayList<AdditionalMenu?>()
     private val session: CoreSession by inject()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         requireActivity().window.statusBarColor = ContextCompat.getColor(requireContext(), R.color.white)
+        viewModel.allMenus()
 
         // TODO: ini besok dihapus
         binding?.ivAvatar?.setOnClickListener {
@@ -56,6 +57,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
             binding?.rvUpdate?.adapter?.notifyItemInserted(0)
             binding?.vEmpty?.isVisible = listTask.isEmpty()
             binding?.progressRvUpdate?.isVisible = false
+        }
+
+        viewModel.dataMenus.observe(viewLifecycleOwner) {
+            listAdditionalMenu.clear()
+            binding?.rvMenuAdditional?.adapter?.notifyDataSetChanged()
+            listAdditionalMenu.addAll(it)
+            binding?.rvMenuAdditional?.adapter?.notifyItemInserted(0)
+            binding?.vMenuAdditional?.isVisible = listAdditionalMenu.isNotEmpty()
         }
     }
 
@@ -111,7 +120,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
             }
 
         binding?.rvMenuAdditional?.adapter = CoreListAdapter<ItemSecondMenuBinding, AdditionalMenu>(R.layout.item_second_menu)
-            .initItem(addsMenus) { _, data ->
+            .initItem(listAdditionalMenu) { _, data ->
                 when (data?.key) {
                     "absent" -> AbsentDialog().show(childFragmentManager, "absent")
                     else -> requireActivity().openUrl(data?.link ?: return@initItem)
@@ -155,32 +164,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
         )
         menus.clear()
         menus.addAll(homeMenu)
-
-        /* menu */
-        val addMenus = arrayOf(
-            AdditionalMenu(
-                image = "https://cdn-icons-png.flaticon.com/512/2302/2302658.png",
-                label = "Absent",
-                key = "absent"
-            ), AdditionalMenu(
-                image = "https://static.thenounproject.com/png/1049455-200.png",
-                label = "Today Check",
-                key = "today_check",
-                link = "https://google.com"
-            ), AdditionalMenu(
-                image = "https://static.thenounproject.com/png/1049455-200.png",
-                label = "Today Check",
-                key = "today_check",
-                link = "https://google.com"
-            ), AdditionalMenu(
-                image = "https://static.thenounproject.com/png/1049455-200.png",
-                label = "Today Check",
-                key = "today_check",
-                link = "https://google.com"
-            ),
-        )
-        addsMenus.addAll(addMenus)
-        binding?.vMenuAdditional?.isVisible = addsMenus.isNotEmpty()
 
         /* absent */
         val absent = Absent(description = "Ijin Work From Home")

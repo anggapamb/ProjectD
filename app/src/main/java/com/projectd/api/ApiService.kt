@@ -64,5 +64,5 @@ interface ApiService {
     ): String
 
     @GET("application-menus")
-    suspend fun getAllMenus(): String
+    suspend fun addMenus(): String
 }

@@ -7,6 +7,7 @@ import com.crocodic.core.api.ApiResponse
 import com.crocodic.core.extension.toList
 import com.projectd.api.ApiService
 import com.projectd.base.viewmodel.BaseViewModel
+import com.projectd.data.model.AdditionalMenu
 import com.projectd.data.model.Task
 import kotlinx.coroutines.launch
 import org.json.JSONObject
@@ -14,6 +15,7 @@ import org.json.JSONObject
 class HomeViewModel(private val apiService: ApiService) : BaseViewModel() {
 
     val listTask = MutableLiveData<List<Task?>>()
+    val dataMenus = MutableLiveData<List<AdditionalMenu>>()
 
     fun taskToday() = viewModelScope.launch {
         ApiObserver(
@@ -45,6 +47,24 @@ class HomeViewModel(private val apiService: ApiService) : BaseViewModel() {
 
                 override suspend fun onError(response: ApiResponse) {
                     onResponse.invoke()
+                }
+
+            }
+        )
+    }
+
+    fun allMenus() = viewModelScope.launch {
+        ApiObserver(
+            block = {apiService.addMenus()},
+            toast = false,
+            responseListener = object : ApiObserver.ResponseListener {
+                override suspend fun onSuccess(response: JSONObject) {
+                    val data = response.getJSONArray("data").toList<AdditionalMenu>(gson)
+                    dataMenus.postValue(data)
+                }
+
+                override suspend fun onError(response: ApiResponse) {
+                    dataMenus.postValue(emptyList())
                 }
 
             }

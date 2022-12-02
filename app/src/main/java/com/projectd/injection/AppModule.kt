@@ -7,6 +7,7 @@ import com.projectd.BuildConfig
 import com.projectd.api.ApiService
 import com.projectd.ui.dialog.ManagerChooserDialog.ManagerChooserViewModel
 import com.projectd.data.Session
+import com.projectd.ui.dialog.AbsentDialog.AbsentViewModel
 import com.projectd.ui.dialog.LoadingDialog
 import com.projectd.ui.dialog.ProjectChooserDialog.ProjectChooserViewModel
 import com.projectd.ui.dialog.TaskReportDialog.TaskReportViewModel
@@ -50,6 +51,7 @@ object AppModule {
         viewModel { ProjectChooserViewModel(get()) }
         viewModel { TaskAddViewModel(get()) }
         viewModel { TaskReportViewModel(get()) }
+        viewModel { AbsentViewModel(get()) }
     }
 
     val networkModule = module {
@@ -84,7 +86,7 @@ object AppModule {
                 val session = getKoin().get<Session>()
                 val token = session.getUser()?.token
                 val requestBuilder = original.newBuilder()
-                    .header("Authorization", "Bearer $token")
+                    .header("Authorization", "$token")
                     .header("Content-Type", "application/json")
                     .method(original.method, original.body)
 

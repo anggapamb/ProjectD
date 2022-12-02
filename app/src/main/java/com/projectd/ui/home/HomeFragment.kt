@@ -34,7 +34,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         requireActivity().window.statusBarColor = ContextCompat.getColor(requireContext(), R.color.white)
-        viewModel.allMenus()
 
         // TODO: ini besok dihapus
         binding?.ivAvatar?.setOnClickListener {
@@ -46,6 +45,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
         initView()
         observe()
         getTaskToday()
+
+        viewModel.allMenus()
+        viewModel.getAbsent()
         dataDummy()
     }
 
@@ -64,7 +66,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
             binding?.rvMenuAdditional?.adapter?.notifyDataSetChanged()
             listAdditionalMenu.addAll(it)
             binding?.rvMenuAdditional?.adapter?.notifyItemInserted(0)
-            binding?.vMenuAdditional?.isVisible = listAdditionalMenu.isNotEmpty()
+            binding?.vMenuAdditional?.isVisible = it.isNotEmpty()
+        }
+
+        viewModel.dataAbsent.observe(viewLifecycleOwner) {
+            binding?.absent = it
         }
     }
 
@@ -122,7 +128,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
         binding?.rvMenuAdditional?.adapter = CoreListAdapter<ItemSecondMenuBinding, AdditionalMenu>(R.layout.item_second_menu)
             .initItem(listAdditionalMenu) { _, data ->
                 when (data?.key) {
-                    "absent" -> AbsentDialog().show(childFragmentManager, "absent")
+                    "absent" -> AbsentDialog { viewModel.getAbsent() }.show(childFragmentManager, "absent")
                     else -> requireActivity().openUrl(data?.link ?: return@initItem)
                 }
             }
@@ -164,9 +170,5 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
         )
         menus.clear()
         menus.addAll(homeMenu)
-
-        /* absent */
-        val absent = Absent(description = "Ijin Work From Home")
-        binding?.absent = absent
     }
 }

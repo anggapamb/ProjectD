@@ -6,6 +6,8 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class User(
+    @SerializedName("id")
+    val id: Int?,
     @SerializedName("banned")
     val banned: String?,
     @SerializedName("devision")

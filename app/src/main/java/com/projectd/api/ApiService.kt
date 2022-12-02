@@ -65,4 +65,15 @@ interface ApiService {
 
     @GET("application-menus")
     suspend fun addMenus(): String
+
+    @FormUrlEncoded
+    @POST("absent/add")
+    suspend fun sendAbsent(
+        @Field("name") name: String?,
+        @Field("reason") reason: String?,
+        @Field("id_login") id_login: String?
+    ): String
+
+    @POST("absent/list-login-today")
+    suspend fun getAbsent(): String
 }

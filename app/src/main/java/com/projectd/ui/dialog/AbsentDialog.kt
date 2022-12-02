@@ -4,14 +4,28 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewModelScope
+import com.crocodic.core.api.ApiObserver
+import com.crocodic.core.api.ApiResponse
+import com.crocodic.core.api.ApiStatus
+import com.crocodic.core.extension.textOf
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.projectd.R
+import com.projectd.api.ApiService
+import com.projectd.base.viewmodel.BaseViewModel
 import com.projectd.databinding.DialogAbsentBinding
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
+import org.json.JSONObject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class AbsentDialog: BottomSheetDialogFragment() {
+class AbsentDialog(private val onSuccess: () -> Unit): BottomSheetDialogFragment() {
 
     private var binding: DialogAbsentBinding? = null
+    private val viewModel: AbsentViewModel by viewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -25,5 +39,57 @@ class AbsentDialog: BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        observe()
+
+        binding?.btnSubmit?.setOnClickListener {
+            Toast.makeText(context, "Submitting..", Toast.LENGTH_SHORT).show()
+            viewModel.sendAbsent(viewModel.user?.nama, binding?.etReason?.textOf(), viewModel.user?.id.toString())
+        }
     }
+
+    private fun observe() {
+        lifecycleScope.launch {
+            viewModel.apiResponse.collect {
+                when (it.status) {
+                    ApiStatus.SUCCESS -> {
+                        onSuccess.invoke()
+                        dismiss()
+                    }
+
+                    ApiStatus.ERROR -> {
+                        Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show()
+                    }
+                    else -> {}
+                }
+            }
+        }
+    }
+
+    class AbsentViewModel(private val apiService: ApiService): BaseViewModel() {
+
+        fun sendAbsent(name: String?, reason: String?, idLogin: String?) = viewModelScope.launch {
+            if (name.isNullOrEmpty() || reason.isNullOrEmpty() || idLogin.isNullOrEmpty()) {
+                _apiResponse.send(ApiResponse(ApiStatus.ERROR, message = "Please complete from."))
+            } else {
+                ApiObserver(
+                    block = {apiService.sendAbsent(name, reason, idLogin)},
+                    toast = false,
+                    responseListener = object : ApiObserver.ResponseListener {
+                        override suspend fun onSuccess(response: JSONObject) {
+                            val message = response.getString("message")
+                            _apiResponse.send(ApiResponse(ApiStatus.SUCCESS, message = message))
+                        }
+
+                        override suspend fun onError(response: ApiResponse) {
+                            val message = response.rawResponse?.let { JSONObject(it) }?.getString("message")
+                            _apiResponse.send(ApiResponse(ApiStatus.ERROR, message = message))
+                        }
+
+                    }
+                )
+            }
+        }
+
+    }
+
 }

@@ -5,8 +5,10 @@ import androidx.lifecycle.viewModelScope
 import com.crocodic.core.api.ApiObserver
 import com.crocodic.core.api.ApiResponse
 import com.crocodic.core.extension.toList
+import com.crocodic.core.extension.toObject
 import com.projectd.api.ApiService
 import com.projectd.base.viewmodel.BaseViewModel
+import com.projectd.data.model.Absent
 import com.projectd.data.model.AdditionalMenu
 import com.projectd.data.model.Task
 import kotlinx.coroutines.launch
@@ -16,6 +18,7 @@ class HomeViewModel(private val apiService: ApiService) : BaseViewModel() {
 
     val listTask = MutableLiveData<List<Task?>>()
     val dataMenus = MutableLiveData<List<AdditionalMenu>>()
+    val dataAbsent = MutableLiveData<Absent?>()
 
     fun taskToday() = viewModelScope.launch {
         ApiObserver(
@@ -65,6 +68,24 @@ class HomeViewModel(private val apiService: ApiService) : BaseViewModel() {
 
                 override suspend fun onError(response: ApiResponse) {
                     dataMenus.postValue(emptyList())
+                }
+
+            }
+        )
+    }
+
+    fun getAbsent() = viewModelScope.launch {
+        ApiObserver(
+            block = {apiService.getAbsent()},
+            toast = false,
+            responseListener = object : ApiObserver.ResponseListener {
+                override suspend fun onSuccess(response: JSONObject) {
+                    val data = response.getJSONArray("data").getJSONObject(0).toObject<Absent>(gson)
+                    dataAbsent.postValue(data)
+                }
+
+                override suspend fun onError(response: ApiResponse) {
+                    dataAbsent.postValue(null)
                 }
 
             }

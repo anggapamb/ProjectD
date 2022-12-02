@@ -62,4 +62,7 @@ interface ApiService {
         @Path("idTask") idTask: String?,
         @Field("token") token: String?
     ): String
+
+    @GET("application-menus")
+    suspend fun getAllMenus(): String
 }

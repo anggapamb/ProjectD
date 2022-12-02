@@ -37,11 +37,13 @@ class TaskAddFragment : BaseFragment<FragmentTaskAddBinding>(R.layout.fragment_t
     private fun observe() {
         lifecycleScope.launch {
             viewModel.apiResponse.collect {
-                loadingDialog.show(it.message, it.status == ApiStatus.LOADING)
-                if (it.status == ApiStatus.SUCCESS) {
-                    loadingDialog.dismiss()
-                    Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
-                    findNavController().navigateUp()
+                if (!activity?.isFinishing!!) {
+                    loadingDialog.show(it.message, it.status == ApiStatus.LOADING)
+                    if (it.status == ApiStatus.SUCCESS) {
+                        loadingDialog.dismiss()
+                        Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
+                        findNavController().navigateUp()
+                    }
                 }
             }
         }

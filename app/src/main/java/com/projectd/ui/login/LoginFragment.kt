@@ -30,10 +30,12 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(R.layout.fragment_login
     private fun observe() {
         lifecycleScope.launch {
             viewModel.apiResponse.collect {
-                loadingDialog.show(it.message, it.status == ApiStatus.LOADING)
-                if (it.status == ApiStatus.SUCCESS) {
-                    loadingDialog.dismiss()
-                    navigateTo(R.id.actionHomeFragment)
+                if (!activity?.isFinishing!!) {
+                    loadingDialog.show(it.message, it.status == ApiStatus.LOADING)
+                    if (it.status == ApiStatus.SUCCESS) {
+                        loadingDialog.dismiss()
+                        navigateTo(R.id.actionHomeFragment)
+                    }
                 }
             }
         }

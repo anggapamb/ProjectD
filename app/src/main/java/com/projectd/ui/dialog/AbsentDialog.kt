@@ -12,6 +12,7 @@ import com.crocodic.core.api.ApiObserver
 import com.crocodic.core.api.ApiResponse
 import com.crocodic.core.api.ApiStatus
 import com.crocodic.core.extension.textOf
+import com.crocodic.core.extension.tos
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.projectd.R
 import com.projectd.api.ApiService
@@ -42,7 +43,7 @@ class AbsentDialog(private val onSuccess: () -> Unit): BottomSheetDialogFragment
         observe()
 
         binding?.btnSubmit?.setOnClickListener {
-            Toast.makeText(context, "Submitting..", Toast.LENGTH_SHORT).show()
+            if (!binding?.etReason?.textOf().isNullOrEmpty()) { activity?.tos("Submitting..", true) }
             viewModel.sendAbsent(viewModel.user?.nama, binding?.etReason?.textOf(), viewModel.user?.id.toString())
         }
     }

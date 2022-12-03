@@ -76,4 +76,14 @@ interface ApiService {
 
     @POST("absent/list-login-today")
     suspend fun getAbsent(): String
+
+    @GET("absents")
+    suspend fun getListAllAbsent(): String
+
+    @FormUrlEncoded
+    @POST("absent/update-approved/{idAbsent}")
+    suspend fun approvedAbsent(
+        @Path("idAbsent") idAbsent: String,
+        @Field("approved") approved: String
+    ): String
 }

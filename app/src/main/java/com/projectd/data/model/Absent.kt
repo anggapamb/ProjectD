@@ -21,7 +21,9 @@ data class Absent(
     @SerializedName("reason")
     val reason: String?,
     @SerializedName("approvedBy")
-    val approvedBy: String?
+    val approvedBy: String?,
+    @SerializedName("photo")
+    val photo: String?
 ) : Parcelable {
 
     fun prettyDate() = DateTimeHelper().convert(date, "yyyy-MM-dd", "d MMMM yyyy")

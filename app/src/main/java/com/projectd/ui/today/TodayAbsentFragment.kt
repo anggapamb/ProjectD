@@ -1,24 +1,115 @@
 package com.projectd.ui.today
 
+import android.app.AlertDialog
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
+import androidx.core.view.isVisible
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
+import com.crocodic.core.api.ApiObserver
+import com.crocodic.core.api.ApiResponse
+import com.crocodic.core.base.adapter.CoreListAdapter
+import com.crocodic.core.extension.toList
+import com.crocodic.core.extension.tos
 import com.projectd.R
+import com.projectd.api.ApiService
+import com.projectd.base.fragment.BaseFragment
+import com.projectd.base.viewmodel.BaseViewModel
+import com.projectd.data.model.Absent
+import com.projectd.databinding.FragmentTodayAbsentBinding
+import com.projectd.databinding.ItemAbsentBinding
+import kotlinx.coroutines.launch
+import org.json.JSONObject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class TodayAbsentFragment : Fragment() {
+class TodayAbsentFragment : BaseFragment<FragmentTodayAbsentBinding>(R.layout.fragment_today_absent) {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    private val viewModel: TodayAbsentViewModel by viewModel()
+    private val listAbsent = ArrayList<Absent?>()
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+
+        initView()
+        observe()
+        viewModel.listAllAbsent()
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_today_absent, container, false)
+    private fun initView() {
+        binding?.rvUpdate?.adapter = CoreListAdapter<ItemAbsentBinding, Absent>(R.layout.item_absent)
+            .initItem(listAbsent) { _, data ->
+                val moreDialogItems = arrayOf("Approve", "Reject")
+                AlertDialog.Builder(requireContext()).apply {
+                    setItems(moreDialogItems) { dialog, which ->
+                        dialog.dismiss()
+                        when (which) {
+                            0 -> {
+                                if (data?.approved == null) {
+                                    viewModel.approvedAbsent("${data?.id}", "true") { viewModel.listAllAbsent() }
+                                } else {
+                                    val aprvl = if (data.approved == "true") "approved" else "rejected"
+                                    requireActivity().tos("Absent already $aprvl by ${data.approvedBy}")
+                                }
+                            }
+                            1 -> {
+                                if (data?.approved == null) {
+                                    viewModel.approvedAbsent("${data?.id}", "false") { viewModel.listAllAbsent() }
+                                } else {
+                                    val aprvl = if (data.approved == "true") "approved" else "rejected"
+                                    requireActivity().tos("Absent already $aprvl by ${data.approvedBy}")
+                                }
+                            }
+                        }
+                    }
+                }.show()
+            }
+    }
+
+    private fun observe() {
+        viewModel.dataAbsents.observe(viewLifecycleOwner) {
+            listAbsent.clear()
+            binding?.rvUpdate?.adapter?.notifyDataSetChanged()
+            listAbsent.addAll(it)
+            binding?.rvUpdate?.adapter?.notifyItemInserted(0)
+            binding?.vEmpty?.isVisible = listAbsent.isEmpty()
+        }
+    }
+
+    class TodayAbsentViewModel(private val apiService: ApiService): BaseViewModel() {
+
+        val dataAbsents = MutableLiveData<List<Absent?>>()
+
+        fun listAllAbsent() = viewModelScope.launch {
+            ApiObserver(
+                block = {apiService.getListAllAbsent()},
+                toast = false,
+                responseListener = object : ApiObserver.ResponseListener {
+                    override suspend fun onSuccess(response: JSONObject) {
+                        val data = response.getJSONArray("data").toList<Absent>(gson)
+                        dataAbsents.postValue(data)
+                    }
+
+                    override suspend fun onError(response: ApiResponse) {
+                        dataAbsents.postValue(emptyList())
+                    }
+
+                }
+            )
+        }
+
+        fun approvedAbsent(idAbsent: String, approved: String, onResponse: () -> Unit) = viewModelScope.launch {
+            ApiObserver(
+                block = {apiService.approvedAbsent(idAbsent, approved)},
+                toast = false,
+                responseListener = object : ApiObserver.ResponseListener {
+                    override suspend fun onSuccess(response: JSONObject) {
+                        onResponse.invoke()
+                    }
+
+                }
+            )
+        }
+
     }
 }

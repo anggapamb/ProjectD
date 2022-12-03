@@ -19,6 +19,9 @@
         <action
             android:id="@+id/actionTaskFragment"
             app:destination="@id/taskFragment" />
+        <action
+            android:id="@+id/actionTodayFragment"
+            app:destination="@id/todayAbsentFragment" />
     </fragment>
     <fragment
         android:id="@+id/loginFragment"
@@ -65,4 +68,9 @@
         android:name="com.projectd.ui.project.add.ProjectAddFragment"
         android:label="ProjectAddFragment"
         tools:layout="@layout/fragment_project_add"/>
+    <fragment
+        android:id="@+id/todayAbsentFragment"
+        android:name="com.projectd.ui.today.TodayAbsentFragment"
+        android:label="TodayAbsentFragment"
+        tools:layout="@layout/fragment_today_absent"/>
 </navigation>

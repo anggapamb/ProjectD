@@ -7,7 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.viewModelScope
 import com.crocodic.core.api.ApiObserver
 import com.crocodic.core.api.ApiResponse
@@ -20,6 +22,8 @@ import com.projectd.base.viewmodel.BaseViewModel
 import com.projectd.data.model.Manager
 import com.projectd.databinding.DialogManagerChooserBinding
 import com.projectd.databinding.ItemManagerBinding
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -53,13 +57,19 @@ class ManagerChooserDialog(private val title :String, private val onSelect: (Man
     }
 
     private fun observe() {
-        viewModel.dataManagers.observe(viewLifecycleOwner) {
-            listManager.clear()
-            binding?.rvManager?.adapter?.notifyDataSetChanged()
-            listManager.addAll(it)
-            binding?.rvManager?.adapter?.notifyItemInserted(0)
-            binding?.vEmpty?.isVisible = listManager.isEmpty()
-            binding?.progressRvManager?.isVisible = false
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    viewModel.dataManagers.collect {
+                        listManager.clear()
+                        binding?.rvManager?.adapter?.notifyDataSetChanged()
+                        listManager.addAll(it)
+                        binding?.rvManager?.adapter?.notifyItemInserted(0)
+                        binding?.vEmpty?.isVisible = listManager.isEmpty()
+                        binding?.progressRvManager?.isVisible = false
+                    }
+                }
+            }
         }
     }
 
@@ -70,7 +80,8 @@ class ManagerChooserDialog(private val title :String, private val onSelect: (Man
 
     class ManagerChooserViewModel(private val apiService: ApiService) : BaseViewModel() {
 
-        val dataManagers = MutableLiveData<List<Manager?>>()
+        private val _dataManagers: Channel<List<Manager?>> = Channel()
+        val dataManagers = _dataManagers.receiveAsFlow()
 
         fun managers() = viewModelScope.launch {
             ApiObserver(
@@ -79,12 +90,11 @@ class ManagerChooserDialog(private val title :String, private val onSelect: (Man
                 responseListener = object : ApiObserver.ResponseListener {
                     override suspend fun onSuccess(response: JSONObject) {
                         val data = response.getJSONArray("data").toList<Manager>(gson)
-                        dataManagers.postValue(data)
+                        _dataManagers.send(data)
                     }
 
                     override suspend fun onError(response: ApiResponse) {
-                        super.onError(response)
-                        dataManagers.postValue(emptyList())
+                        _dataManagers.send(emptyList())
                     }
 
                 }

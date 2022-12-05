@@ -4,7 +4,9 @@ import android.os.Bundle
 import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.crocodic.core.api.ApiStatus
 import com.crocodic.core.extension.textOf
 import com.projectd.R
@@ -28,6 +30,21 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(R.layout.fragment_login
     }
 
     private fun observe() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    viewModel.apiResponse.collect {
+                        loadingDialog.show(it.message, it.status == ApiStatus.LOADING)
+                        if (it.status == ApiStatus.SUCCESS) {
+                            loadingDialog.dismiss()
+                            navigateTo(R.id.actionHomeFragment)
+                        }
+                    }
+                }
+            }
+        }
+
+        /* foreclose
         lifecycleScope.launch {
             viewModel.apiResponse.collect {
                 if (!activity?.isFinishing!!) {
@@ -39,6 +56,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(R.layout.fragment_login
                 }
             }
         }
+         */
     }
 
     private fun login() {
@@ -46,11 +64,11 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(R.layout.fragment_login
     }
 
     private fun onBackPressedHandle() {
-        requireActivity()
-            .onBackPressedDispatcher
-            .addCallback(requireActivity(), object : OnBackPressedCallback(true) {
+        activity
+            ?.onBackPressedDispatcher
+            ?.addCallback(requireActivity(), object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
-                    requireActivity().finishAffinity()
+                    activity?.finishAffinity()
                 }
             })
     }

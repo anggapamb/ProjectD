@@ -29,9 +29,9 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(R.layout.a
     fun popMsg(msg: String) = binding.root.snack(msg)
 
     private fun onBackPressedHandle() {
-        this
+        this@HomeActivity
             .onBackPressedDispatcher
-            .addCallback(this, object : OnBackPressedCallback(true) {
+            .addCallback(this@HomeActivity, object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
                     if (navController.currentDestination?.id == R.id.homeFragment) {
                         if (backPressed + 2000 > System.currentTimeMillis()) {

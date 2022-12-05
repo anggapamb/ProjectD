@@ -1,6 +1,5 @@
 package com.projectd.ui.home
 
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.crocodic.core.api.ApiObserver
 import com.crocodic.core.api.ApiResponse
@@ -11,14 +10,15 @@ import com.projectd.base.viewmodel.BaseViewModel
 import com.projectd.data.model.Absent
 import com.projectd.data.model.AdditionalMenu
 import com.projectd.data.model.Task
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 
 class HomeViewModel(private val apiService: ApiService) : BaseViewModel() {
 
-    val listTask = MutableLiveData<List<Task?>>()
-    val dataMenus = MutableLiveData<List<AdditionalMenu>>()
-    val dataAbsent = MutableLiveData<Absent?>()
+    private val _dataTasks: Channel<List<Task?>> = Channel()
+    val dataTasks =_dataTasks.receiveAsFlow()
 
     fun taskToday() = viewModelScope.launch {
         ApiObserver(
@@ -27,12 +27,12 @@ class HomeViewModel(private val apiService: ApiService) : BaseViewModel() {
             responseListener = object : ApiObserver.ResponseListener {
                 override suspend fun onSuccess(response: JSONObject) {
                     val data = response.getJSONArray("data").toList<Task>(gson)
-                    listTask.postValue(data)
+                    _dataTasks.send(data)
                 }
 
                 override suspend fun onError(response: ApiResponse) {
                     super.onError(response)
-                    listTask.postValue(emptyList())
+                    _dataTasks.send(emptyList())
                 }
 
             }
@@ -56,6 +56,9 @@ class HomeViewModel(private val apiService: ApiService) : BaseViewModel() {
         )
     }
 
+    private val _dataMenus: Channel<List<AdditionalMenu?>> = Channel()
+    val dataMenus = _dataMenus.receiveAsFlow()
+
     fun allMenus() = viewModelScope.launch {
         ApiObserver(
             block = {apiService.addMenus()},
@@ -63,16 +66,19 @@ class HomeViewModel(private val apiService: ApiService) : BaseViewModel() {
             responseListener = object : ApiObserver.ResponseListener {
                 override suspend fun onSuccess(response: JSONObject) {
                     val data = response.getJSONArray("data").toList<AdditionalMenu>(gson)
-                    dataMenus.postValue(data)
+                    _dataMenus.send(data)
                 }
 
                 override suspend fun onError(response: ApiResponse) {
-                    dataMenus.postValue(emptyList())
+                    _dataMenus.send(emptyList())
                 }
 
             }
         )
     }
+
+    private val _dataAbsent: Channel<Absent?> = Channel()
+    val dataAbsent = _dataAbsent.receiveAsFlow()
 
     fun getAbsent() = viewModelScope.launch {
         ApiObserver(
@@ -81,11 +87,11 @@ class HomeViewModel(private val apiService: ApiService) : BaseViewModel() {
             responseListener = object : ApiObserver.ResponseListener {
                 override suspend fun onSuccess(response: JSONObject) {
                     val data = response.getJSONArray("data").getJSONObject(0).toObject<Absent>(gson)
-                    dataAbsent.postValue(data)
+                    _dataAbsent.send(data)
                 }
 
                 override suspend fun onError(response: ApiResponse) {
-                    dataAbsent.postValue(null)
+                    _dataAbsent.send(null)
                 }
 
             }

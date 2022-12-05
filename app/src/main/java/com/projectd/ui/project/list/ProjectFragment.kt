@@ -3,7 +3,9 @@ package com.projectd.ui.project.list
 import android.os.Bundle
 import android.view.View
 import androidx.core.view.isVisible
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.crocodic.core.base.adapter.CoreListAdapter
 import com.projectd.R
 import com.projectd.base.fragment.BaseFragment
@@ -41,14 +43,18 @@ class ProjectFragment : BaseFragment<FragmentProjectBinding>(R.layout.fragment_p
     }
 
     private fun observe() {
-        lifecycleScope.launch {
-            viewModel.dataProjects.observe(viewLifecycleOwner) {
-                listProject.clear()
-                binding?.rvProject?.adapter?.notifyDataSetChanged()
-                listProject.addAll(it)
-                binding?.rvProject?.adapter?.notifyItemInserted(0)
-                binding?.vEmpty?.isVisible = listProject.isEmpty()
-                binding?.progressRvProject?.isVisible = false
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    viewModel.dataProjects.collect {
+                        listProject.clear()
+                        binding?.rvProject?.adapter?.notifyDataSetChanged()
+                        listProject.addAll(it)
+                        binding?.rvProject?.adapter?.notifyItemInserted(0)
+                        binding?.vEmpty?.isVisible = listProject.isEmpty()
+                        binding?.progressRvProject?.isVisible = false
+                    }
+                }
             }
         }
     }

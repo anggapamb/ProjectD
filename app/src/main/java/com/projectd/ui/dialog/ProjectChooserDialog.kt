@@ -9,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
 import com.crocodic.core.api.ApiObserver
@@ -23,6 +22,8 @@ import com.projectd.base.viewmodel.BaseViewModel
 import com.projectd.data.model.Project
 import com.projectd.databinding.DialogProjectChooserBinding
 import com.projectd.databinding.ItemProjectChooserBinding
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -86,7 +87,7 @@ class ProjectChooserDialog(private val onSelect: (Project?) -> Unit, private val
 
     private fun observe() {
         lifecycleScope.launch {
-            viewModel.dataProjects.observe(viewLifecycleOwner) {
+            viewModel.dataProjects.collect {
                 listProject.clear()
                 allListProject.clear()
                 binding?.rvProject?.adapter?.notifyDataSetChanged()
@@ -106,7 +107,8 @@ class ProjectChooserDialog(private val onSelect: (Project?) -> Unit, private val
 
     class ProjectChooserViewModel(private val apiService: ApiService): BaseViewModel() {
 
-        val dataProjects = MutableLiveData<List<Project?>>()
+        private val _dataProjects: Channel<List<Project?>> = Channel()
+        val dataProjects = _dataProjects.receiveAsFlow()
 
         fun allProject() = viewModelScope.launch {
             ApiObserver(
@@ -115,12 +117,11 @@ class ProjectChooserDialog(private val onSelect: (Project?) -> Unit, private val
                 responseListener = object : ApiObserver.ResponseListener {
                     override suspend fun onSuccess(response: JSONObject) {
                         val data = response.getJSONArray("data").toList<Project>(gson)
-                        dataProjects.postValue(data)
+                        _dataProjects.send(data)
                     }
 
                     override suspend fun onError(response: ApiResponse) {
-                        super.onError(response)
-                        dataProjects.postValue(emptyList())
+                        _dataProjects.send(emptyList())
                     }
 
                 }

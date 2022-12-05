@@ -4,7 +4,9 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.core.util.Pair
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.crocodic.core.api.ApiStatus
 import com.crocodic.core.extension.textOf
@@ -59,6 +61,22 @@ class ProjectAddFragment : BaseFragment<FragmentProjectAddBinding>(R.layout.frag
     }
 
     private fun observe() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    viewModel.apiResponse.collect {
+                        loadingDialog.show(it.message, it.status == ApiStatus.LOADING)
+                        if (it.status == ApiStatus.SUCCESS) {
+                            loadingDialog.dismiss()
+                            Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
+                            findNavController().navigateUp()
+                        }
+                    }
+                }
+            }
+        }
+
+        /* foreclose
         lifecycleScope.launch {
             viewModel.apiResponse.collect {
                 if (!activity?.isFinishing!!) {
@@ -71,6 +89,7 @@ class ProjectAddFragment : BaseFragment<FragmentProjectAddBinding>(R.layout.frag
                 }
             }
         }
+         */
     }
 
     private fun showManager() {

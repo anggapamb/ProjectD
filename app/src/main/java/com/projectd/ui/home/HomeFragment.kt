@@ -6,6 +6,9 @@ import android.view.View
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.crocodic.core.base.adapter.CoreListAdapter
 import com.crocodic.core.data.CoreSession
 import com.crocodic.core.extension.tos
@@ -21,6 +24,7 @@ import com.projectd.databinding.ItemUpdateBinding
 import com.projectd.ui.dialog.AbsentDialog
 import com.projectd.ui.dialog.TaskReportDialog
 import com.projectd.util.ViewBindingAdapter.Companion.openUrl
+import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 
 class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
@@ -52,25 +56,35 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
     }
 
     private fun observe() {
-        viewModel.listTask.observe(viewLifecycleOwner) {
-            listTask.clear()
-            binding?.rvUpdate?.adapter?.notifyDataSetChanged()
-            listTask.addAll(it)
-            binding?.rvUpdate?.adapter?.notifyItemInserted(0)
-            binding?.vEmpty?.isVisible = listTask.isEmpty()
-            binding?.progressRvUpdate?.isVisible = false
-        }
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    viewModel.dataTasks.collect {
+                        listTask.clear()
+                        binding?.rvUpdate?.adapter?.notifyDataSetChanged()
+                        listTask.addAll(it)
+                        binding?.rvUpdate?.adapter?.notifyItemInserted(0)
+                        binding?.vEmpty?.isVisible = listTask.isEmpty()
+                        binding?.progressRvUpdate?.isVisible = false
+                    }
+                }
 
-        viewModel.dataMenus.observe(viewLifecycleOwner) {
-            listAdditionalMenu.clear()
-            binding?.rvMenuAdditional?.adapter?.notifyDataSetChanged()
-            listAdditionalMenu.addAll(it)
-            binding?.rvMenuAdditional?.adapter?.notifyItemInserted(0)
-            binding?.vMenuAdditional?.isVisible = it.isNotEmpty()
-        }
+                launch {
+                    viewModel.dataMenus.collect {
+                        listAdditionalMenu.clear()
+                        binding?.rvMenuAdditional?.adapter?.notifyDataSetChanged()
+                        listAdditionalMenu.addAll(it)
+                        binding?.rvMenuAdditional?.adapter?.notifyItemInserted(0)
+                        binding?.vMenuAdditional?.isVisible = it.isNotEmpty()
+                    }
+                }
 
-        viewModel.dataAbsent.observe(viewLifecycleOwner) {
-            binding?.absent = it
+                launch {
+                    viewModel.dataAbsent.collect {
+                        binding?.absent = it
+                    }
+                }
+            }
         }
     }
 

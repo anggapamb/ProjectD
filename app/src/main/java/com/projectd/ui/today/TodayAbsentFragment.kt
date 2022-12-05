@@ -4,7 +4,9 @@ import android.app.AlertDialog
 import android.os.Bundle
 import android.view.View
 import androidx.core.view.isVisible
-import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.viewModelScope
 import com.crocodic.core.api.ApiObserver
 import com.crocodic.core.api.ApiResponse
@@ -18,6 +20,8 @@ import com.projectd.base.viewmodel.BaseViewModel
 import com.projectd.data.model.Absent
 import com.projectd.databinding.FragmentTodayAbsentBinding
 import com.projectd.databinding.ItemAbsentBinding
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -67,18 +71,25 @@ class TodayAbsentFragment : BaseFragment<FragmentTodayAbsentBinding>(R.layout.fr
     }
 
     private fun observe() {
-        viewModel.dataAbsents.observe(viewLifecycleOwner) {
-            listAbsent.clear()
-            binding?.rvUpdate?.adapter?.notifyDataSetChanged()
-            listAbsent.addAll(it)
-            binding?.rvUpdate?.adapter?.notifyItemInserted(0)
-            binding?.vEmpty?.isVisible = listAbsent.isEmpty()
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    viewModel.dataAbsents.collect {
+                        listAbsent.clear()
+                        binding?.rvUpdate?.adapter?.notifyDataSetChanged()
+                        listAbsent.addAll(it)
+                        binding?.rvUpdate?.adapter?.notifyItemInserted(0)
+                        binding?.vEmpty?.isVisible = listAbsent.isEmpty()
+                    }
+                }
+            }
         }
     }
 
     class TodayAbsentViewModel(private val apiService: ApiService): BaseViewModel() {
 
-        val dataAbsents = MutableLiveData<List<Absent?>>()
+        private val _dataAbsents: Channel<List<Absent?>> = Channel()
+        val dataAbsents = _dataAbsents.receiveAsFlow()
 
         fun listAllAbsent() = viewModelScope.launch {
             ApiObserver(
@@ -87,11 +98,11 @@ class TodayAbsentFragment : BaseFragment<FragmentTodayAbsentBinding>(R.layout.fr
                 responseListener = object : ApiObserver.ResponseListener {
                     override suspend fun onSuccess(response: JSONObject) {
                         val data = response.getJSONArray("data").toList<Absent>(gson)
-                        dataAbsents.postValue(data)
+                        _dataAbsents.send(data)
                     }
 
                     override suspend fun onError(response: ApiResponse) {
-                        dataAbsents.postValue(emptyList())
+                        _dataAbsents.send(emptyList())
                     }
 
                 }

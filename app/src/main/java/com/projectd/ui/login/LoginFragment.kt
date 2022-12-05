@@ -26,7 +26,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(R.layout.fragment_login
         binding?.btnLogin?.setOnClickListener(this)
 
         observe()
-        onBackPressedHandle()
+        //onBackPressedHandle()
     }
 
     private fun observe() {
@@ -63,6 +63,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(R.layout.fragment_login
         viewModel.login(binding?.etUsername?.textOf(), binding?.etPassword?.textOf())
     }
 
+    /*
     private fun onBackPressedHandle() {
         activity
             ?.onBackPressedDispatcher
@@ -72,6 +73,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(R.layout.fragment_login
                 }
             })
     }
+     */
 
     override fun onClick(p0: View?) {
         when (p0) {

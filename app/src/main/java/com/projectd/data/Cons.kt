@@ -60,12 +60,15 @@ object Cons {
         }
     }
 
-    object ROLE {
-        const val ROOT = "root"
-        const val ENGINEER = "engineer"
-        const val LEADER = "leader"
-        const val MANAGER = "manager"
+    object DIVISION {
+        const val WEB = "web"
+        const val MOBILE = "mobile"
+        const val TESTER = "tester"
+        const val ANALYST = "analyst"
+        const val MARKETING = "marketing"
         const val PSDM = "psdm"
+        const val SUPER_ADMIN = "super admin"
+        const val MANAGER = "manager"
     }
 
     object PREVILLEGE {

@@ -7,6 +7,7 @@ import com.crocodic.core.extension.toList
 import com.crocodic.core.extension.toObject
 import com.projectd.api.ApiService
 import com.projectd.base.viewmodel.BaseViewModel
+import com.projectd.data.Cons
 import com.projectd.data.model.Absent
 import com.projectd.data.model.AdditionalMenu
 import com.projectd.data.model.Task
@@ -66,7 +67,7 @@ class HomeViewModel(private val apiService: ApiService) : BaseViewModel() {
             responseListener = object : ApiObserver.ResponseListener {
                 override suspend fun onSuccess(response: JSONObject) {
                     val data = response.getJSONArray("data").toList<AdditionalMenu>(gson)
-                    _dataMenus.send(data)
+                    _dataMenus.send(customData(data))
                 }
 
                 override suspend fun onError(response: ApiResponse) {
@@ -75,6 +76,20 @@ class HomeViewModel(private val apiService: ApiService) : BaseViewModel() {
 
             }
         )
+    }
+
+    private fun customData(data: List<AdditionalMenu>): ArrayList<AdditionalMenu?> {
+        val todayCheck = data.single { it.key?.contains("today_check", true) == true }
+
+        val menus = ArrayList<AdditionalMenu?>()
+        menus.addAll(data)
+
+        return if (user?.devision != Cons.DIVISION.MANAGER) {
+            menus.remove(todayCheck)
+            menus
+        } else {
+            menus
+        }
     }
 
     private val _dataAbsent: Channel<Absent?> = Channel()

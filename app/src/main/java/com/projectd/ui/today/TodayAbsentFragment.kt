@@ -34,7 +34,6 @@ class TodayAbsentFragment : BaseFragment<FragmentTodayAbsentBinding>(R.layout.fr
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
         initView()
         observe()
         viewModel.listAllAbsent()
@@ -122,5 +121,12 @@ class TodayAbsentFragment : BaseFragment<FragmentTodayAbsentBinding>(R.layout.fr
             )
         }
 
+    }
+
+    companion object {
+        @JvmStatic
+        fun newInstance(title: String) = TodayAbsentFragment().apply {
+            this.title = title
+        }
     }
 }

@@ -21,7 +21,7 @@
             app:destination="@id/taskFragment" />
         <action
             android:id="@+id/actionTodayFragment"
-            app:destination="@id/todayAbsentFragment" />
+            app:destination="@id/todayCheckFragment" />
     </fragment>
     <fragment
         android:id="@+id/loginFragment"
@@ -69,8 +69,8 @@
         android:label="ProjectAddFragment"
         tools:layout="@layout/fragment_project_add"/>
     <fragment
-        android:id="@+id/todayAbsentFragment"
-        android:name="com.projectd.ui.today.TodayAbsentFragment"
-        android:label="TodayAbsentFragment"
-        tools:layout="@layout/fragment_today_absent"/>
+        android:id="@+id/todayCheckFragment"
+        android:name="com.projectd.ui.today.TodayCheckFragment"
+        android:label="TodayCheckFragment"
+        tools:layout="@layout/fragment_today_check"/>
 </navigation>

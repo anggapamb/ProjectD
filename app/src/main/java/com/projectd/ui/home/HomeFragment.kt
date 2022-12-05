@@ -47,6 +47,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
         }
 
         initView()
+        initData()
         observe()
         getTaskToday()
 
@@ -101,7 +102,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
                     val data = tasks[position]
                     holder.binding.data = data
                     holder.binding.yourName = viewModel.user?.shortName()
-                    holder.binding.btnMore.isVisible = (viewModel.user?.isLeader == "true" || viewModel.user?.devision == Cons.ROLE.MANAGER)
+                    holder.binding.btnMore.isVisible = (viewModel.user?.devision == Cons.DIVISION.MANAGER)
 
                     holder.itemView.setOnClickListener {
                         if (data?.createdBy == viewModel.user?.shortName()) {
@@ -130,19 +131,21 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
                 }
             }.initItem(tasks)
         }
+    }
 
+    private fun initData() {
         binding?.rvMenu?.adapter = CoreListAdapter<ItemMainMenuBinding, HomeMenu>(R.layout.item_main_menu)
             .initItem(menus) { _, data ->
                 when (data?.key) {
                     "task" -> navigateTo(R.id.actionTaskFragment)
                     "project" -> navigateTo(R.id.actionProjectFragment)
-                    "absent" -> navigateTo(R.id.actionTodayFragment)
                 }
             }
 
         binding?.rvMenuAdditional?.adapter = CoreListAdapter<ItemSecondMenuBinding, AdditionalMenu>(R.layout.item_second_menu)
             .initItem(listAdditionalMenu) { _, data ->
                 when (data?.key) {
+                    "today_check" -> navigateTo(R.id.actionTodayFragment)
                     "absent" -> AbsentDialog { viewModel.getAbsent() }.show(childFragmentManager, "absent")
                     else -> requireActivity().openUrl(data?.link!!)
                 }
@@ -185,18 +188,5 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
         )
         menus.clear()
         menus.addAll(homeMenu)
-        if (viewModel.user?.isLeader == "true" || viewModel.user?.devision == Cons.ROLE.PSDM || viewModel.user?.devision == Cons.ROLE.MANAGER) {
-            menus.add(
-                HomeMenu(
-                    icon = R.drawable.ic_baseline_fact_check_24,
-                    color = R.color.text_bg_blue,
-                    background = AppCompatResources.getDrawable(requireContext(), R.drawable.bg_round_12_blue),
-                    label = "Today's Absent",
-                    key = "absent",
-                    count = 0,
-                    countBackground = R.drawable.bg_circle_blue
-                )
-            )
-        }
     }
 }

@@ -22,4 +22,11 @@ class TodayCheckListFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_today_check_list, container, false)
     }
 
+    companion object {
+        @JvmStatic
+        fun newInstance(title: String) = TodayCheckNotReadyFragment().apply {
+            this.title = title
+        }
+    }
+
 }

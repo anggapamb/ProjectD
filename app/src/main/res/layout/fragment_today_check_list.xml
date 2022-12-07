@@ -25,6 +25,12 @@
                 tools:itemCount="3"
                 tools:listitem="@layout/item_update" />
 
+            <ProgressBar
+                android:id="@+id/progress_rv_update"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"/>
+
             <LinearLayout
                 android:id="@+id/v_empty"
                 android:layout_width="wrap_content"

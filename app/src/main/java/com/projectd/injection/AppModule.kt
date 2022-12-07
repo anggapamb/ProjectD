@@ -17,7 +17,7 @@ import com.projectd.ui.project.add.ProjectAddViewModel
 import com.projectd.ui.project.list.ProjectViewModel
 import com.projectd.ui.task.add.TaskAddViewModel
 import com.projectd.ui.task.list.TaskViewModel
-import com.projectd.ui.today.TodayAbsentFragment.TodayAbsentViewModel
+import com.projectd.ui.today.TodayCheckViewModel
 import org.koin.dsl.module
 import java.util.concurrent.TimeUnit
 import javax.net.ssl.SSLContext
@@ -53,7 +53,7 @@ object AppModule {
         viewModel { TaskAddViewModel(get()) }
         viewModel { TaskReportViewModel(get()) }
         viewModel { AbsentViewModel(get()) }
-        viewModel { TodayAbsentViewModel(get()) }
+        viewModel { TodayCheckViewModel(get()) }
     }
 
     val networkModule = module {

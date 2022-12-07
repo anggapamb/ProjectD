@@ -4,6 +4,8 @@ import com.google.gson.annotations.SerializedName
 import com.projectd.R
 
 data class AdditionalMenu(
+    @SerializedName("disable_enable")
+    val disableEnable: String?,
     @SerializedName("icon")
     val icon: String?,
     @SerializedName("id")

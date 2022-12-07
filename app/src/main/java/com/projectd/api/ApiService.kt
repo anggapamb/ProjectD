@@ -86,4 +86,10 @@ interface ApiService {
         @Path("idAbsent") idAbsent: String,
         @Field("approved") approved: String
     ): String
+
+    @FormUrlEncoded
+    @POST("task/date")
+    suspend fun taskByDate(
+        @Field("date") date: String
+    ): String
 }

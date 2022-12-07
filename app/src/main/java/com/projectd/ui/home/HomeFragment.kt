@@ -61,22 +61,27 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
                     viewModel.dataTasks.collect {
-                        listTask.clear()
-                        binding?.rvUpdate?.adapter?.notifyDataSetChanged()
-                        listTask.addAll(it)
-                        binding?.rvUpdate?.adapter?.notifyItemInserted(0)
-                        binding?.vEmpty?.isVisible = listTask.isEmpty()
-                        binding?.progressRvUpdate?.isVisible = false
+                        binding?.apply {
+                            listTask.clear()
+                            rvUpdate.adapter?.notifyDataSetChanged()
+                            listTask.addAll(it)
+                            rvUpdate.adapter?.notifyItemInserted(0)
+                            vEmpty.isVisible = listTask.isEmpty()
+                            progressRvUpdate.isVisible = false
+                            swipeRefresh.isRefreshing = false
+                        }
                     }
                 }
 
                 launch {
                     viewModel.dataMenus.collect {
-                        listAdditionalMenu.clear()
-                        binding?.rvMenuAdditional?.adapter?.notifyDataSetChanged()
-                        listAdditionalMenu.addAll(it)
-                        binding?.rvMenuAdditional?.adapter?.notifyItemInserted(0)
-                        binding?.vMenuAdditional?.isVisible = it.isNotEmpty()
+                        binding?.apply {
+                            listAdditionalMenu.clear()
+                            rvMenuAdditional.adapter?.notifyDataSetChanged()
+                            listAdditionalMenu.addAll(it)
+                            rvMenuAdditional.adapter?.notifyItemInserted(0)
+                            vMenuAdditional.isVisible = it.isNotEmpty()
+                        }
                     }
                 }
 
@@ -130,6 +135,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
 
                 }
             }.initItem(tasks)
+        }
+
+        binding?.swipeRefresh?.setOnRefreshListener {
+            viewModel.apply {
+                taskToday()
+                allMenus()
+                getAbsent()
+            }
         }
     }
 

@@ -79,6 +79,7 @@ class TodayAbsentFragment : BaseFragment<FragmentTodayAbsentBinding>(R.layout.fr
                         listAbsent.addAll(it)
                         binding?.rvUpdate?.adapter?.notifyItemInserted(0)
                         binding?.vEmpty?.isVisible = listAbsent.isEmpty()
+                        binding?.progressBar?.isVisible = false
                     }
                 }
             }

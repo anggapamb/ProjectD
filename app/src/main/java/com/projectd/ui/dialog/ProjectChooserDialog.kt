@@ -2,17 +2,19 @@ package com.projectd.ui.dialog
 
 import android.content.DialogInterface
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
+import androidx.core.widget.doAfterTextChanged
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
 import androidx.paging.LoadState
 import androidx.paging.Pager
 import androidx.paging.cachedIn
-import com.crocodic.core.api.ApiObserver
 import com.crocodic.core.base.adapter.CorePagingSource
 import com.crocodic.core.base.adapter.PaginationAdapter
 import com.crocodic.core.base.adapter.PaginationLoadState
@@ -39,6 +41,25 @@ class ProjectChooserDialog(private val onSelect: (Project?) -> Unit, private val
             onSelect(data)
             this@ProjectChooserDialog.dismiss()
     }
+    private var keyword = ""
+    private val runnable: () -> Unit = ({
+        if (keyword.isEmpty()) {
+            lifecycleScope.launch {
+                viewModel.allProject().collect {
+                    adapter.submitData(it)
+                }
+            }
+        } else {
+            lifecycleScope.launch {
+                viewModel.searchProject(keyword).collect {
+                    adapter.submitData(it)
+                }
+            }
+        }
+    })
+    private val handler: Handler by lazy {
+        Handler(Looper.getMainLooper())
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.dialog_project_chooser, container, false)
@@ -50,7 +71,6 @@ class ProjectChooserDialog(private val onSelect: (Project?) -> Unit, private val
 
         initView()
         observe()
-        viewModel.allProject()
     }
 
     private fun initView() {
@@ -61,6 +81,13 @@ class ProjectChooserDialog(private val onSelect: (Project?) -> Unit, private val
 
         binding?.btnAddProject?.setOnClickListener {
             addProject()
+        }
+
+        binding?.etSearch?.doAfterTextChanged {
+            keyword = it?.toString() ?: ""
+            binding?.progressRvProject?.isVisible = true
+            handler.removeCallbacks(runnable)
+            handler.postDelayed(runnable, 2000)
         }
     }
 
@@ -94,22 +121,16 @@ class ProjectChooserDialog(private val onSelect: (Project?) -> Unit, private val
         fun allProject() = Pager(CorePagingSource.config(itemPerPage), pagingSourceFactory = {
             CorePagingSource(firstPage){ page, _ ->
                 val data = JSONObject(apiService.allProject(page)).getJSONArray("data").toList<Project>(gson)
-                data // List<Product>
+                data
             }
         }).flow.cachedIn(viewModelScope)
 
-        fun searchProject(projectName: String) = viewModelScope.launch {
-            ApiObserver(
-                block = {apiService.searchProject(projectName)},
-                toast = false,
-                responseListener = object : ApiObserver.ResponseListener {
-                    override suspend fun onSuccess(response: JSONObject) {
-
-                    }
-
-                }
-            )
-        }
+        fun searchProject(projectName: String = "") = Pager(CorePagingSource.config(itemPerPage), pagingSourceFactory = {
+            CorePagingSource(firstPage){ _, _ ->
+                val data = JSONObject(apiService.searchProject(projectName)).getJSONArray("data").toList<Project>(gson)
+                data
+            }
+        }).flow.cachedIn(viewModelScope)
 
     }
 }

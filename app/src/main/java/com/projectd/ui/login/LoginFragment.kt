@@ -2,7 +2,6 @@ package com.projectd.ui.login
 
 import android.os.Bundle
 import android.view.View
-import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -26,7 +25,6 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(R.layout.fragment_login
         binding?.btnLogin?.setOnClickListener(this)
 
         observe()
-        //onBackPressedHandle()
     }
 
     private fun observe() {
@@ -43,37 +41,11 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(R.layout.fragment_login
                 }
             }
         }
-
-        /* foreclose
-        lifecycleScope.launch {
-            viewModel.apiResponse.collect {
-                if (!activity?.isFinishing!!) {
-                    loadingDialog.show(it.message, it.status == ApiStatus.LOADING)
-                    if (it.status == ApiStatus.SUCCESS) {
-                        loadingDialog.dismiss()
-                        navigateTo(R.id.actionHomeFragment)
-                    }
-                }
-            }
-        }
-         */
     }
 
     private fun login() {
         viewModel.login(binding?.etUsername?.textOf(), binding?.etPassword?.textOf())
     }
-
-    /*
-    private fun onBackPressedHandle() {
-        activity
-            ?.onBackPressedDispatcher
-            ?.addCallback(requireActivity(), object : OnBackPressedCallback(true) {
-                override fun handleOnBackPressed() {
-                    activity?.finishAffinity()
-                }
-            })
-    }
-     */
 
     override fun onClick(p0: View?) {
         when (p0) {

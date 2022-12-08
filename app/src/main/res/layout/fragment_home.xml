@@ -138,7 +138,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_margin="4dp"
-                            app:imgCircleUrl='@{prayer.image}'
+                            app:imgCircleUrl='@{prayer.photo}'
                             android:contentDescription="@string/cd_prayer_reader_s_photo" />
 
                         <TextView
@@ -168,7 +168,7 @@
                             android:layout_height="wrap_content"
                             android:ellipsize="end"
                             android:maxLines="1"
-                            android:text='@{prayer.title}'
+                            android:text='@{prayer.user}'
                             android:textColor="@color/text_bg_green"
                             android:textSize="@dimen/text_default"
                             android:textStyle="bold"

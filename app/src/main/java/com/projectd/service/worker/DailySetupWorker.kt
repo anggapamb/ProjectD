@@ -5,14 +5,11 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.work.*
 import com.crocodic.core.helper.BitmapHelper
-import com.crocodic.core.helper.DateTimeHelper
 import com.crocodic.core.helper.log.Log
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 import com.projectd.data.Cons
 import com.projectd.data.Session
-import com.projectd.data.model.Prayer
 import com.projectd.service.fcm.FirebaseMsgService
+import com.projectd.ui.home.HomeViewModel
 import com.projectd.util.ViewBindingAdapter.Companion.getEmoji
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
@@ -27,11 +24,12 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.net.ssl.*
 
-class DailySetupWorker(context: Context, workerParams: WorkerParameters): Worker(context, workerParams), KoinComponent {
+class DailySetupWorker(context: Context, workerParams: WorkerParameters): CoroutineWorker(context, workerParams), KoinComponent {
 
     private val session: Session by inject()
+    private val viewModel: HomeViewModel by inject()
 
-    override fun doWork(): Result {
+    override suspend fun doWork(): Result {
 
         Log.d("work outside")
 
@@ -43,59 +41,26 @@ class DailySetupWorker(context: Context, workerParams: WorkerParameters): Worker
                 "Assalamu'alaikum ${user.shortName()}, hope you always healthy today."
             )
 
-            val prayer = Prayer(
-                "1",
-                "Berdoalah kalian semua",
-                "Bismillah",
-                "http://206.189.40.49:8111/doa/ab1e0a02397ab7aced16039b9c9aadf0.mp3",
-                "https://i.pinimg.com/736x/b9/9d/a0/b99da05e7507d78e9c6a7e9aa7ebbe7b.jpg"
-            )
+            viewModel.preparePrayer()
+            viewModel.prayer.collect { p ->
+                setup(applicationContext)
 
-            prayer.let { p ->
                 Log.d("work inside")
 
                 val message = "${getEmoji(0x1F534)} LIVE ~ ${p.description}"
 
-                if (p.image.isNullOrEmpty()) {
+                if (p.photo.isNullOrEmpty()) {
                     FirebaseMsgService.createNotification(applicationContext, Cons.NOTIFICATION.ID_STARTUP, message, greeting.random())
                 } else {
-                    getImage(p.image) { bmp ->
+                    getImage(p.photo) { bmp ->
                         bmp?.let { bp ->
-                            session.setValue(PRAYER_IMG_URL, p.image)
+                            session.setValue(PRAYER_IMG_URL, p.photo)
                             session.setValue(PRAYER_IMG_BMP, BitmapHelper.encodeToBase64(bp))
                         }
                         FirebaseMsgService.createNotification(applicationContext, Cons.NOTIFICATION.ID_STARTUP, message, greeting.random(), bmp)
                     }
                 }
             }
-
-            /*
-            Firebase.firestore.collection(Cons.DB.PRAYER.REFF_NAME).document(day).get()
-                .addOnSuccessListener {
-
-                    setup(applicationContext)
-
-                    if (it.exists()) {
-                        it.toObject(Prayer::class.java)?.let { p ->
-                            Log.d("work inside")
-
-                            val message = "${getEmoji(0x1F534)} LIVE ~ ${p.description}"
-
-                            if (p.image.isNullOrEmpty()) {
-                                FirebaseMsgService.createNotification(applicationContext, Cons.NOTIFICATION.ID_STARTUP, message, greeting.random())
-                            } else {
-                                getImage(p.image) { bmp ->
-                                    bmp?.let { bp ->
-                                        session.setValue(PRAYER_IMG_URL, p.image)
-                                        session.setValue(PRAYER_IMG_BMP, BitmapHelper.encodeToBase64(bp))
-                                    }
-                                    FirebaseMsgService.createNotification(applicationContext, Cons.NOTIFICATION.ID_STARTUP, message, greeting.random(), bmp)
-                                }
-                            }
-                        }
-                    }
-                }
-             */
         }
 
         return Result.success()

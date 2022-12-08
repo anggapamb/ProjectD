@@ -46,7 +46,7 @@ class PrayerPlayer(private val context: Context): KoinComponent {
                 EventBus.getDefault().postSticky(Prayer.PlayBack.STOP)
                 stopPrayer()
             }
-            mediaPlayer?.setDataSource(prayer.url)
+            mediaPlayer?.setDataSource(prayer.file)
             mediaPlayer?.prepare()
         } catch (e: Exception) {
             e.printStackTrace()

@@ -101,4 +101,7 @@ interface ApiService {
     suspend fun searchProject(
         @Field("projectName") projectName: String?
     ): String
+
+    @GET("show/doa")
+    suspend fun showPrayer(): String
 }

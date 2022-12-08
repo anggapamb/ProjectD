@@ -118,17 +118,17 @@ class HomeViewModel(private val apiService: ApiService) : BaseViewModel() {
     val prayer = _prayer.receiveAsFlow()
 
     fun preparePrayer() = viewModelScope.launch {
-        val prayer = Prayer(
-            "1",
-            "Berdoalah kalian semua",
-            "Bismillah",
-            "http://206.189.40.49:8111/doa/ab1e0a02397ab7aced16039b9c9aadf0.mp3",
-            "https://i.pinimg.com/736x/b9/9d/a0/b99da05e7507d78e9c6a7e9aa7ebbe7b.jpg"
-        )
+        ApiObserver(
+            block = {apiService.showPrayer()},
+            toast = false,
+            responseListener = object : ApiObserver.ResponseListener {
+                override suspend fun onSuccess(response: JSONObject) {
+                    val data = response.getJSONObject("data").toObject<Prayer>(gson)
+                    _prayer.send(data)
+                }
 
-        prayer.let { p ->
-            _prayer.send(p)
-        }
+            }
+        )
     }
 
 }

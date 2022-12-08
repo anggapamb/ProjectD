@@ -33,7 +33,7 @@ class PrayerNotificationService: Service() {
 
             val prayer = intent?.getParcelableExtra<Prayer>(Cons.BUNDLE.DATA)
 
-            val image = prayer?.image
+            val image = prayer?.photo
 
             if (image.isNullOrEmpty()) {
                 startNotification(prayer)
@@ -41,12 +41,12 @@ class PrayerNotificationService: Service() {
                 val imgUrl = session.getString(DailySetupWorker.PRAYER_IMG_URL)
                 val imgBmp = session.getString(DailySetupWorker.PRAYER_IMG_BMP)
 
-                if (imgUrl == prayer.image && imgBmp.isNotEmpty()) {
+                if (imgUrl == prayer.photo && imgBmp.isNotEmpty()) {
                     startNotification(prayer, BitmapHelper.decodeBase64(applicationContext, imgBmp))
                 } else {
                     DailySetupWorker.getImage(image) {
                         it?.let { bp ->
-                            session.setValue(DailySetupWorker.PRAYER_IMG_URL, prayer.image)
+                            session.setValue(DailySetupWorker.PRAYER_IMG_URL, prayer.photo)
                             session.setValue(DailySetupWorker.PRAYER_IMG_BMP, BitmapHelper.encodeToBase64(bp))
                         }
                         startNotification(prayer, it)
@@ -71,7 +71,7 @@ class PrayerNotificationService: Service() {
         createChannel()
 
         val notificationBuilder = NotificationCompat.Builder(applicationContext, CHANNEL_ID)
-            .setContentTitle(prayer?.title)
+            .setContentTitle(prayer?.user)
             .setContentText(prayer?.description)
             .setSmallIcon(R.drawable.ic_baseline_voicemail_24)
             .setPriority(NotificationCompat.PRIORITY_HIGH)

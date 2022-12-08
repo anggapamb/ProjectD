@@ -27,15 +27,17 @@ import com.projectd.databinding.FragmentHomeBinding
 import com.projectd.databinding.ItemMainMenuBinding
 import com.projectd.databinding.ItemSecondMenuBinding
 import com.projectd.databinding.ItemUpdateBinding
+import com.projectd.service.fcm.FirebaseMsgService
 import com.projectd.ui.dialog.AbsentDialog
 import com.projectd.ui.dialog.TaskReportDialog
 import com.projectd.util.ViewBindingAdapter.Companion.openUrl
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
 
-    private val viewModel: HomeViewModel by inject()
+    private val viewModel: HomeViewModel by viewModel()
     private val menus = ArrayList<HomeMenu?>()
     private val listTask = ArrayList<Task?>()
     private val listAdditionalMenu = ArrayList<AdditionalMenu?>()
@@ -47,6 +49,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
         requireActivity().window.statusBarColor = ContextCompat.getColor(requireContext(), R.color.white)
 
         // TODO: ini besok dihapus
+        FirebaseMsgService.createNotification(requireContext(), 1, "halo", "askdal")
         binding?.ivAvatar?.setOnClickListener {
             session.clearAll()
             requireActivity().tos("Logout")
@@ -204,7 +207,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
 
     private fun initPrayer() {
         val hour = DateTimeHelper().convert(DateTimeHelper().createAt(), "yyyy-MM-dd HH:mm:ss", "H").toInt()
-        if (hour in 8..9) { // TODO: return jam 9
+        if (hour in 8..10) { // TODO: return jam 9
             viewModel.preparePrayer()
         }
     }

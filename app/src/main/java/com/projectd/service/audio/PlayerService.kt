@@ -38,7 +38,7 @@ class PlayerService: Service() {
 
             mediaPlayer = MediaPlayer().apply {
                 //setAudioStreamType(AudioManager.STREAM_MUSIC)
-                setDataSource(prayer?.url)
+                setDataSource(prayer?.file)
                 setAudioAttributes(AudioAttributes.Builder().setUsage(AudioAttributes.CONTENT_TYPE_MUSIC).build())
                 prepare()
                 setOnPreparedListener {
@@ -64,7 +64,7 @@ class PlayerService: Service() {
             createChannel()
 
             val notificationBuilder = NotificationCompat.Builder(applicationContext, CHANNEL_ID)
-                .setContentTitle(prayer?.title)
+                .setContentTitle(prayer?.user)
                 .setContentText(prayer?.description)
                 .setSmallIcon(R.drawable.ic_baseline_voicemail_24)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)

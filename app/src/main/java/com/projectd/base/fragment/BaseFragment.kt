@@ -37,7 +37,7 @@ open class BaseFragment<VB : ViewDataBinding>(@LayoutRes private val layoutRes: 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        //homeActivity.invalidateTickerPlayer()
+        homeActivity.invalidateTickerPlayer()
     }
 
     override fun onDestroyView() {

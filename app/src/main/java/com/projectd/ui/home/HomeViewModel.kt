@@ -10,6 +10,7 @@ import com.projectd.base.viewmodel.BaseViewModel
 import com.projectd.data.Cons
 import com.projectd.data.model.Absent
 import com.projectd.data.model.AdditionalMenu
+import com.projectd.data.model.Prayer
 import com.projectd.data.model.Task
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -111,6 +112,23 @@ class HomeViewModel(private val apiService: ApiService) : BaseViewModel() {
 
             }
         )
+    }
+
+    private val _prayer: Channel<Prayer> = Channel()
+    val prayer = _prayer.receiveAsFlow()
+
+    fun preparePrayer() = viewModelScope.launch {
+        val prayer = Prayer(
+            "1",
+            "Berdoalah kalian semua",
+            "Bismillah",
+            "http://206.189.40.49:8111/doa/ab1e0a02397ab7aced16039b9c9aadf0.mp3",
+            "https://i.pinimg.com/736x/b9/9d/a0/b99da05e7507d78e9c6a7e9aa7ebbe7b.jpg"
+        )
+
+        prayer.let { p ->
+            _prayer.send(p)
+        }
     }
 
 }

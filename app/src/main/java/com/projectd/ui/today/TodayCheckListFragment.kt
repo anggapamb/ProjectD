@@ -43,6 +43,7 @@ class TodayCheckListFragment : BaseFragment<FragmentTodayCheckListBinding>(R.lay
                             rvUpdate.adapter?.notifyItemInserted(0)
                             vEmpty.isVisible = listTask.isEmpty()
                             progressRvUpdate.isVisible = false
+                            swipeRefresh.isRefreshing = false
                         }
                     }
                 }
@@ -51,7 +52,6 @@ class TodayCheckListFragment : BaseFragment<FragmentTodayCheckListBinding>(R.lay
     }
 
     private fun initView() {
-
         listTask.let { tasks ->
             binding?.rvUpdate?.adapter = object : CoreListAdapter<ItemUpdateBinding, Task>(R.layout.item_update) {
                 override fun onBindViewHolder(
@@ -89,6 +89,10 @@ class TodayCheckListFragment : BaseFragment<FragmentTodayCheckListBinding>(R.lay
 
                 }
             }.initItem(tasks)
+        }
+
+        binding?.swipeRefresh?.setOnRefreshListener {
+            viewModel.taskToday(title)
         }
 
         viewModel.taskToday(title)

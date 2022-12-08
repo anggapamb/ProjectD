@@ -1,39 +1,25 @@
 package com.projectd.ui.project.list
 
 import androidx.lifecycle.viewModelScope
-import com.crocodic.core.api.ApiObserver
-import com.crocodic.core.api.ApiResponse
+import androidx.paging.Pager
+import androidx.paging.cachedIn
+import com.crocodic.core.base.adapter.CorePagingSource
 import com.crocodic.core.extension.toList
 import com.projectd.api.ApiService
 import com.projectd.base.viewmodel.BaseViewModel
 import com.projectd.data.model.Project
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.launch
 import org.json.JSONObject
 
 class ProjectViewModel(private val apiService: ApiService): BaseViewModel() {
 
-    private val _dataProjects: Channel<List<Project?>> = Channel()
-    val dataProjects = _dataProjects.receiveAsFlow()
+    private val firstPage = 1
+    private val itemPerPage = 10
 
-    fun allProject() = viewModelScope.launch {
-        ApiObserver(
-            block = {apiService.allProject()},
-            toast = false,
-            responseListener = object : ApiObserver.ResponseListener {
-                override suspend fun onSuccess(response: JSONObject) {
-                    val data = response.getJSONArray("data").toList<Project>(gson)
-                    _dataProjects.send(data)
-                }
-
-                override suspend fun onError(response: ApiResponse) {
-                    super.onError(response)
-                    _dataProjects.send(emptyList())
-                }
-            }
-
-        )
-    }
+    fun allProject() = Pager(CorePagingSource.config(itemPerPage), pagingSourceFactory = {
+        CorePagingSource(firstPage){ page, _ ->
+            val data = JSONObject(apiService.allProject(page)).getJSONArray("data").toList<Project>(gson)
+            data // List<Product>
+        }
+    }).flow.cachedIn(viewModelScope)
 
 }

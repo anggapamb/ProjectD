@@ -11,6 +11,7 @@ import com.crocodic.core.helper.tree.ReleaseTree
 import com.projectd.BuildConfig
 import com.projectd.data.Session
 import com.projectd.injection.AppModule
+import com.projectd.service.prayer.PrayerPlayer
 import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
@@ -19,6 +20,7 @@ import timber.log.Timber
 class App : Application(), LifecycleEventObserver {
 
     private val session: Session by inject()
+    val prayerPlayer: PrayerPlayer by lazy { PrayerPlayer(applicationContext) }
 
     override fun onCreate() {
         super.onCreate()

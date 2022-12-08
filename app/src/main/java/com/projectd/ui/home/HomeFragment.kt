@@ -2,7 +2,10 @@ package com.projectd.ui.home
 
 import android.app.AlertDialog
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
@@ -16,7 +19,10 @@ import com.crocodic.core.helper.DateTimeHelper
 import com.projectd.R
 import com.projectd.base.fragment.BaseFragment
 import com.projectd.data.Cons
-import com.projectd.data.model.*
+import com.projectd.data.model.AdditionalMenu
+import com.projectd.data.model.HomeMenu
+import com.projectd.data.model.Prayer
+import com.projectd.data.model.Task
 import com.projectd.databinding.FragmentHomeBinding
 import com.projectd.databinding.ItemMainMenuBinding
 import com.projectd.databinding.ItemSecondMenuBinding
@@ -34,6 +40,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
     private val listTask = ArrayList<Task?>()
     private val listAdditionalMenu = ArrayList<AdditionalMenu?>()
     private val session: CoreSession by inject()
+    private var currentPrayer: Prayer? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -53,6 +60,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
 
         viewModel.allMenus()
         viewModel.getAbsent()
+
+        initPrayer()
         dataDummy()
     }
 
@@ -88,6 +97,32 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
                 launch {
                     viewModel.dataAbsent.collect {
                         binding?.absent = it
+                    }
+                }
+
+                launch {
+                    viewModel.prayer.collect {
+                        currentPrayer = it
+                        binding?.prayer = it
+
+                        invalidateButtonPlay(homeActivity.isPlayPrayer())
+
+                        if (!session.getBoolean(Cons.BUNDLE.PRAYER_COUNT)) {
+
+                            if (homeActivity.isPlayPrayer()) {
+                                invalidateButtonPlay()
+                            } else {
+                                Handler(Looper.getMainLooper()).postDelayed({
+                                    homeActivity.playPrayer(it)
+                                    invalidateButtonPlay()
+                                }, 300)
+                            }
+                        }
+                        /*
+                        if (currentPrayer?.like?.contains(viewModel.user?.username) == true) {
+                            binding?.btnLikeDoa?.setImageResource(R.drawable.ic_baseline_favorite_24)
+                        }
+                         */
                     }
                 }
             }
@@ -137,12 +172,40 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
             }.initItem(tasks)
         }
 
+        binding?.btnPlayDoa?.setOnClickListener {
+
+            if (!session.getBoolean(Cons.BUNDLE.PRAYER_COUNT)) {
+                Toast.makeText(requireContext(), "Hope you always pray before.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            if (binding?.btnPlayDoa?.tag == null) {
+                homeActivity.playPrayer(currentPrayer ?: return@setOnClickListener)
+                invalidateButtonPlay()
+            } else {
+                homeActivity.stopPrayer()
+                invalidateButtonPlay(false)
+            }
+        }
+
         binding?.swipeRefresh?.setOnRefreshListener {
             viewModel.apply {
                 taskToday()
                 allMenus()
                 getAbsent()
             }
+        }
+    }
+
+    private fun invalidateButtonPlay(playing: Boolean = true) {
+        binding?.btnPlayDoa?.setImageResource(if (playing) R.drawable.ic_baseline_pause_circle_filled_24 else R.drawable.ic_baseline_play_circle_filled_24)
+        binding?.btnPlayDoa?.tag = if (playing) true else null
+    }
+
+    private fun initPrayer() {
+        val hour = DateTimeHelper().convert(DateTimeHelper().createAt(), "yyyy-MM-dd HH:mm:ss", "H").toInt()
+        if (hour in 8..9) { // TODO: return jam 9
+            viewModel.preparePrayer()
         }
     }
 
@@ -170,14 +233,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
     }
 
     private fun dataDummy() {
-        /* prayer */
-        val prayer = Prayer(
-            image = "https://c-fa.cdn.smule.com/rs-s-sg-1/sing_google/performance/cover/db/76/244786ea-1547-4341-95f2-3f0951ac2598.jpg",
-            title = "Pak Haji Jamaludin",
-            description = "Bismillah"
-        )
-        binding?.prayer = prayer
-
         /* homeMenu */
         val homeMenu = arrayOf(
             HomeMenu(

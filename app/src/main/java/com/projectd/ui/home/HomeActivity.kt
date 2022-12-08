@@ -4,29 +4,67 @@ import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import com.crocodic.core.extension.clearNotification
 import com.crocodic.core.extension.snack
 import com.projectd.R
+import com.projectd.base.App
 import com.projectd.base.activity.BaseActivity
 import com.projectd.data.Session
+import com.projectd.data.model.Prayer
 import com.projectd.databinding.ActivityHomeBinding
+import com.projectd.service.prayer.PrayerPlayer
+import com.projectd.service.worker.DailySetupWorker
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import org.koin.android.ext.android.inject
 
 class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(R.layout.activity_home) {
 
     private val navHostFragment: NavHostFragment by lazy { supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment }
     private val navController: NavController by lazy { navHostFragment.navController }
+    private val prayerPlayer: PrayerPlayer by lazy { (application as App).prayerPlayer }
     private val session: Session by inject()
     private var backPressed: Long = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        clearNotification()
         if (session.getUser() == null) navController.navigate(R.id.actionLoginFragment)
+
+        binding.vPrayerInformation.setOnClickListener { navController.navigate(R.id.actionHomeFragment) }
+        initDailySetup()
 
         onBackPressedHandle()
     }
 
+    private fun initDailySetup() {
+        DailySetupWorker.setup(this)
+    }
+
     fun popMsg(msg: String) = binding.root.snack(msg)
+
+    fun playPrayer(prayer: Prayer) {
+        prayerPlayer.playPrayer(prayer)
+        invalidateTickerPlayer()
+    }
+
+    fun isPlayPrayer() = prayerPlayer.isPlayPrayer()
+
+    fun stopPrayer() {
+        prayerPlayer.stopPrayer()
+        binding.prayer = null
+    }
+
+    fun invalidateTickerPlayer() {
+        binding.prayer = if (navController.currentDestination?.id != R.id.homeFragment && isPlayPrayer()) prayerPlayer.prayer else null
+    }
+
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+    fun playBackMedia(playBack: Prayer.PlayBack) {
+        if (playBack == Prayer.PlayBack.STOP) {
+            binding.prayer = null
+        }
+    }
 
     private fun onBackPressedHandle() {
         this@HomeActivity

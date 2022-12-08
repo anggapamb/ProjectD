@@ -5,6 +5,7 @@ import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface ApiService {
 
@@ -19,7 +20,9 @@ interface ApiService {
     suspend fun taskToday(): String
 
     @GET("projects")
-    suspend fun allProject(): String
+    suspend fun allProject(
+        @Query("page") page: Int
+    ): String
 
     @FormUrlEncoded
     @POST("project/add")
@@ -91,5 +94,11 @@ interface ApiService {
     @POST("task/date")
     suspend fun taskByDate(
         @Field("date") date: String
+    ): String
+
+    @FormUrlEncoded
+    @POST("project/search")
+    suspend fun searchProject(
+        @Field("projectName") projectName: String?
     ): String
 }

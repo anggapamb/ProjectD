@@ -58,6 +58,10 @@ class TodayAbsentFragment : BaseFragment<FragmentTodayAbsentBinding>(R.layout.fr
                     }
                 }.show()
             }
+
+        binding?.swipeRefresh?.setOnRefreshListener {
+            viewModel.listAllAbsent()
+        }
     }
 
     private fun observe() {
@@ -65,12 +69,15 @@ class TodayAbsentFragment : BaseFragment<FragmentTodayAbsentBinding>(R.layout.fr
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
                     viewModel.dataAbsents.collect {
-                        listAbsent.clear()
-                        binding?.rvUpdate?.adapter?.notifyDataSetChanged()
-                        listAbsent.addAll(it)
-                        binding?.rvUpdate?.adapter?.notifyItemInserted(0)
-                        binding?.vEmpty?.isVisible = listAbsent.isEmpty()
-                        binding?.progressBar?.isVisible = false
+                        binding?.apply {
+                            listAbsent.clear()
+                            rvUpdate.adapter?.notifyDataSetChanged()
+                            listAbsent.addAll(it)
+                            rvUpdate.adapter?.notifyItemInserted(0)
+                            vEmpty.isVisible = listAbsent.isEmpty()
+                            progressBar.isVisible = false
+                            swipeRefresh.isRefreshing = false
+                        }
                     }
                 }
             }

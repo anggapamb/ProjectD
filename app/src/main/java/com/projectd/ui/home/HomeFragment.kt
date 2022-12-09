@@ -13,12 +13,12 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.crocodic.core.base.adapter.CoreListAdapter
-import com.crocodic.core.data.CoreSession
 import com.crocodic.core.extension.tos
 import com.crocodic.core.helper.DateTimeHelper
 import com.projectd.R
 import com.projectd.base.fragment.BaseFragment
 import com.projectd.data.Cons
+import com.projectd.data.Session
 import com.projectd.data.model.AdditionalMenu
 import com.projectd.data.model.HomeMenu
 import com.projectd.data.model.Prayer
@@ -27,7 +27,6 @@ import com.projectd.databinding.FragmentHomeBinding
 import com.projectd.databinding.ItemMainMenuBinding
 import com.projectd.databinding.ItemSecondMenuBinding
 import com.projectd.databinding.ItemUpdateBinding
-import com.projectd.service.fcm.FirebaseMsgService
 import com.projectd.ui.dialog.AbsentDialog
 import com.projectd.ui.dialog.TaskReportDialog
 import com.projectd.util.ViewBindingAdapter.Companion.openUrl
@@ -41,15 +40,15 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
     private val menus = ArrayList<HomeMenu?>()
     private val listTask = ArrayList<Task?>()
     private val listAdditionalMenu = ArrayList<AdditionalMenu?>()
-    private val session: CoreSession by inject()
+    private val session: Session by inject()
     private var currentPrayer: Prayer? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         requireActivity().window.statusBarColor = ContextCompat.getColor(requireContext(), R.color.white)
+        if (session.getUser() == null) navigateTo(R.id.actionLoginFragment)
 
         // TODO: ini besok dihapus
-        FirebaseMsgService.createNotification(requireContext(), 1, "halo", "askdal")
         binding?.ivAvatar?.setOnClickListener {
             session.clearAll()
             requireActivity().tos("Logout")
@@ -207,7 +206,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
 
     private fun initPrayer() {
         val hour = DateTimeHelper().convert(DateTimeHelper().createAt(), "yyyy-MM-dd HH:mm:ss", "H").toInt()
-        if (hour in 8..10) { // TODO: return jam 9
+        if (hour in 8..9) { // TODO: return jam 9
             viewModel.preparePrayer()
         }
     }

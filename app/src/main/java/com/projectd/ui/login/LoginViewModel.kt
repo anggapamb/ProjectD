@@ -26,6 +26,7 @@ class LoginViewModel(private val apiService: ApiService) : BaseViewModel() {
                     override suspend fun onSuccess(response: JSONObject) {
                         val message = response.getString("message")
                         val data = response.getJSONObject("data").toObject<User>(gson)
+                        saveFirebaseRegId { regId -> data.fcmId = regId }
                         session.saveUser(data)
                         _apiResponse.send(ApiResponse(ApiStatus.SUCCESS, message = message))
                     }

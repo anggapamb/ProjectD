@@ -27,7 +27,9 @@ data class User(
     @SerializedName("re_login")
     val reLogin: String?,
     @SerializedName("token")
-    val token: String?
+    val token: String?,
+    @SerializedName("fcmId")
+    var fcmId: String?
 ): Parcelable {
 
     fun shortName(): String {

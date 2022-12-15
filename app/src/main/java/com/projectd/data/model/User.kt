@@ -6,14 +6,14 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class User(
-    @SerializedName("id")
-    val id: Int?,
     @SerializedName("banned")
     val banned: String?,
     @SerializedName("devision")
     val devision: String?,
     @SerializedName("email")
     val email: String?,
+    @SerializedName("id")
+    val id: Int?,
     @SerializedName("id_devision")
     val idDevision: Int?,
     @SerializedName("is_leader")
@@ -27,9 +27,7 @@ data class User(
     @SerializedName("re_login")
     val reLogin: String?,
     @SerializedName("token")
-    val token: String?,
-    @SerializedName("fcmId")
-    var fcmId: String?
+    val token: String?
 ): Parcelable {
 
     fun shortName(): String {

@@ -104,4 +104,7 @@ interface ApiService {
 
     @GET("show/doa")
     suspend fun showPrayer(): String
+
+    @GET("tasks/list-user-not-input-task-today")
+    suspend fun userNotReady(): String
 }

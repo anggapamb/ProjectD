@@ -6,6 +6,7 @@ import com.crocodic.core.extension.toJson
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.gson.Gson
 import com.projectd.api.FcmApiService
+import com.projectd.data.Cons
 import com.projectd.data.Session
 import com.projectd.data.model.User
 import com.projectd.data.param.RequestFcm
@@ -33,7 +34,7 @@ open class BaseViewModel: CoreViewModel(), KoinComponent {
     }
 
     fun getFirebaseRegId(result: (String) -> Unit) {
-        session.getUser()?.fcmId?.let { result(it) }
+        session.getString(Cons.DB.USER.FCM_ID).let(result)
     }
 
     fun sendNotificationToUser(title: String, message: String, type: String? = null) {

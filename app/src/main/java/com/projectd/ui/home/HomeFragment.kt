@@ -27,20 +27,25 @@ import com.projectd.databinding.FragmentHomeBinding
 import com.projectd.databinding.ItemMainMenuBinding
 import com.projectd.databinding.ItemSecondMenuBinding
 import com.projectd.databinding.ItemUpdateBinding
+import com.projectd.service.AudioHelper
 import com.projectd.ui.dialog.AbsentDialog
 import com.projectd.ui.dialog.TaskReportDialog
 import com.projectd.util.ViewBindingAdapter.Companion.openUrl
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import timber.log.Timber
 
 class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
 
     private val viewModel: HomeViewModel by viewModel()
+    private val audioHelper: AudioHelper by inject()
+    private val session: Session by inject()
+
     private val menus = ArrayList<HomeMenu?>()
     private val listTask = ArrayList<Task?>()
     private val listAdditionalMenu = ArrayList<AdditionalMenu?>()
-    private val session: Session by inject()
+
     private var currentPrayer: Prayer? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -49,6 +54,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
         if (session.getUser() == null) navigateTo(R.id.actionLoginFragment)
 
         // TODO: ini besok dihapus
+        Timber.d("CekUser: ${session.getUser()}")
         binding?.ivAvatar?.setOnClickListener {
             session.clearAll()
             requireActivity().tos("Logout")
@@ -182,10 +188,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
             }
 
             if (binding?.btnPlayDoa?.tag == null) {
-                homeActivity.playPrayer(currentPrayer ?: return@setOnClickListener)
+                //homeActivity.playPrayer(currentPrayer ?: return@setOnClickListener)
+                audioHelper.playMedia(currentPrayer ?: return@setOnClickListener)
                 invalidateButtonPlay()
             } else {
-                homeActivity.stopPrayer()
+                //homeActivity.stopPrayer()
+                audioHelper.pauseMedia()
                 invalidateButtonPlay(false)
             }
         }
@@ -205,8 +213,19 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
     }
 
     private fun initPrayer() {
+
+        val date = DateTimeHelper().dateNow()
+
+        if (session.getString(Session.LAST_DATE_SEEK) != date) {
+            session.setValue(Session.LAST_DATE_SEEK, date)
+            session.setValue(Cons.BUNDLE.PRAYER_SEEK, 0)
+            session.setValue(Cons.BUNDLE.PRAYER_COUNT, false)
+
+            Timber.d("reset seek")
+        }
+
         val hour = DateTimeHelper().convert(DateTimeHelper().createAt(), "yyyy-MM-dd HH:mm:ss", "H").toInt()
-        if (hour in 8..9) { // TODO: return jam 9
+        if (hour in 8..9) {
             viewModel.preparePrayer()
         }
     }

@@ -27,14 +27,7 @@ object Cons {
         }
 
         object USER {
-            const val REFF_NAME = "user"
-            const val USERNAME = "username"
             const val FCM_ID = "fcmId"
-            const val RE_LOGIN = "reLogin"
-            const val ONLINE = "online"
-            const val LAST_ONLINE = "lastOnline"
-            const val ROLE = "role"
-            const val APP_VERSION = "appVersion"
         }
 
         object PROJECT {

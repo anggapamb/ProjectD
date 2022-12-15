@@ -5,8 +5,10 @@ import com.crocodic.core.helper.okhttp.SSLTrust
 import com.google.gson.Gson
 import com.projectd.BuildConfig
 import com.projectd.api.ApiService
+import com.projectd.data.Cons
 import com.projectd.ui.dialog.ManagerChooserDialog.ManagerChooserViewModel
 import com.projectd.data.Session
+import com.projectd.service.AudioHelper
 import com.projectd.ui.dialog.AbsentDialog.AbsentViewModel
 import com.projectd.ui.dialog.LoadingDialog
 import com.projectd.ui.dialog.ProjectChooserDialog.ProjectChooserViewModel
@@ -36,6 +38,7 @@ object AppModule {
         singleOf(::Gson)
         singleOf(::Session)
         singleOf(::CoreSession)
+        singleOf(::AudioHelper)
 
         single { activityContext ->
             LoadingDialog(activityContext.get())
@@ -87,8 +90,10 @@ object AppModule {
                 val original = chain.request()
                 val session = getKoin().get<Session>()
                 val token = session.getUser()?.token
+                val fcmId = session.getString(Cons.DB.USER.FCM_ID)
                 val requestBuilder = original.newBuilder()
                     .header("Authorization", "$token")
+                    .header("device_token", fcmId)
                     .header("Content-Type", "application/json")
                     .method(original.method, original.body)
 

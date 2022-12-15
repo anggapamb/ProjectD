@@ -106,4 +106,17 @@ class TodayCheckViewModel(private val apiService: ApiService): BaseViewModel() {
         )
     }
 
+    fun userNotReady() = viewModelScope.launch {
+        ApiObserver(
+            block = {apiService.userNotReady()},
+            toast = false,
+            responseListener = object : ApiObserver.ResponseListener {
+                override suspend fun onSuccess(response: JSONObject) {
+                    TODO("Not yet implemented")
+                }
+
+            }
+        )
+    }
+
 }

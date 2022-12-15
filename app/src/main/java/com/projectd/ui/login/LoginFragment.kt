@@ -7,16 +7,20 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.crocodic.core.api.ApiStatus
+import com.crocodic.core.data.CoreSession
 import com.crocodic.core.extension.textOf
 import com.projectd.R
 import com.projectd.base.fragment.BaseFragment
+import com.projectd.data.Cons
 import com.projectd.databinding.FragmentLoginBinding
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class LoginFragment : BaseFragment<FragmentLoginBinding>(R.layout.fragment_login), View.OnClickListener {
 
     private val viewModel: LoginViewModel by viewModel()
+    private val session: CoreSession by inject()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -24,7 +28,14 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(R.layout.fragment_login
 
         binding?.btnLogin?.setOnClickListener(this)
 
+        initFcmToken()
         observe()
+    }
+
+    private fun initFcmToken() {
+        viewModel.saveFirebaseRegId {
+            session.setValue(Cons.DB.USER.FCM_ID, it)
+        }
     }
 
     private fun observe() {

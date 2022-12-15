@@ -8,6 +8,7 @@ import com.projectd.api.ApiService
 import com.projectd.base.viewmodel.BaseViewModel
 import com.projectd.data.model.Absent
 import com.projectd.data.model.Task
+import com.projectd.data.model.User
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
@@ -84,6 +85,7 @@ class TodayCheckViewModel(private val apiService: ApiService): BaseViewModel() {
             }
             "On-going" -> {
                 tasks.filter { it.status?.contains(Task.HOLD, true) == true || it.status.equals(null) }
+                // TODO: remove yang loadnya standby
             }
              else -> { tasks }
          }
@@ -106,15 +108,23 @@ class TodayCheckViewModel(private val apiService: ApiService): BaseViewModel() {
         )
     }
 
+    private val _dataUsers: Channel<List<User?>> = Channel()
+    val dataUsers = _dataUsers.receiveAsFlow()
+
     fun userNotReady() = viewModelScope.launch {
         ApiObserver(
             block = {apiService.userNotReady()},
             toast = false,
             responseListener = object : ApiObserver.ResponseListener {
                 override suspend fun onSuccess(response: JSONObject) {
-                    TODO("Not yet implemented")
+                    val data = response.getJSONArray("data").toList<User>(gson)
+                    _dataUsers.send(data)
                 }
 
+                override suspend fun onError(response: ApiResponse) {
+                    super.onError(response)
+                    _dataUsers.send(emptyList())
+                }
             }
         )
     }

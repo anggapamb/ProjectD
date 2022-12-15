@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.core.util.Pair
+import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -51,21 +52,6 @@ class TaskAddFragment : BaseFragment<FragmentTaskAddBinding>(R.layout.fragment_t
                 }
             }
         }
-
-        /* foreclose
-        lifecycleScope.launch {
-            viewModel.apiResponse.collect {
-                if (!activity?.isFinishing!!) {
-                    loadingDialog.show(it.message, it.status == ApiStatus.LOADING)
-                    if (it.status == ApiStatus.SUCCESS) {
-                        loadingDialog.dismiss()
-                        Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
-                        findNavController().navigateUp()
-                    }
-                }
-            }
-        }
-         */
     }
 
     private fun initView() {
@@ -83,10 +69,38 @@ class TaskAddFragment : BaseFragment<FragmentTaskAddBinding>(R.layout.fragment_t
 
         binding?.rgDiff?.setOnCheckedChangeListener { _, i ->
             when (i) {
-                R.id.rb_standby_task -> { load = LOAD.STANDBY }
-                R.id.rb_low_task -> { load = LOAD.LOW }
-                R.id.rb_medium_task -> { load = LOAD.MEDIUM }
-                R.id.rb_high_task -> { load = LOAD.HIGH }
+                R.id.rb_standby_task -> {
+                    load = LOAD.STANDBY
+                    binding?.apply {
+                        etProject.isVisible = false
+                        etStartDate.isVisible = false
+                        etEndDate.isVisible = false
+                    }
+                }
+                R.id.rb_low_task -> {
+                    load = LOAD.LOW
+                    binding?.apply {
+                        etProject.isVisible = true
+                        etStartDate.isVisible = true
+                        etEndDate.isVisible = true
+                    }
+                }
+                R.id.rb_medium_task -> {
+                    load = LOAD.MEDIUM
+                    binding?.apply {
+                        etProject.isVisible = true
+                        etStartDate.isVisible = true
+                        etEndDate.isVisible = true
+                    }
+                }
+                R.id.rb_high_task -> {
+                    load = LOAD.HIGH
+                    binding?.apply {
+                        etProject.isVisible = true
+                        etStartDate.isVisible = true
+                        etEndDate.isVisible = true
+                    }
+                }
             }
         }
     }

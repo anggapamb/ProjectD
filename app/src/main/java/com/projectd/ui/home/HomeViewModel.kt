@@ -79,18 +79,19 @@ class HomeViewModel(private val apiService: ApiService) : BaseViewModel() {
         )
     }
 
-    private fun customData(data: List<AdditionalMenu>): ArrayList<AdditionalMenu?> {
+    private fun customData(data: List<AdditionalMenu>): List<AdditionalMenu?> {
         val todayCheck = data.single { it.key?.contains("today_check", true) == true }
+        val menus = ArrayList<AdditionalMenu>(data)
 
-        val menus = ArrayList<AdditionalMenu?>()
-        menus.addAll(data)
-
-        return if (user?.devision != Cons.DIVISION.MANAGER) {
-            menus.remove(todayCheck)
-            menus
+        if (user?.devision == Cons.DIVISION.MANAGER || user?.devision == Cons.DIVISION.PSDM) {
+            return menus
+        } else if (user?.isLeader == "true"){
+            return menus
         } else {
-            menus
+            menus.remove(todayCheck)
         }
+
+       return menus
     }
 
     private val _dataAbsent: Channel<Absent?> = Channel()

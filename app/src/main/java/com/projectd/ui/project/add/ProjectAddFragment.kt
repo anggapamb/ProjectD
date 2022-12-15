@@ -31,7 +31,7 @@ class ProjectAddFragment : BaseFragment<FragmentProjectAddBinding>(R.layout.frag
     private var selectedStartDate: String? = null
     private var selectedEndDate: String? = null
     private var selectedManager: Manager? = null
-    private var pdShortName = ""
+    private var pdShortName: String? = ""
 
     var project: Project? = null
 
@@ -49,6 +49,12 @@ class ProjectAddFragment : BaseFragment<FragmentProjectAddBinding>(R.layout.frag
         // TODO: deprecated parcelable
         project = arguments?.getParcelable(Cons.BUNDLE.DATA)
         binding?.project = project
+
+        if (project != null) {
+            selectedStartDate = project?.startDate
+            selectedEndDate = project?.endDate
+            pdShortName = project?.projectDirector
+        }
 
         binding?.etStartDate?.setOnFocusChangeListener { _, b ->
             if (b) showDatePicker()
@@ -85,21 +91,6 @@ class ProjectAddFragment : BaseFragment<FragmentProjectAddBinding>(R.layout.frag
                 }
             }
         }
-
-        /* foreclose
-        lifecycleScope.launch {
-            viewModel.apiResponse.collect {
-                if (!activity?.isFinishing!!) {
-                    loadingDialog.show(it.message, it.status == ApiStatus.LOADING)
-                    if (it.status == ApiStatus.SUCCESS) {
-                        loadingDialog.dismiss()
-                        Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
-                        findNavController().navigateUp()
-                    }
-                }
-            }
-        }
-         */
     }
 
     private fun showManager() {
@@ -146,8 +137,13 @@ class ProjectAddFragment : BaseFragment<FragmentProjectAddBinding>(R.layout.frag
     }
 
     private fun addProject() {
-        viewModel.addProject(binding?.etProjectName?.textOf(), binding?.etDescription?.textOf(), selectedStartDate, selectedEndDate,
-            pdShortName, difficult, viewModel.user?.shortName())
+        if (project == null) {
+            viewModel.addProject(null, binding?.etProjectName?.textOf(), binding?.etDescription?.textOf(), selectedStartDate, selectedEndDate,
+                pdShortName, difficult, viewModel.user?.shortName())
+        } else {
+            viewModel.addProject(project?.id.toString(),binding?.etProjectName?.textOf(), binding?.etDescription?.textOf(), selectedStartDate, selectedEndDate,
+                pdShortName, difficult, viewModel.user?.shortName())
+        }
     }
 
     override fun onClick(p0: View?) {

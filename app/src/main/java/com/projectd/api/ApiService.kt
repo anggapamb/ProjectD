@@ -36,6 +36,19 @@ interface ApiService {
         @Field("createdBy") createdBy: String?,
     ): String
 
+    @FormUrlEncoded
+    @POST("http://206.189.40.49:8111/project/update/{id}")
+    suspend fun updateProject(
+        @Path("id") idProject: String?,
+        @Field("project_name") project_name: String?,
+        @Field("description") description: String?,
+        @Field("start_date") start_date: String?,
+        @Field("end_date") end_date: String?,
+        @Field("project_director") project_director: String?,
+        @Field("difficulty") difficulty: String?,
+        @Field("createdBy") createdBy: String?,
+    ): String
+
     @GET("users/managers")
     suspend fun managers(): String
 

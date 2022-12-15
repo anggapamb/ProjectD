@@ -12,6 +12,7 @@ import org.json.JSONObject
 class ProjectAddViewModel(private val apiService: ApiService): BaseViewModel() {
 
     fun addProject(
+        idProject: String?,
         projectName: String?,
         description: String?,
         startDate: String?,
@@ -26,7 +27,13 @@ class ProjectAddViewModel(private val apiService: ApiService): BaseViewModel() {
         } else {
             _apiResponse.send(ApiResponse(ApiStatus.LOADING, message = "Submitting..."))
             ApiObserver(
-                block = {apiService.addProject(projectName, description, startDate, endDate, projectDirector, difficult, createdBy)},
+                block = {
+                        if (idProject.isNullOrEmpty()){
+                            apiService.addProject(projectName, description, startDate, endDate, projectDirector, difficult, createdBy)
+                        } else {
+                            apiService.updateProject(idProject,projectName, description, startDate, endDate, projectDirector, difficult, createdBy)
+                        }
+                },
                 toast = true,
                 responseListener = object : ApiObserver.ResponseListener {
                     override suspend fun onSuccess(response: JSONObject) {

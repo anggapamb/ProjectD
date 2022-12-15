@@ -56,7 +56,7 @@
             android:textColor="@color/text_bg_green"
             android:textSize="@dimen/text_small"
             android:textStyle="bold"
-            android:visibility="@{data.project == null ? View.GONE : View.VISIBLE}"
+            android:visibility='@{data.project.contains("null") ? View.GONE : View.VISIBLE}'
             tools:text="Project Name" />
 
         <TextView

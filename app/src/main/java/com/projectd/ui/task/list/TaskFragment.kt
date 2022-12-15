@@ -20,6 +20,7 @@ import com.projectd.databinding.FragmentTaskBinding
 import com.projectd.databinding.ItemDayBinding
 import com.projectd.databinding.ItemTaskBinding
 import com.projectd.ui.dialog.TaskReportDialog
+import com.projectd.ui.task.add.TaskAddFragment
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class TaskFragment : BaseFragment<FragmentTaskBinding>(R.layout.fragment_task), View.OnClickListener {
@@ -65,7 +66,9 @@ class TaskFragment : BaseFragment<FragmentTaskBinding>(R.layout.fragment_task), 
                 holder.binding.btnMore.isVisible = (viewModel.user?.devision == Cons.DIVISION.MANAGER)
 
                 holder.itemView.setOnClickListener {
-                    TaskReportDialog(data) { viewModel.taskByDate(selectedDate) }.show(childFragmentManager, "report")
+                    if (data?.status != Task.DONE && data?.load != TaskAddFragment.Companion.LOAD.STANDBY) {
+                        TaskReportDialog(data) { viewModel.taskByDate(selectedDate) }.show(childFragmentManager, "report")
+                    }
                 }
 
                 holder.binding.btnMore.setOnClickListener {

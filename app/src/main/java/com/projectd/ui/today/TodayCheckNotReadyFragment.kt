@@ -1,27 +1,52 @@
 package com.projectd.ui.today
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
+import androidx.core.view.isVisible
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import com.crocodic.core.base.adapter.CoreListAdapter
 import com.projectd.R
 import com.projectd.base.fragment.BaseFragment
+import com.projectd.data.model.User
 import com.projectd.databinding.FragmentTodayCheckNotReadyBinding
+import com.projectd.databinding.ItemUserNotReadyBinding
+import kotlinx.coroutines.launch
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class TodayCheckNotReadyFragment : BaseFragment<FragmentTodayCheckNotReadyBinding>(R.layout.fragment_today_check_not_ready) {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    private val listUser =  ArrayList<User?>()
+    private val viewModel: TodayCheckViewModel by viewModel()
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        observe()
+        initView()
+        viewModel.userNotReady()
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_today_check_not_ready, container, false)
+    private fun observe() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    viewModel.dataUsers.collect {
+                        listUser.clear()
+                        binding?.rvUser?.adapter?.notifyDataSetChanged()
+                        listUser.addAll(it)
+                        binding?.rvUser?.adapter?.notifyItemInserted(0)
+                        binding?.vEmpty?.isVisible = listUser.isEmpty()
+                    }
+                }
+            }
+        }
+    }
+
+    private fun initView() {
+        binding?.rvUser?.adapter = CoreListAdapter<ItemUserNotReadyBinding, User>(R.layout.item_user_not_ready)
+            .initItem(listUser)
     }
 
     companion object {

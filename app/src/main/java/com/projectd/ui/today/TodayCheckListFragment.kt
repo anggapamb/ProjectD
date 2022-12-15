@@ -16,6 +16,7 @@ import com.projectd.data.model.Task
 import com.projectd.databinding.FragmentTodayCheckListBinding
 import com.projectd.databinding.ItemUpdateBinding
 import com.projectd.ui.dialog.TaskReportDialog
+import com.projectd.ui.task.add.TaskAddFragment
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -64,8 +65,10 @@ class TodayCheckListFragment : BaseFragment<FragmentTodayCheckListBinding>(R.lay
                     holder.binding.btnMore.isVisible = (viewModel.user?.devision == Cons.DIVISION.MANAGER)
 
                     holder.itemView.setOnClickListener {
-                        if (data?.createdBy == viewModel.user?.shortName()) {
-                            TaskReportDialog(data) { viewModel.taskToday(title) }.show(childFragmentManager, "report")
+                        if (data?.createdBy == viewModel.user?.shortName() && data?.load != TaskAddFragment.Companion.LOAD.STANDBY) {
+                            if ( data?.status != Task.DONE) {
+                                TaskReportDialog(data) { viewModel.taskToday(title) }.show(childFragmentManager, "report")
+                            }
                         }
                     }
 

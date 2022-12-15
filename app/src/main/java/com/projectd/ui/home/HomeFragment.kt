@@ -30,6 +30,7 @@ import com.projectd.databinding.ItemUpdateBinding
 import com.projectd.service.AudioHelper
 import com.projectd.ui.dialog.AbsentDialog
 import com.projectd.ui.dialog.TaskReportDialog
+import com.projectd.ui.task.add.TaskAddFragment
 import com.projectd.util.ViewBindingAdapter.Companion.openUrl
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
@@ -153,8 +154,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
                     holder.binding.btnMore.isVisible = (viewModel.user?.devision == Cons.DIVISION.MANAGER)
 
                     holder.itemView.setOnClickListener {
-                        if (data?.createdBy == viewModel.user?.shortName()) {
-                            TaskReportDialog(data) { getTaskToday() }.show(childFragmentManager, "report")
+                        if (data?.createdBy == viewModel.user?.shortName() && data?.load != TaskAddFragment.Companion.LOAD.STANDBY) {
+                            if ( data?.status != Task.DONE) {
+                                TaskReportDialog(data) { getTaskToday() }.show(childFragmentManager, "report")
+                            }
                         }
                     }
 

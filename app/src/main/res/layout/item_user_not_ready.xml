@@ -35,7 +35,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text='@{data.nama}'
+                android:text='@{data.name}'
                 android:textColor="@color/brand_75"
                 android:textSize="@dimen/text_default"
                 android:textStyle="bold"

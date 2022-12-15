@@ -6,20 +6,26 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class User(
+    @SerializedName("app_version")
+    val appVersion: Int?,
     @SerializedName("banned")
     val banned: String?,
     @SerializedName("devision")
     val devision: String?,
     @SerializedName("email")
     val email: String?,
+    @SerializedName("fcm_id")
+    val fcmId: String?,
     @SerializedName("id")
     val id: Int?,
-    @SerializedName("id_devision")
-    val idDevision: Int?,
     @SerializedName("is_leader")
     val isLeader: String?,
-    @SerializedName("nama")
-    val nama: String?,
+    @SerializedName("last_online")
+    val lastOnline: String?,
+    @SerializedName("name")
+    val name: String?,
+    @SerializedName("online")
+    val online: String?,
     @SerializedName("phone")
     val phone: String?,
     @SerializedName("photo")
@@ -31,12 +37,17 @@ data class User(
 ): Parcelable {
 
     fun shortName(): String {
-        val spName = nama?.split(" ")
+        val spName = name?.split(" ")
         val name = if ((spName?.size ?: 0) >= 2) {
             "${spName?.get(0)} ${spName?.get(spName.lastIndex)}"
         } else {
             "${spName?.get(0)}"
         }
         return name
+    }
+
+    fun oneName(): String {
+        val spName = name?.split(" ")
+        return "${spName?.get(0)}"
     }
 }

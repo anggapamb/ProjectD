@@ -13,6 +13,7 @@ import com.projectd.ui.dialog.AbsentDialog.AbsentViewModel
 import com.projectd.ui.dialog.LoadingDialog
 import com.projectd.ui.dialog.ProjectChooserDialog.ProjectChooserViewModel
 import com.projectd.ui.dialog.TaskReportDialog.TaskReportViewModel
+import com.projectd.ui.dialog.UpdateProgressDialog.UpdateProgressViewModel
 import com.projectd.ui.home.HomeViewModel
 import com.projectd.ui.login.LoginViewModel
 import com.projectd.ui.project.add.ProjectAddViewModel
@@ -57,6 +58,7 @@ object AppModule {
         viewModel { TaskReportViewModel(get()) }
         viewModel { AbsentViewModel(get()) }
         viewModel { TodayCheckViewModel(get()) }
+        viewModel { UpdateProgressViewModel(get()) }
     }
 
     val networkModule = module {

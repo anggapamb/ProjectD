@@ -1,7 +1,10 @@
 package com.projectd.ui.project.list
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -11,10 +14,12 @@ import com.crocodic.core.base.adapter.PaginationAdapter
 import com.crocodic.core.base.adapter.PaginationLoadState
 import com.projectd.R
 import com.projectd.base.fragment.BaseFragment
+import com.projectd.data.Cons
 import com.projectd.data.model.Project
 import com.projectd.databinding.FragmentProjectBinding
 import com.projectd.databinding.ItemProjectBinding
 import com.projectd.databinding.StateLoadingBinding
+import com.projectd.ui.dialog.UpdateProgressDialog
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -22,7 +27,34 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class ProjectFragment : BaseFragment<FragmentProjectBinding>(R.layout.fragment_project), View.OnClickListener {
 
     private val viewModel: ProjectViewModel by viewModel()
-    private val adapter = PaginationAdapter<ItemProjectBinding, Project>(R.layout.item_project)
+    private val adapter = object : PaginationAdapter<ItemProjectBinding, Project>(R.layout.item_project) {
+        override fun onBindViewHolder(
+            holder: ItemViewHolder<ItemProjectBinding, Project>,
+            position: Int
+        ) {
+            val item = getItem(position)
+            holder.binding.data = item
+            holder.binding.btnMore.isVisible = (item?.projectDirector == viewModel.user?.oneName() || item?.createdBy == viewModel.user?.name)
+
+            holder.itemView.setOnClickListener {
+                val moreDialogItems = arrayListOf("Update Progress", "Edit")
+                AlertDialog.Builder(requireContext()).apply {
+                    setItems(moreDialogItems.toTypedArray()) { dialog, which ->
+                        dialog.dismiss()
+                        when (which) {
+                            0 -> {
+                                if (item != null) { UpdateProgressDialog(item).show(childFragmentManager, "update_progress") }
+                            }
+                            1 -> {
+                                val bundle = bundleOf(Cons.BUNDLE.DATA to item)
+                                navigateTo(R.id.actionProjectAddFragment, bundle)
+                            }
+                        }
+                    }
+                }.show()
+            }
+        }
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

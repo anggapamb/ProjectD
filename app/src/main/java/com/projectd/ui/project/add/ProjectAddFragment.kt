@@ -14,7 +14,9 @@ import com.crocodic.core.helper.DateTimeHelper
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.projectd.R
 import com.projectd.base.fragment.BaseFragment
+import com.projectd.data.Cons
 import com.projectd.data.model.Manager
+import com.projectd.data.model.Project
 import com.projectd.databinding.FragmentProjectAddBinding
 import com.projectd.ui.dialog.ManagerChooserDialog
 import kotlinx.coroutines.launch
@@ -24,11 +26,14 @@ import java.util.*
 class ProjectAddFragment : BaseFragment<FragmentProjectAddBinding>(R.layout.fragment_project_add), View.OnClickListener {
 
     private val viewModel: ProjectAddViewModel by viewModel()
+
     private var difficult: String? = null
     private var selectedStartDate: String? = null
     private var selectedEndDate: String? = null
     private var selectedManager: Manager? = null
     private var pdShortName = ""
+
+    var project: Project? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -40,6 +45,11 @@ class ProjectAddFragment : BaseFragment<FragmentProjectAddBinding>(R.layout.frag
     }
 
     private fun initView() {
+
+        // TODO: deprecated parcelable
+        project = arguments?.getParcelable(Cons.BUNDLE.DATA)
+        binding?.project = project
+
         binding?.etStartDate?.setOnFocusChangeListener { _, b ->
             if (b) showDatePicker()
         }

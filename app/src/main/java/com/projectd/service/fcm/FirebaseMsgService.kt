@@ -19,6 +19,7 @@ import com.projectd.data.Session
 import com.projectd.ui.home.HomeActivity
 import org.greenrobot.eventbus.EventBus
 import org.koin.android.ext.android.inject
+import timber.log.Timber
 import java.util.*
 
 class FirebaseMsgService: FirebaseMessagingService() {
@@ -36,8 +37,10 @@ class FirebaseMsgService: FirebaseMessagingService() {
         if (session.getUser() == null) return
 
         if (isBackground(applicationContext)) {
+            Timber.d("CekFirebaseMessage: inBackground")
             createNotification(applicationContext, DateTimeHelper().createAtLong().toInt(), message.data["title"] ?: return, message.data["content"] ?: return)
         } else {
+            Timber.d("CekFirebaseMessage: inForeground")
             createAppNotification(message.data["title"] ?: return, message.data["content"] ?: return, message.data["type"])
         }
     }

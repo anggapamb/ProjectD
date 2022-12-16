@@ -44,6 +44,13 @@
         <service
             android:name=".service.prayer.PrayerNotificationService"
             android:exported="false" />
+
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_baseline_local_fire_department_24" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/black" />
     </application>
 
 </manifest>

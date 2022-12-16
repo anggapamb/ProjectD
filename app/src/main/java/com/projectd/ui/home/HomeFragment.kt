@@ -122,7 +122,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
                                 invalidateButtonPlay()
                             } else {
                                 Handler(Looper.getMainLooper()).postDelayed({
-                                    homeActivity.playPrayer(it)
+                                    //homeActivity.playPrayer(it)
+                                    audioHelper.playMedia(it)
                                     invalidateButtonPlay()
                                 }, 300)
                             }

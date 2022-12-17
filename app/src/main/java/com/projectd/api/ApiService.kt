@@ -121,6 +121,10 @@ interface ApiService {
     @GET("tasks/list-user-not-input-task-today")
     suspend fun userNotReady(): String
 
-    @POST("devisions")
-    suspend fun allDivision(): String
+    @FormUrlEncoded
+    @POST("notif/absent/{id}")
+    suspend fun notificationAbsent(
+        @Path("id") id: String?,
+        @Field("status") status: String?
+    ): String
 }

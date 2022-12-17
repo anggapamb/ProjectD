@@ -38,6 +38,7 @@ class TodayCheckNotReadyFragment : BaseFragment<FragmentTodayCheckNotReadyBindin
                         listUser.addAll(it)
                         binding?.rvUser?.adapter?.notifyItemInserted(0)
                         binding?.vEmpty?.isVisible = listUser.isEmpty()
+                        binding?.swipeRefresh?.isRefreshing = false
                     }
                 }
             }
@@ -47,6 +48,10 @@ class TodayCheckNotReadyFragment : BaseFragment<FragmentTodayCheckNotReadyBindin
     private fun initView() {
         binding?.rvUser?.adapter = CoreListAdapter<ItemUserNotReadyBinding, User>(R.layout.item_user_not_ready)
             .initItem(listUser)
+
+        binding?.swipeRefresh?.setOnRefreshListener {
+            viewModel.userNotReady()
+        }
     }
 
     companion object {

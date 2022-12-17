@@ -44,7 +44,7 @@ class AbsentDialog(private val onSuccess: () -> Unit): BottomSheetDialogFragment
 
         binding?.btnSubmit?.setOnClickListener {
             if (!binding?.etReason?.textOf().isNullOrEmpty()) { activity?.tos("Submitting..", true) }
-            viewModel.sendAbsent(viewModel.user?.nama, binding?.etReason?.textOf(), viewModel.user?.id.toString())
+            viewModel.sendAbsent(viewModel.user?.name, binding?.etReason?.textOf(), viewModel.user?.id.toString())
         }
     }
 

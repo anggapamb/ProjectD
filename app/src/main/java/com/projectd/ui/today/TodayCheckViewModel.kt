@@ -46,6 +46,8 @@ class TodayCheckViewModel(private val apiService: ApiService): BaseViewModel() {
             responseListener = object : ApiObserver.ResponseListener {
                 override suspend fun onSuccess(response: JSONObject) {
                     onResponse.invoke()
+                    val status = if (approved == "true") { "approved" } else { "rejected" }
+                    apiService.notificationAbsent(idAbsent, status)
                 }
 
             }
@@ -78,13 +80,29 @@ class TodayCheckViewModel(private val apiService: ApiService): BaseViewModel() {
         val filterTasks = ArrayList<Task?>(tasks)
         when (status) {
             "Standby" -> {
-                return filterTasks.filter { it?.load?.contains(Task.STANDBY, true) == true }
+                return if (user?.devision == Cons.DIVISION.MANAGER || user?.devision == Cons.DIVISION.PSDM) {
+                    filterTasks.filter { it?.load?.contains(Task.STANDBY, true) == true }
+                } else {
+                    val taskStandby = filterTasks.filter { it?.load?.contains(Task.STANDBY, true) == true }
+                    taskStandby.filter { it?.devision?.contains(user?.devision.toString(), true) == true}
+                }
+
             }
             "Done" -> {
-                return filterTasks.filter { it?.status?.contains(Task.DONE, true) == true }
+                return if (user?.devision == Cons.DIVISION.MANAGER || user?.devision == Cons.DIVISION.PSDM) {
+                    filterTasks.filter { it?.status?.contains(Task.DONE, true) == true }
+                } else {
+                    val taskDone = filterTasks.filter { it?.status?.contains(Task.DONE, true) == true }
+                    taskDone.filter { it?.devision?.contains(user?.devision.toString(), true) == true}
+                }
             }
             "Cancel" -> {
-                return filterTasks.filter { it?.status?.contains(Task.CANCEL, true) == true }
+                return if (user?.devision == Cons.DIVISION.MANAGER || user?.devision == Cons.DIVISION.PSDM) {
+                    filterTasks.filter { it?.status?.contains(Task.CANCEL, true) == true }
+                } else {
+                    val taskCancel = filterTasks.filter { it?.status?.contains(Task.CANCEL, true) == true }
+                    taskCancel.filter { it?.devision?.contains(user?.devision.toString(), true) == true}
+                }
             }
             "On-going" -> {
                 val onGoing = filterTasks.filter { it?.status?.contains(Task.HOLD, true) == true || it?.status.equals(null) }
@@ -94,7 +112,12 @@ class TodayCheckViewModel(private val apiService: ApiService): BaseViewModel() {
                         list.add(it)
                     }
                 }
-                return list
+
+                return if (user?.devision == Cons.DIVISION.MANAGER || user?.devision == Cons.DIVISION.PSDM) {
+                    list
+                } else {
+                    list.filter { it?.devision?.contains(user?.devision.toString(), true) == true }
+                }
             }
          }
 

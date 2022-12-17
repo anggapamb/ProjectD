@@ -13,12 +13,16 @@ data class Task(
     val createdBy: String?,
     @SerializedName("description")
     val description: String?,
+    @SerializedName("devision")
+    val devision: String?,
     @SerializedName("done_at")
     val doneAt: String?,
     @SerializedName("end_date")
     val endDate: String?,
     @SerializedName("id")
     val id: Int?,
+    @SerializedName("id_login")
+    val idLogin: String?,
     @SerializedName("load")
     val load: String?,
     @SerializedName("photo")

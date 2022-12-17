@@ -37,7 +37,7 @@ interface ApiService {
     ): String
 
     @FormUrlEncoded
-    @POST("http://206.189.40.49:8111/project/update/{id}")
+    @POST("project/update/{id}")
     suspend fun updateProject(
         @Path("id") idProject: String?,
         @Field("project_name") project_name: String?,
@@ -120,4 +120,7 @@ interface ApiService {
 
     @GET("tasks/list-user-not-input-task-today")
     suspend fun userNotReady(): String
+
+    @POST("devisions")
+    suspend fun allDivision(): String
 }

@@ -3,7 +3,6 @@ package com.projectd.ui.project.list
 import android.app.AlertDialog
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
@@ -34,9 +33,9 @@ class ProjectFragment : BaseFragment<FragmentProjectBinding>(R.layout.fragment_p
         ) {
             val item = getItem(position)
             holder.binding.data = item
-            holder.binding.btnMore.isVisible = (item?.projectDirector == viewModel.user?.oneName() || item?.createdBy == viewModel.user?.name)
+            holder.binding.btnMore.isVisible = (item?.projectDirector == viewModel.user?.shortName() || item?.createdBy == viewModel.user?.shortName())
 
-            holder.itemView.setOnClickListener {
+            holder.binding.btnMore.setOnClickListener {
                 val moreDialogItems = arrayListOf("Update Progress", "Edit")
                 AlertDialog.Builder(requireContext()).apply {
                     setItems(moreDialogItems.toTypedArray()) { dialog, which ->

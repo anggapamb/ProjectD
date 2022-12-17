@@ -15,7 +15,6 @@ import com.google.android.material.datepicker.MaterialDatePicker
 import com.projectd.R
 import com.projectd.base.fragment.BaseFragment
 import com.projectd.data.Cons
-import com.projectd.data.model.Manager
 import com.projectd.data.model.Project
 import com.projectd.databinding.FragmentProjectAddBinding
 import com.projectd.ui.dialog.ManagerChooserDialog
@@ -30,7 +29,6 @@ class ProjectAddFragment : BaseFragment<FragmentProjectAddBinding>(R.layout.frag
     private var difficult: String? = null
     private var selectedStartDate: String? = null
     private var selectedEndDate: String? = null
-    private var selectedManager: Manager? = null
     private var pdShortName: String? = ""
 
     var project: Project? = null
@@ -95,8 +93,7 @@ class ProjectAddFragment : BaseFragment<FragmentProjectAddBinding>(R.layout.frag
 
     private fun showManager() {
         ManagerChooserDialog(manager, {
-            selectedManager = it
-            pdShortName = it?.oneName().toString()
+            pdShortName = it?.shortName()
             binding?.etPd?.setText(it?.name)
         }) { clearFocus() }.show(childFragmentManager, "manager")
     }

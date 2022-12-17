@@ -15,6 +15,7 @@ import com.crocodic.core.helper.DateTimeHelper
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.projectd.R
 import com.projectd.base.fragment.BaseFragment
+import com.projectd.data.Cons
 import com.projectd.databinding.FragmentTaskAddBinding
 import com.projectd.ui.dialog.ProjectChooserDialog
 import kotlinx.coroutines.launch
@@ -27,6 +28,7 @@ class TaskAddFragment : BaseFragment<FragmentTaskAddBinding>(R.layout.fragment_t
     private var selectedStartDate: String? = null
     private var selectedEndDate: String? = null
     private var load: String? = null
+    private var timelineIsFilled = false
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -108,6 +110,59 @@ class TaskAddFragment : BaseFragment<FragmentTaskAddBinding>(R.layout.fragment_t
     private fun showProject() {
         ProjectChooserDialog( {
             binding?.etProject?.setText(it?.projectName)
+
+            when (viewModel.user?.devision) {
+                Cons.DIVISION.MOBILE -> {
+                    if (!it?.timeline?.mobile?.startDate.isNullOrEmpty() || !it?.timeline?.mobile?.endDate.isNullOrEmpty()) {
+                        binding?.vTimeline?.isVisible = false
+                        timelineIsFilled = true
+
+                    }
+                }
+                Cons.DIVISION.WEB -> {
+                    if (!it?.timeline?.web?.startDate.isNullOrEmpty() || !it?.timeline?.web?.endDate.isNullOrEmpty()) {
+                        binding?.vTimeline?.isVisible = false
+                        timelineIsFilled = true
+                    }
+                }
+                Cons.DIVISION.TESTER -> {
+                    if (!it?.timeline?.tester?.startDate.isNullOrEmpty() || !it?.timeline?.tester?.endDate.isNullOrEmpty()) {
+                        binding?.vTimeline?.isVisible = false
+                        timelineIsFilled = true
+                    }
+                }
+                Cons.DIVISION.ANALYST -> {
+                    if (!it?.timeline?.analyst?.startDate.isNullOrEmpty() || !it?.timeline?.analyst?.endDate.isNullOrEmpty()) {
+                        binding?.vTimeline?.isVisible = false
+                        timelineIsFilled = true
+                    }
+                }
+                Cons.DIVISION.MARKETING -> {
+                    if (!it?.timeline?.marketing?.startDate.isNullOrEmpty() || !it?.timeline?.marketing?.endDate.isNullOrEmpty()) {
+                        binding?.vTimeline?.isVisible = false
+                        timelineIsFilled = true
+                    }
+                }
+                Cons.DIVISION.PSDM -> {
+                    if (!it?.timeline?.psdm?.startDate.isNullOrEmpty() || !it?.timeline?.psdm?.endDate.isNullOrEmpty()) {
+                        binding?.vTimeline?.isVisible = false
+                        timelineIsFilled = true
+                    }
+                }
+                Cons.DIVISION.SUPER_ADMIN -> {
+                    if (!it?.timeline?.super_admin?.startDate.isNullOrEmpty() || !it?.timeline?.super_admin?.endDate.isNullOrEmpty()) {
+                        binding?.vTimeline?.isVisible = false
+                        timelineIsFilled = true
+                    }
+                }
+                Cons.DIVISION.MANAGER -> {
+                    if (!it?.timeline?.manager?.startDate.isNullOrEmpty() || !it?.timeline?.manager?.endDate.isNullOrEmpty()) {
+                        binding?.vTimeline?.isVisible = false
+                        timelineIsFilled = true
+                    }
+                }
+            }
+
         } , { clearFocus() }, { navigateTo(R.id.actionProjectAddFragment) }).show(childFragmentManager, "project")
     }
 
@@ -147,7 +202,8 @@ class TaskAddFragment : BaseFragment<FragmentTaskAddBinding>(R.layout.fragment_t
     }
 
     private fun addTask() {
-        viewModel.addTask(binding?.etTask?.textOf(), binding?.etProject?.textOf(), selectedStartDate, selectedEndDate, load, viewModel.user?.shortName(), viewModel.user?.photo)
+        viewModel.addTask(binding?.etTask?.textOf(), binding?.etProject?.textOf(),
+            selectedStartDate, selectedEndDate, load, viewModel.user?.shortName(), viewModel.user?.photo, timelineIsFilled)
     }
 
     override fun onClick(p0: View?) {

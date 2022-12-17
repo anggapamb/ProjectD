@@ -115,7 +115,7 @@
                 android:textColor="@color/brand_50"
                 android:textSize="@dimen/text_small"
                 android:textStyle="bold"
-                android:visibility='@{data.project.contains("null") ? View.GONE : View.VISIBLE}'
+                android:visibility='@{data.project == null ? View.GONE : View.VISIBLE}'
                 tools:text="Project Name" />
 
             <TextView
@@ -128,7 +128,7 @@
                 android:text='@{"Verified by " + data.verifiedBy}'
                 android:textColor="@color/brand_50"
                 android:textSize="@dimen/text_smallest"
-                android:visibility='@{data.verified.equals("0") ? View.GONE : View.VISIBLE}'
+                android:visibility='@{data.verified.contains("0") ? View.GONE : View.VISIBLE}'
                 app:drawableStartCompat="@drawable/ic_baseline_verified_24"
                 app:drawableTint="@color/text_bg_green"
                 tools:text="Verified by Aliando" />

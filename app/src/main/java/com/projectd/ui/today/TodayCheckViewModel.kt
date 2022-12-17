@@ -6,9 +6,11 @@ import com.crocodic.core.api.ApiResponse
 import com.crocodic.core.extension.toList
 import com.projectd.api.ApiService
 import com.projectd.base.viewmodel.BaseViewModel
+import com.projectd.data.Cons
 import com.projectd.data.model.Absent
 import com.projectd.data.model.Task
 import com.projectd.data.model.User
+import com.projectd.ui.task.add.TaskAddFragment
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
@@ -72,23 +74,31 @@ class TodayCheckViewModel(private val apiService: ApiService): BaseViewModel() {
         )
     }
 
-    private fun customData(status: String, tasks: List<Task>): List<Task> {
-         return when (status) {
+    private fun customData(status: String, tasks: List<Task>): List<Task?> {
+        val filterTasks = ArrayList<Task?>(tasks)
+        when (status) {
             "Standby" -> {
-                tasks.filter { it.load?.contains(Task.STANDBY, true) == true }
+                return filterTasks.filter { it?.load?.contains(Task.STANDBY, true) == true }
             }
             "Done" -> {
-                tasks.filter { it.status?.contains(Task.DONE, true) == true }
+                return filterTasks.filter { it?.status?.contains(Task.DONE, true) == true }
             }
             "Cancel" -> {
-                tasks.filter { it.status?.contains(Task.CANCEL, true) == true }
+                return filterTasks.filter { it?.status?.contains(Task.CANCEL, true) == true }
             }
             "On-going" -> {
-                tasks.filter { it.status?.contains(Task.HOLD, true) == true || it.status.equals(null) }
-                // TODO: remove yang loadnya standby
+                val onGoing = filterTasks.filter { it?.status?.contains(Task.HOLD, true) == true || it?.status.equals(null) }
+                val list = ArrayList<Task?>()
+                ArrayList(onGoing).forEach {
+                    if (it?.load != TaskAddFragment.Companion.LOAD.STANDBY) {
+                        list.add(it)
+                    }
+                }
+                return list
             }
-             else -> { tasks }
          }
+
+        return filterTasks
     }
 
     fun verifyTask(idTask: String?, token: String?, onResponse: () -> Unit) = viewModelScope.launch {
@@ -118,7 +128,7 @@ class TodayCheckViewModel(private val apiService: ApiService): BaseViewModel() {
             responseListener = object : ApiObserver.ResponseListener {
                 override suspend fun onSuccess(response: JSONObject) {
                     val data = response.getJSONArray("data").toList<User>(gson)
-                    _dataUsers.send(data)
+                    _dataUsers.send(customUserNotReady(data))
                 }
 
                 override suspend fun onError(response: ApiResponse) {
@@ -126,6 +136,18 @@ class TodayCheckViewModel(private val apiService: ApiService): BaseViewModel() {
                 }
             }
         )
+    }
+
+    private fun customUserNotReady(data: List<User>): List<User?> {
+        val dataUsers = ArrayList<User?>(data)
+
+        if (user?.devision == Cons.DIVISION.MANAGER || user?.devision == Cons.DIVISION.PSDM) {
+            return dataUsers
+        } else if (user?.isLeader == "true") {
+            return dataUsers.filter { it?.devision?.contains(user?.devision.toString(), true) == true }
+        }
+
+        return dataUsers
     }
 
 }

@@ -20,7 +20,9 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(R.layout.a
 
     private val navHostFragment: NavHostFragment by lazy { supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment }
     private val navController: NavController by lazy { navHostFragment.navController }
+
     private val prayerPlayer: PrayerPlayer by lazy { (application as App).prayerPlayer }
+
     private var backPressed: Long = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {

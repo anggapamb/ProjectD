@@ -40,13 +40,13 @@ import timber.log.Timber
 class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
 
     private val viewModel: HomeViewModel by viewModel()
-    private val audioHelper: AudioHelper by inject()
     private val session: Session by inject()
 
     private val menus = ArrayList<HomeMenu?>()
     private val listTask = ArrayList<Task?>()
     private val listAdditionalMenu = ArrayList<AdditionalMenu?>()
 
+    private val audioHelper: AudioHelper by inject()
     private var currentPrayer: Prayer? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -122,8 +122,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
                                 invalidateButtonPlay()
                             } else {
                                 Handler(Looper.getMainLooper()).postDelayed({
-                                    //homeActivity.playPrayer(it)
-                                    audioHelper.playMedia(it)
+                                    homeActivity.playPrayer(it)
                                     invalidateButtonPlay()
                                 }, 300)
                             }

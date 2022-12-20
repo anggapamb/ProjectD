@@ -4,12 +4,8 @@
 
     <data>
         <variable
-            name="user"
-            type="com.projectd.data.model.User" />
-
-        <variable
-            name="division"
-            type="String" />
+            name="task"
+            type="com.projectd.data.model.Task" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout xmlns:tools="http://schemas.android.com/tools"
@@ -34,7 +30,7 @@
                 android:layout_width="72dp"
                 android:layout_height="72dp"
                 android:background="@drawable/bg_circle_placeholder"
-                app:imgCircleUrl='@{user.photo}'
+                app:imgCircleUrl='@{task.photo}'
                 android:contentDescription="@string/cd_photo_user" />
 
             <LinearLayout
@@ -46,7 +42,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text='@{user.shortName()}'
+                    android:text='@{task.createdBy}'
                     android:textColor="@color/brand_75"
                     android:textSize="@dimen/text_default"
                     android:textStyle="bold"
@@ -55,7 +51,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text='@{" · " + division}'
+                    android:text='@{" · " + task.devision}'
                     android:textColor="@color/brand_75"
                     android:textSize="@dimen/text_small"
                     tools:text=" · engineer" />

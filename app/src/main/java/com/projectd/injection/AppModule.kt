@@ -20,6 +20,7 @@ import com.projectd.ui.project.add.ProjectAddViewModel
 import com.projectd.ui.project.list.ProjectViewModel
 import com.projectd.ui.task.add.TaskAddViewModel
 import com.projectd.ui.task.list.TaskViewModel
+import com.projectd.ui.task.pov.TaskPovViewModel
 import com.projectd.ui.today.TodayCheckViewModel
 import org.koin.dsl.module
 import java.util.concurrent.TimeUnit
@@ -59,6 +60,7 @@ object AppModule {
         viewModel { AbsentViewModel(get()) }
         viewModel { TodayCheckViewModel(get()) }
         viewModel { UpdateProgressViewModel(get()) }
+        viewModel { TaskPovViewModel(get()) }
     }
 
     val networkModule = module {

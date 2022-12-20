@@ -22,6 +22,9 @@
         <action
             android:id="@+id/actionTodayFragment"
             app:destination="@id/todayCheckFragment" />
+        <action
+            android:id="@+id/actionTaskPovFragment"
+            app:destination="@id/taskPovFragment" />
     </fragment>
     <fragment
         android:id="@+id/loginFragment"
@@ -72,5 +75,9 @@
         android:id="@+id/todayCheckFragment"
         android:name="com.projectd.ui.today.TodayCheckFragment"
         android:label="TodayCheckFragment"
-        tools:layout="@layout/fragment_today_check"/>
+        tools:layout="@layout/fragment_today_check">
+        <action
+            android:id="@+id/actionTaskPovFragment"
+            app:destination="@id/taskPovFragment" />
+    </fragment>
 </navigation>

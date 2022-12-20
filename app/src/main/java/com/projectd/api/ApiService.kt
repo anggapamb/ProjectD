@@ -34,6 +34,7 @@ interface ApiService {
         @Field("project_director") project_director: String?,
         @Field("difficulty") difficulty: String?,
         @Field("createdBy") createdBy: String?,
+        @Field("progress") progress: String?,
     ): String
 
     @FormUrlEncoded
@@ -47,6 +48,7 @@ interface ApiService {
         @Field("project_director") project_director: String?,
         @Field("difficulty") difficulty: String?,
         @Field("createdBy") createdBy: String?,
+        @Field("progress") progress: String?,
     ): String
 
     @GET("users/managers")

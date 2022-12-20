@@ -28,7 +28,9 @@ data class Project(
     @SerializedName("timeline")
     val timeline: Timeline?,
     @SerializedName("updated_at")
-    val updatedAt: String?
+    val updatedAt: String?,
+    @SerializedName("progress")
+    val progress: String,
 ): Parcelable {
     fun prettyTimeline() = "${DateTimeHelper().convert(startDate, "yyyy-MM-dd", "d MMMM yyyy")} - ${DateTimeHelper().convert(endDate, "yyyy-MM-dd", "d MMMM yyyy")}"
     fun prettyStartDate() = DateTimeHelper().convert(startDate, "yyyy-MM-dd", "d MMM yyyy")

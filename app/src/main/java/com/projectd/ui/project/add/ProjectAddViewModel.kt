@@ -19,7 +19,8 @@ class ProjectAddViewModel(private val apiService: ApiService): BaseViewModel() {
         endDate: String?,
         projectDirector: String?,
         difficult: String?,
-        createdBy: String?) = viewModelScope.launch {
+        createdBy: String?,
+        progress: String?) = viewModelScope.launch {
 
         if (projectName.isNullOrEmpty() || description.isNullOrEmpty() || startDate.isNullOrEmpty() || endDate.isNullOrEmpty() || projectDirector.isNullOrEmpty()
             || difficult.isNullOrEmpty() || createdBy.isNullOrEmpty()) {
@@ -28,10 +29,10 @@ class ProjectAddViewModel(private val apiService: ApiService): BaseViewModel() {
             _apiResponse.send(ApiResponse(ApiStatus.LOADING, message = "Submitting..."))
             ApiObserver(
                 block = {
-                        if (idProject.isNullOrEmpty()){
-                            apiService.addProject(projectName, description, startDate, endDate, projectDirector, difficult, createdBy)
+                        if (idProject.isNullOrEmpty()) {
+                            apiService.addProject(projectName, description, startDate, endDate, projectDirector, difficult, createdBy, null)
                         } else {
-                            apiService.updateProject(idProject,projectName, description, startDate, endDate, projectDirector, difficult, createdBy)
+                            apiService.updateProject(idProject,projectName, description, startDate, endDate, projectDirector, difficult, createdBy, progress)
                         }
                 },
                 toast = true,

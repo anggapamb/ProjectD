@@ -63,7 +63,12 @@ class TaskFragment : BaseFragment<FragmentTaskBinding>(R.layout.fragment_task), 
             ) {
                 val data = listTask[position]
                 holder.binding.data = data
-                holder.binding.btnMore.isVisible = (viewModel.user?.devision == Cons.DIVISION.MANAGER)
+
+                if (viewModel.user?.devision == Cons.DIVISION.MANAGER || viewModel.user?.devision == Cons.DIVISION.PSDM) {
+                    holder.binding.btnMore.isVisible = true
+                } else if (viewModel.user?.isLeader == "true") {
+                    holder.binding.btnMore.isVisible = true
+                }
 
                 holder.itemView.setOnClickListener {
                     if (data?.status != Task.DONE && data?.load != TaskAddFragment.Companion.LOAD.STANDBY) {

@@ -35,6 +35,8 @@ class ProjectFragment : BaseFragment<FragmentProjectBinding>(R.layout.fragment_p
             holder.binding.data = item
             holder.binding.btnMore.isVisible = (item?.projectDirector == viewModel.user?.shortName() || item?.createdBy == viewModel.user?.shortName())
 
+            holder.binding.progressBar.progress = item?.progress?.toInt()!!
+
             holder.binding.btnMore.setOnClickListener {
                 val moreDialogItems = arrayListOf("Update Progress", "Edit")
                 AlertDialog.Builder(requireContext()).apply {
@@ -42,7 +44,7 @@ class ProjectFragment : BaseFragment<FragmentProjectBinding>(R.layout.fragment_p
                         dialog.dismiss()
                         when (which) {
                             0 -> {
-                                if (item != null) { UpdateProgressDialog(item).show(childFragmentManager, "update_progress") }
+                                UpdateProgressDialog(item) { viewModel.allProject() }.show(childFragmentManager, "update_progress")
                             }
                             1 -> {
                                 val bundle = bundleOf(Cons.BUNDLE.DATA to item)

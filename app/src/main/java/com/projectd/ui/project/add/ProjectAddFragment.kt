@@ -136,10 +136,10 @@ class ProjectAddFragment : BaseFragment<FragmentProjectAddBinding>(R.layout.frag
     private fun addProject() {
         if (project == null) {
             viewModel.addProject(null, binding?.etProjectName?.textOf(), binding?.etDescription?.textOf(), selectedStartDate, selectedEndDate,
-                pdShortName, difficult, viewModel.user?.shortName())
+                pdShortName, difficult, viewModel.user?.shortName(), null)
         } else {
             viewModel.addProject(project?.id.toString(),binding?.etProjectName?.textOf(), binding?.etDescription?.textOf(), selectedStartDate, selectedEndDate,
-                pdShortName, difficult, viewModel.user?.shortName())
+                pdShortName, difficult, viewModel.user?.shortName(), project?.progress)
         }
     }
 

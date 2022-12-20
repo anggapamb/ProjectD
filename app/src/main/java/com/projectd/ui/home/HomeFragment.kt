@@ -8,6 +8,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -151,13 +152,21 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
                     val data = tasks[position]
                     holder.binding.data = data
                     holder.binding.yourName = viewModel.user?.shortName()
-                    holder.binding.btnMore.isVisible = (viewModel.user?.devision == Cons.DIVISION.MANAGER)
+
+                    if (viewModel.user?.devision == Cons.DIVISION.MANAGER || viewModel.user?.devision == Cons.DIVISION.PSDM) {
+                        holder.binding.btnMore.isVisible = true
+                    } else if (viewModel.user?.isLeader == "true") {
+                        holder.binding.btnMore.isVisible = true
+                    }
 
                     holder.itemView.setOnClickListener {
-                        if (data?.createdBy == viewModel.user?.shortName() && data?.load != TaskAddFragment.Companion.LOAD.STANDBY) {
-                            if ( data?.status != Task.DONE) {
+                        if (data?.idLogin == viewModel.user?.id.toString() && data.load != TaskAddFragment.Companion.LOAD.STANDBY) {
+                            if ( data.status != Task.DONE) {
                                 TaskReportDialog(data) { getTaskToday() }.show(childFragmentManager, "report")
                             }
+                        } else if (viewModel.user?.devision == Cons.DIVISION.MANAGER || viewModel.user?.devision == Cons.DIVISION.PSDM) {
+                            val bundle = bundleOf(Cons.BUNDLE.DATA to data)
+                            navigateTo(R.id.actionTaskPovFragment, bundle)
                         }
                     }
 

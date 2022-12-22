@@ -40,57 +40,64 @@
 
         </LinearLayout>
 
-        <FrameLayout
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swipe_refresh"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_project"
+            <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:clipToPadding="false"
-                android:orientation="vertical"
-                android:paddingHorizontal="12dp"
-                android:paddingBottom="12dp"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                app:spanCount="2"
-                tools:itemCount="3"
-                tools:listitem="@layout/item_project"/>
+                android:layout_height="match_parent">
 
-            <ProgressBar
-                android:id="@+id/progress_rv_project"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"/>
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_project"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:clipToPadding="false"
+                    android:orientation="vertical"
+                    android:paddingHorizontal="12dp"
+                    android:paddingBottom="12dp"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    app:spanCount="2"
+                    tools:itemCount="3"
+                    tools:listitem="@layout/item_project"/>
 
-            <LinearLayout
-                android:id="@+id/v_empty"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:gravity="center"
-                android:visibility="gone"
-                tools:visibility="visible">
+                <ProgressBar
+                    android:id="@+id/progress_rv_project"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"/>
 
-                <ImageView
+                <LinearLayout
+                    android:id="@+id/v_empty"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:src="@drawable/ic_baseline_find_in_page_56"
-                    app:tint="@color/brand_50"
-                    android:contentDescription="@string/cd_image_no_data" />
+                    android:gravity="center"
+                    android:visibility="gone"
+                    tools:visibility="visible">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/label_no_data_found"
-                    android:textColor="@color/brand_50"
-                    android:textSize="@dimen/text_default" />
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:adjustViewBounds="true"
+                        android:src="@drawable/ic_baseline_find_in_page_56"
+                        app:tint="@color/brand_50"
+                        android:contentDescription="@string/cd_image_no_data" />
 
-            </LinearLayout>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/label_no_data_found"
+                        android:textColor="@color/brand_50"
+                        android:textSize="@dimen/text_default" />
 
-        </FrameLayout>
+                </LinearLayout>
+
+            </FrameLayout>
+
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     </LinearLayout>
 

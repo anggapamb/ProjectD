@@ -74,33 +74,26 @@ class TaskAddFragment : BaseFragment<FragmentTaskAddBinding>(R.layout.fragment_t
                 R.id.rb_standby_task -> {
                     load = LOAD.STANDBY
                     binding?.apply {
-                        etProject.isVisible = false
-                        etStartDate.isVisible = false
-                        etEndDate.isVisible = false
+                        ilProject.isVisible = false
+                        vTimeline.isVisible = false
                     }
                 }
                 R.id.rb_low_task -> {
                     load = LOAD.LOW
                     binding?.apply {
-                        etProject.isVisible = true
-                        etStartDate.isVisible = true
-                        etEndDate.isVisible = true
+                        ilProject.isVisible = true
                     }
                 }
                 R.id.rb_medium_task -> {
                     load = LOAD.MEDIUM
                     binding?.apply {
-                        etProject.isVisible = true
-                        etStartDate.isVisible = true
-                        etEndDate.isVisible = true
+                        ilProject.isVisible = true
                     }
                 }
                 R.id.rb_high_task -> {
                     load = LOAD.HIGH
                     binding?.apply {
-                        etProject.isVisible = true
-                        etStartDate.isVisible = true
-                        etEndDate.isVisible = true
+                        ilProject.isVisible = true
                     }
                 }
             }
@@ -117,48 +110,72 @@ class TaskAddFragment : BaseFragment<FragmentTaskAddBinding>(R.layout.fragment_t
                         binding?.vTimeline?.isVisible = false
                         timelineIsFilled = true
 
+                    } else {
+                        binding?.vTimeline?.isVisible = true
+                        timelineIsFilled = false
                     }
                 }
                 Cons.DIVISION.WEB -> {
                     if (!it?.timeline?.web?.startDate.isNullOrEmpty() || !it?.timeline?.web?.endDate.isNullOrEmpty()) {
                         binding?.vTimeline?.isVisible = false
                         timelineIsFilled = true
+                    } else {
+                        binding?.vTimeline?.isVisible = true
+                        timelineIsFilled = false
                     }
                 }
                 Cons.DIVISION.TESTER -> {
                     if (!it?.timeline?.tester?.startDate.isNullOrEmpty() || !it?.timeline?.tester?.endDate.isNullOrEmpty()) {
                         binding?.vTimeline?.isVisible = false
                         timelineIsFilled = true
+                    } else {
+                        binding?.vTimeline?.isVisible = true
+                        timelineIsFilled = false
                     }
                 }
                 Cons.DIVISION.ANALYST -> {
                     if (!it?.timeline?.analyst?.startDate.isNullOrEmpty() || !it?.timeline?.analyst?.endDate.isNullOrEmpty()) {
                         binding?.vTimeline?.isVisible = false
                         timelineIsFilled = true
+                    } else {
+                        binding?.vTimeline?.isVisible = true
+                        timelineIsFilled = false
                     }
                 }
                 Cons.DIVISION.MARKETING -> {
                     if (!it?.timeline?.marketing?.startDate.isNullOrEmpty() || !it?.timeline?.marketing?.endDate.isNullOrEmpty()) {
                         binding?.vTimeline?.isVisible = false
                         timelineIsFilled = true
+                    } else {
+                        binding?.vTimeline?.isVisible = true
+                        timelineIsFilled = false
                     }
                 }
                 Cons.DIVISION.PSDM -> {
                     if (!it?.timeline?.psdm?.startDate.isNullOrEmpty() || !it?.timeline?.psdm?.endDate.isNullOrEmpty()) {
                         binding?.vTimeline?.isVisible = false
                         timelineIsFilled = true
+                    } else {
+                        binding?.vTimeline?.isVisible = true
+                        timelineIsFilled = false
                     }
                 }
                 Cons.DIVISION.SUPER_ADMIN -> {
                     if (!it?.timeline?.super_admin?.startDate.isNullOrEmpty() || !it?.timeline?.super_admin?.endDate.isNullOrEmpty()) {
                         binding?.vTimeline?.isVisible = false
                         timelineIsFilled = true
+                    } else {
+                        binding?.vTimeline?.isVisible = true
+                        timelineIsFilled = false
                     }
                 }
                 Cons.DIVISION.MANAGER -> {
                     if (!it?.timeline?.manager?.startDate.isNullOrEmpty() || !it?.timeline?.manager?.endDate.isNullOrEmpty()) {
                         binding?.vTimeline?.isVisible = false
                         timelineIsFilled = true
+                    } else {
+                        binding?.vTimeline?.isVisible = true
+                        timelineIsFilled = false
                     }
                 }
             }

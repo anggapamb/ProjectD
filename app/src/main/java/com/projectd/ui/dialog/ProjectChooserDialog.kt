@@ -27,7 +27,10 @@ import com.projectd.data.model.Project
 import com.projectd.databinding.DialogProjectChooserBinding
 import com.projectd.databinding.ItemProjectChooserBinding
 import com.projectd.databinding.StateLoadingBinding
+import com.projectd.paging.ProjectRepository
+import com.projectd.paging.ProjectRepositoryImpl
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -45,7 +48,7 @@ class ProjectChooserDialog(private val onSelect: (Project?) -> Unit, private val
     private val runnable: () -> Unit = ({
         if (keyword.isEmpty()) {
             lifecycleScope.launch {
-                viewModel.allProject().collect {
+                viewModel.projectList().collect {
                     adapter.submitData(it)
                 }
             }
@@ -94,7 +97,7 @@ class ProjectChooserDialog(private val onSelect: (Project?) -> Unit, private val
     private fun observe() {
         lifecycleScope.launch {
             launch {
-                viewModel.allProject().collect {
+                viewModel.projectList().collect {
                     adapter.submitData(it)
                 }
             }
@@ -115,13 +118,13 @@ class ProjectChooserDialog(private val onSelect: (Project?) -> Unit, private val
 
     class ProjectChooserViewModel(private val apiService: ApiService): BaseViewModel() {
 
+        private val repository: ProjectRepository = ProjectRepositoryImpl(apiService, gson)
         private val firstPage = 1
         private val itemPerPage = 10
 
-        fun allProject() = Pager(CorePagingSource.config(itemPerPage), pagingSourceFactory = {
-            CorePagingSource(firstPage){ page, _ ->
-                val data = JSONObject(apiService.allProject(page)).getJSONArray("data").toList<Project>(gson)
-                data
+        fun projectList() = Pager(CorePagingSource.config(itemPerPage), pagingSourceFactory = {
+            CorePagingSource(firstPage) { page, limit ->
+                repository.getAllProject(page, limit).first() // List<Product>
             }
         }).flow.cachedIn(viewModelScope)
 

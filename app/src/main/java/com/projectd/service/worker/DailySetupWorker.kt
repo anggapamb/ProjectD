@@ -33,34 +33,40 @@ class DailySetupWorker(context: Context, workerParams: WorkerParameters): Corout
 
         Log.d("work outside")
 
-        session.getUser()?.let { user ->
+        val calendar: Calendar = Calendar.getInstance()
+        val day = calendar.get(Calendar.DAY_OF_WEEK)
+        if (day != Calendar.SATURDAY && day != Calendar.SUNDAY) {
 
-            val greeting = arrayOf(
-                "Good morning ${user.shortName()}, how are you today?",
-                "Hello ${user.shortName()}, ready to change the word huh?",
-                "Assalamu'alaikum ${user.shortName()}, hope you always healthy today."
-            )
+            session.getUser()?.let { user ->
 
-            viewModel.preparePrayer()
-            viewModel.prayer.collect { p ->
-                setup(applicationContext)
+                val greeting = arrayOf(
+                    "Good morning ${user.shortName()}, how are you today?",
+                    "Hello ${user.shortName()}, ready to change the word huh?",
+                    "Assalamu'alaikum ${user.shortName()}, hope you always healthy today."
+                )
 
-                Log.d("work inside")
+                viewModel.preparePrayer()
+                viewModel.prayer.collect { p ->
+                    setup(applicationContext)
 
-                val message = "${getEmoji(0x1F534)} LIVE ~ ${p.description}"
+                    Log.d("work inside")
 
-                if (p.photo.isNullOrEmpty()) {
-                    FirebaseMsgService.createNotification(applicationContext, Cons.NOTIFICATION.ID_STARTUP, message, greeting.random())
-                } else {
-                    getImage(p.photo) { bmp ->
-                        bmp?.let { bp ->
-                            session.setValue(PRAYER_IMG_URL, p.photo)
-                            session.setValue(PRAYER_IMG_BMP, BitmapHelper.encodeToBase64(bp))
+                    val message = "${getEmoji(0x1F534)} LIVE ~ ${p.description}"
+
+                    if (p.photo.isNullOrEmpty()) {
+                        FirebaseMsgService.createNotification(applicationContext, Cons.NOTIFICATION.ID_STARTUP, message, greeting.random())
+                    } else {
+                        getImage(p.photo) { bmp ->
+                            bmp?.let { bp ->
+                                session.setValue(PRAYER_IMG_URL, p.photo)
+                                session.setValue(PRAYER_IMG_BMP, BitmapHelper.encodeToBase64(bp))
+                            }
+                            FirebaseMsgService.createNotification(applicationContext, Cons.NOTIFICATION.ID_STARTUP, message, greeting.random(), bmp)
                         }
-                        FirebaseMsgService.createNotification(applicationContext, Cons.NOTIFICATION.ID_STARTUP, message, greeting.random(), bmp)
                     }
                 }
             }
+
         }
 
         return Result.success()

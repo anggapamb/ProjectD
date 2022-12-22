@@ -44,7 +44,7 @@ class ProjectFragment : BaseFragment<FragmentProjectBinding>(R.layout.fragment_p
                         dialog.dismiss()
                         when (which) {
                             0 -> {
-                                UpdateProgressDialog(item) { viewModel.allProject() }.show(childFragmentManager, "update_progress")
+                                UpdateProgressDialog(item) { observe() }.show(childFragmentManager, "update_progress")
                             }
                             1 -> {
                                 val bundle = bundleOf(Cons.BUNDLE.DATA to item)
@@ -64,7 +64,6 @@ class ProjectFragment : BaseFragment<FragmentProjectBinding>(R.layout.fragment_p
 
         initView()
         observe()
-        viewModel.allProject()
     }
 
     private fun initView() {
@@ -72,13 +71,17 @@ class ProjectFragment : BaseFragment<FragmentProjectBinding>(R.layout.fragment_p
             val loadStateFooter = PaginationLoadState<StateLoadingBinding>(R.layout.state_loading)
             binding?.rvProject?.adapter = withLoadStateFooter(loadStateFooter)
         }
+
+        binding?.swipeRefresh?.setOnRefreshListener {
+            observe()
+        }
     }
 
     private fun observe() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
-                    viewModel.allProject().collect {
+                    viewModel.projectList().collect {
                         adapter.submitData(it)
                     }
                 }
@@ -86,6 +89,8 @@ class ProjectFragment : BaseFragment<FragmentProjectBinding>(R.layout.fragment_p
                     adapter.loadStateFlow.collectLatest {
                         val loading = it.append == LoadState.Loading || it.refresh == LoadState.Loading
                         binding?.progressRvProject?.isVisible = loading && adapter.snapshot().isEmpty()
+                        binding?.vEmpty?.isVisible = adapter.snapshot().isEmpty()
+                        binding?.swipeRefresh?.isRefreshing = loading && adapter.snapshot().isEmpty()
                     }
                 }
             }

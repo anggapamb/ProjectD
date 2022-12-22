@@ -6,11 +6,11 @@ import com.google.gson.Gson
 import com.projectd.BuildConfig
 import com.projectd.api.ApiService
 import com.projectd.data.Cons
-import com.projectd.ui.dialog.ManagerChooserDialog.ManagerChooserViewModel
 import com.projectd.data.Session
 import com.projectd.service.AudioHelper
 import com.projectd.ui.dialog.AbsentDialog.AbsentViewModel
 import com.projectd.ui.dialog.LoadingDialog
+import com.projectd.ui.dialog.ManagerChooserDialog.ManagerChooserViewModel
 import com.projectd.ui.dialog.ProjectChooserDialog.ProjectChooserViewModel
 import com.projectd.ui.dialog.TaskReportDialog.TaskReportViewModel
 import com.projectd.ui.dialog.UpdateProgressDialog.UpdateProgressViewModel
@@ -22,17 +22,17 @@ import com.projectd.ui.task.add.TaskAddViewModel
 import com.projectd.ui.task.list.TaskViewModel
 import com.projectd.ui.task.pov.TaskPovViewModel
 import com.projectd.ui.today.TodayCheckViewModel
-import org.koin.dsl.module
-import java.util.concurrent.TimeUnit
-import javax.net.ssl.SSLContext
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.module.dsl.singleOf
+import org.koin.dsl.module
 import org.koin.java.KoinJavaComponent.getKoin
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
+import java.util.concurrent.TimeUnit
+import javax.net.ssl.SSLContext
 
 object AppModule {
 

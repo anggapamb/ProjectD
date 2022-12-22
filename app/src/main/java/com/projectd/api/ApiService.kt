@@ -21,7 +21,8 @@ interface ApiService {
 
     @GET("projects")
     suspend fun allProject(
-        @Query("page") page: Int
+        @Query("page") page: Int,
+        @Query("limit") limit: Int
     ): String
 
     @FormUrlEncoded

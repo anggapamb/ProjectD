@@ -155,7 +155,13 @@ class TodayCheckViewModel(private val apiService: ApiService): BaseViewModel() {
                 }
 
                 override suspend fun onError(response: ApiResponse) {
-                    _dataUsers.send(emptyList())
+                    val jsonResponse = response.rawResponse?.let { JSONObject(it) }
+                    val data = jsonResponse?.getJSONArray("data")?.toList<User>(gson)
+                    if (data != null) {
+                        _dataUsers.send(customUserNotReady(data))
+                    } else {
+                        _dataUsers.send(customUserNotReady(emptyList()))
+                    }
                 }
             }
         )

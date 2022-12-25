@@ -62,4 +62,6 @@
     <string name="rb_cancel">Cancel</string>
     <string name="hint_write_some_learning_by_this_task">Write some learning by this task...</string>
     <string name="button_update">Update</string>
+    <string name="default_channel_id">ProjectD</string>
+    <string name="please_update_engineer_timeline">*Please update engineer timeline</string>
 </resources>

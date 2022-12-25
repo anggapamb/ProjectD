@@ -18,7 +18,6 @@ import androidx.paging.cachedIn
 import com.crocodic.core.base.adapter.CorePagingSource
 import com.crocodic.core.base.adapter.PaginationAdapter
 import com.crocodic.core.base.adapter.PaginationLoadState
-import com.crocodic.core.extension.toList
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.projectd.R
 import com.projectd.api.ApiService
@@ -32,18 +31,29 @@ import com.projectd.paging.ProjectRepositoryImpl
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import org.json.JSONObject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class ProjectChooserDialog(private val onSelect: (Project?) -> Unit, private val onCancel: () -> Unit, private val addProject: () -> Unit): BottomSheetDialogFragment() {
 
     private var binding: DialogProjectChooserBinding? = null
     private val viewModel: ProjectChooserViewModel by viewModel()
-    private val adapter = PaginationAdapter<ItemProjectChooserBinding, Project>(R.layout.item_project_chooser)
-        .initItem { _, data ->
-            onSelect(data)
-            this@ProjectChooserDialog.dismiss()
+
+    private val adapter = object : PaginationAdapter<ItemProjectChooserBinding, Project>(R.layout.item_project_chooser) {
+        override fun onBindViewHolder(
+            holder: ItemViewHolder<ItemProjectChooserBinding, Project>,
+            position: Int
+        ) {
+            val data = getItem(position)
+            holder.binding.data = data
+            holder.binding.progressBar.progress = data?.progress?.toInt()!!
+
+            holder.itemView.setOnClickListener {
+                onSelect(data)
+                this@ProjectChooserDialog.dismiss()
+            }
+        }
     }
+
     private var keyword = ""
     private val runnable: () -> Unit = ({
         if (keyword.isEmpty()) {
@@ -116,7 +126,7 @@ class ProjectChooserDialog(private val onSelect: (Project?) -> Unit, private val
         onCancel()
     }
 
-    class ProjectChooserViewModel(private val apiService: ApiService): BaseViewModel() {
+    class ProjectChooserViewModel(apiService: ApiService): BaseViewModel() {
 
         private val repository: ProjectRepository = ProjectRepositoryImpl(apiService, gson)
         private val firstPage = 1
@@ -128,10 +138,10 @@ class ProjectChooserDialog(private val onSelect: (Project?) -> Unit, private val
             }
         }).flow.cachedIn(viewModelScope)
 
-        fun searchProject(projectName: String = "") = Pager(CorePagingSource.config(itemPerPage), pagingSourceFactory = {
-            CorePagingSource(firstPage){ _, _ ->
-                val data = JSONObject(apiService.searchProject(projectName)).getJSONArray("data").toList<Project>(gson)
-                data
+
+        fun searchProject(projectName: String?) = Pager(CorePagingSource.config(itemPerPage), pagingSourceFactory = {
+            CorePagingSource(firstPage) { page, limit ->
+                repository.searchProject(projectName, page, limit).first() // List<Product>
             }
         }).flow.cachedIn(viewModelScope)
 

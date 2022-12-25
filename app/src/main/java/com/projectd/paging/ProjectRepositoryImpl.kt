@@ -15,4 +15,10 @@ class ProjectRepositoryImpl(private val apiService: ApiService, private val gson
         val projectList = JSONObject(project).getJSONArray("data").toList<Project>(gson)
         emit(projectList)
     }
+
+    override fun searchProject(projectName: String?, page: Int?, limit: Int?): Flow<List<Project>> = flow {
+        val project = apiService.searchProject(projectName, page, limit)
+        val projectList = JSONObject(project).getJSONArray("data").toList<Project>(gson)
+        emit(projectList)
+    }
 }

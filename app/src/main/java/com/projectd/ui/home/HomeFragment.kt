@@ -29,6 +29,7 @@ import com.projectd.databinding.ItemMainMenuBinding
 import com.projectd.databinding.ItemSecondMenuBinding
 import com.projectd.databinding.ItemUpdateBinding
 import com.projectd.service.AudioHelper
+import com.projectd.service.fcm.FirebaseMsgService
 import com.projectd.ui.dialog.AbsentDialog
 import com.projectd.ui.dialog.TaskReportDialog
 import com.projectd.ui.task.add.TaskAddFragment
@@ -58,9 +59,15 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
         // TODO: ini besok dihapus
         Timber.d("CekUser: ${session.getUser()}")
         binding?.ivAvatar?.setOnClickListener {
-            session.clearAll()
-            requireActivity().tos("Logout")
-            navigateTo(R.id.actionLoginFragment)
+            FirebaseMsgService.createNotificationUpdateTask(
+                requireContext(),
+                DateTimeHelper().createAtLong().toInt(),
+                "Apakah task anda sudah selesai ?",
+                "Silahkan update task anda terlebih dahulu"
+            )
+//            session.clearAll()
+//            requireActivity().tos("Logout")
+//            navigateTo(R.id.actionLoginFragment)
         }
 
         initView()

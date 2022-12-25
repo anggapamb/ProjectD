@@ -115,7 +115,9 @@ interface ApiService {
     @FormUrlEncoded
     @POST("project/search")
     suspend fun searchProject(
-        @Field("projectName") projectName: String?
+        @Field("projectName") projectName: String?,
+        @Field("page") page: Int?,
+        @Field("limit") limit: Int?
     ): String
 
     @GET("show/doa")

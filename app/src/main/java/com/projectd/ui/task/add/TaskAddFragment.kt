@@ -16,8 +16,10 @@ import com.google.android.material.datepicker.MaterialDatePicker
 import com.projectd.R
 import com.projectd.base.fragment.BaseFragment
 import com.projectd.data.Cons
+import com.projectd.data.model.Task
 import com.projectd.databinding.FragmentTaskAddBinding
 import com.projectd.ui.dialog.ProjectChooserDialog
+import com.projectd.ui.dialog.TaskChooserDialog
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.*
@@ -97,6 +99,51 @@ class TaskAddFragment : BaseFragment<FragmentTaskAddBinding>(R.layout.fragment_t
                     }
                 }
             }
+        }
+
+        binding?.btnCopyTask?.setOnClickListener {
+            TaskChooserDialog {
+
+                binding?.etTask?.setText(it?.taskName)
+                binding?.etProject?.setText(it?.project)
+
+                when (it?.load) {
+                    Task.STANDBY -> {
+                        load = LOAD.STANDBY
+                        binding?.apply {
+                            rbStandbyTask.performClick()
+                            ilProject.isVisible = false
+                            vTimeline.isVisible = false
+                        }
+
+                    }
+                    Task.LOW -> {
+                        load = LOAD.LOW
+                        binding?.apply {
+                            rbLowTask.performClick()
+                            ilProject.isVisible = true
+                            vTimeline.isVisible = true
+                        }
+                    }
+                    Task.MEDIUM -> {
+                        load = LOAD.MEDIUM
+                        binding?.apply {
+                            rbMediumTask.performClick()
+                            ilProject.isVisible = true
+                            vTimeline.isVisible = true
+                        }
+                    }
+                    Task.HIGH -> {
+                        load = LOAD.HIGH
+                        binding?.apply {
+                            rbHighTask.performClick()
+                            ilProject.isVisible = true
+                            vTimeline.isVisible = true
+                        }
+                    }
+                }
+
+            }.show(childFragmentManager, "task")
         }
     }
 

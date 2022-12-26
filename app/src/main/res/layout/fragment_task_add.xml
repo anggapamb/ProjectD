@@ -253,6 +253,7 @@
                 android:textSize="@dimen/text_default" />
 
             <TextView
+                android:id="@+id/btn_copy_task"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"

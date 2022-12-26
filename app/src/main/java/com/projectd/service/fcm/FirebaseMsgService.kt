@@ -42,17 +42,17 @@ class FirebaseMsgService: FirebaseMessagingService() {
 
         if (session.getUser() == null) return
 
-        if (message.notification?.title == "Update Task") {
+        if (message.data["type"] == "update_task") {
             if (isBackground(applicationContext)) {
-                createNotificationUpdateTask(applicationContext, DateTimeHelper().createAtLong().toInt(), message.data["title"] ?: return, message.data["content"] ?: return)
+                createNotificationUpdateTask(applicationContext,  message.data["title"] ?: return, message.data["body"] ?: return)
             } else {
-                createNotificationUpdateTask(applicationContext, DateTimeHelper().createAtLong().toInt(),message.notification?.title ?: return, message.notification?.body ?: return)
+                createNotificationUpdateTask(applicationContext, message.data["title"] ?: return, message.data["body"] ?: return)
             }
         } else {
             if (isBackground(applicationContext)) {
-                createNotification(applicationContext, DateTimeHelper().createAtLong().toInt(), message.data["title"] ?: return, message.data["content"] ?: return)
+                createNotification(applicationContext, DateTimeHelper().createAtLong().toInt(), message.data["title"] ?: return, message.data["body"] ?: return)
             } else {
-                createNotification(applicationContext, DateTimeHelper().createAtLong().toInt(),message.notification?.title ?: return, message.notification?.body ?: return)
+                createNotification(applicationContext, DateTimeHelper().createAtLong().toInt(),message.data["title"] ?: return, message.data["body"] ?: return)
             }
         }
 
@@ -124,7 +124,7 @@ class FirebaseMsgService: FirebaseMessagingService() {
             notificationManager.notify(idNotification, mBuilder.build())
         }
 
-        fun createNotificationUpdateTask(context: Context, idNotification: Int, title: String, message: String) {
+        fun createNotificationUpdateTask(context: Context, title: String, message: String) {
             val notificationManager = NotificationManagerCompat.from(context)
 
             val pendingIntent: PendingIntent?
@@ -186,7 +186,22 @@ class FirebaseMsgService: FirebaseMessagingService() {
                 .addAction(cancelAction)
                 .setAutoCancel(true)
 
-            notificationManager.notify(idNotification, mBuilder.build())
+            notificationManager.notify(ID_NOTIFICATION_TASK, mBuilder.build())
+        }
+
+        fun mBuilder(context: Context?, input: String?, type: String?) : NotificationCompat.Builder? {
+            val builder = context?.let {
+                NotificationCompat.Builder(it, CHANNEL_ID)
+                    .setSmallIcon(R.drawable.ic_baseline_local_fire_department_24)
+                    .setChannelId(CHANNEL_ID)
+                    .setDefaults(NotificationCompat.DEFAULT_ALL)
+                    .setCategory(NotificationCompat.CATEGORY_MESSAGE)
+                    .setPriority(NotificationCompat.PRIORITY_HIGH)
+                    .setContentTitle("$type: $input")
+                    .setStyle(null)
+                    .setAutoCancel(true)
+            }
+            return builder
         }
 
         /* change color action text
@@ -214,6 +229,7 @@ class FirebaseMsgService: FirebaseMessagingService() {
         const val CHANNEL_ID = "ProjectD"
         const val CHANNEL_NAME = "ProjectD Mobile"
         const val RESULT_KEY = "RESULT_KEY"
+        const val ID_NOTIFICATION_TASK = 202
     }
 
 }

@@ -61,7 +61,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
         binding?.ivAvatar?.setOnClickListener {
             FirebaseMsgService.createNotificationUpdateTask(
                 requireContext(),
-                DateTimeHelper().createAtLong().toInt(),
                 "Apakah task anda sudah selesai ?",
                 "Silahkan update task anda terlebih dahulu"
             )

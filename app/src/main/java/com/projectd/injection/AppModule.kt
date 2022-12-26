@@ -12,6 +12,7 @@ import com.projectd.ui.dialog.AbsentDialog.AbsentViewModel
 import com.projectd.ui.dialog.LoadingDialog
 import com.projectd.ui.dialog.ManagerChooserDialog.ManagerChooserViewModel
 import com.projectd.ui.dialog.ProjectChooserDialog.ProjectChooserViewModel
+import com.projectd.ui.dialog.TaskChooserDialog.TaskChooserViewModel
 import com.projectd.ui.dialog.TaskReportDialog.TaskReportViewModel
 import com.projectd.ui.dialog.UpdateProgressDialog.UpdateProgressViewModel
 import com.projectd.ui.home.HomeViewModel
@@ -61,6 +62,7 @@ object AppModule {
         viewModel { TodayCheckViewModel(get()) }
         viewModel { UpdateProgressViewModel(get()) }
         viewModel { TaskPovViewModel(get()) }
+        viewModel { TaskChooserViewModel(get()) }
     }
 
     val networkModule = module {

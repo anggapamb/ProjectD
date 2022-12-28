@@ -37,6 +37,10 @@
             </intent-filter>
         </service>
 
+        <receiver android:name=".service.receiver.DoneReceiver"/>
+        <receiver android:name=".service.receiver.HoldReceiver"/>
+        <receiver android:name=".service.receiver.CancelReceiver"/>
+
         <service
             android:name=".service.audio.PlayerService"
             android:exported="false" />
@@ -51,6 +55,9 @@
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/black" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="@string/default_channel_id" />
     </application>
 
 </manifest>

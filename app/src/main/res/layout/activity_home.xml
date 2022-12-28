@@ -42,7 +42,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="6dp"
-                android:text='@{prayer.user}'
+                android:text="@string/label_lestari_taman_media"
                 android:textColor="@color/text_bg_green"
                 android:textSize="@dimen/text_small"
                 tools:text="Lestari Taman Media" />

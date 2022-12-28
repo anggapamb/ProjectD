@@ -106,6 +106,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
                     viewModel.prayer.collect {
                         currentPrayer = it
                         binding?.prayer = it
+                        binding?.prayerDescription?.text = "\uD83E\uDD32 ${it.description}"
 
                         invalidateButtonPlay(homeActivity.isPlayPrayer())
 

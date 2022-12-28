@@ -71,7 +71,8 @@ class PrayerNotificationService: Service() {
         createChannel()
 
         val notificationBuilder = NotificationCompat.Builder(applicationContext, CHANNEL_ID)
-            .setContentTitle(prayer?.user)
+            //.setContentTitle(prayer?.user)
+            .setContentTitle(getString(R.string.label_lestari_taman_media))
             .setContentText(prayer?.description)
             .setSmallIcon(R.drawable.ic_baseline_voicemail_24)
             .setPriority(NotificationCompat.PRIORITY_HIGH)

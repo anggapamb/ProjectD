@@ -12,7 +12,6 @@ import com.crocodic.core.api.ApiObserver
 import com.crocodic.core.api.ApiResponse
 import com.crocodic.core.base.adapter.CoreListAdapter
 import com.crocodic.core.extension.toList
-import com.crocodic.core.helper.DateTimeHelper
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.projectd.R
 import com.projectd.api.ApiService
@@ -25,6 +24,9 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+import java.util.*
 
 class TaskChooserDialog(private val onSelect: (Task?) -> Unit): BottomSheetDialogFragment() {
 
@@ -42,7 +44,7 @@ class TaskChooserDialog(private val onSelect: (Task?) -> Unit): BottomSheetDialo
 
         observe()
         initView()
-        viewModel.taskByDate()
+        viewModel.taskByDate(yesterdayDate())
     }
 
     private fun initView() {
@@ -68,13 +70,19 @@ class TaskChooserDialog(private val onSelect: (Task?) -> Unit): BottomSheetDialo
         }
     }
 
+    private fun yesterdayDate(): String {
+        val dateFormat: DateFormat = SimpleDateFormat("yyyy-MM-dd")
+        val cal: Calendar = Calendar.getInstance()
+        cal.add(Calendar.DATE, -1)
+        return dateFormat.format(cal.time)
+    }
 
     class TaskChooserViewModel(private val apiService: ApiService): BaseViewModel() {
 
         private val _dataTasks: Channel<List<Task>> = Channel()
         val dataTasks = _dataTasks.receiveAsFlow()
 
-        fun taskByDate(date: String = DateTimeHelper().dateNow()) = viewModelScope.launch {
+        fun taskByDate(date: String) = viewModelScope.launch {
             ApiObserver(
                 block = {apiService.taskByDate(date)},
                 toast = false,

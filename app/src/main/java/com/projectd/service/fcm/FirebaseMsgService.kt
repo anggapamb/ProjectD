@@ -10,22 +10,27 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.core.app.Person
 import androidx.core.app.RemoteInput
 import androidx.core.graphics.drawable.IconCompat
+import com.crocodic.core.extension.toList
 import com.crocodic.core.helper.DateTimeHelper
 import com.crocodic.core.helper.log.Log
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import com.google.gson.Gson
 import com.projectd.R
 import com.projectd.data.Session
+import com.projectd.data.model.TaskNotification
 import com.projectd.service.receiver.CancelReceiver
 import com.projectd.service.receiver.DoneReceiver
 import com.projectd.service.receiver.HoldReceiver
 import com.projectd.ui.home.HomeActivity
+import org.json.JSONArray
 import org.koin.android.ext.android.inject
 import java.util.*
 
 class FirebaseMsgService: FirebaseMessagingService() {
 
     private val session: Session by inject()
+    private val gson: Gson by inject()
 
     override fun onNewToken(token: String) {
         super.onNewToken(token)
@@ -44,9 +49,9 @@ class FirebaseMsgService: FirebaseMessagingService() {
 
         if (message.data["type"] == "update_task") {
             if (isBackground(applicationContext)) {
-                createNotificationUpdateTask(applicationContext,  message.data["title"] ?: return, message.data["body"] ?: return)
+                processedNotification(message.data, applicationContext, gson)
             } else {
-                createNotificationUpdateTask(applicationContext, message.data["title"] ?: return, message.data["body"] ?: return)
+                processedNotification(message.data, applicationContext, gson)
             }
         } else {
             if (isBackground(applicationContext)) {
@@ -124,7 +129,7 @@ class FirebaseMsgService: FirebaseMessagingService() {
             notificationManager.notify(idNotification, mBuilder.build())
         }
 
-        fun createNotificationUpdateTask(context: Context, title: String, message: String) {
+        fun createNotificationUpdateTask(context: Context, title: String, message: String, idTask: Int) {
             val notificationManager = NotificationManagerCompat.from(context)
 
             val pendingIntent: PendingIntent?
@@ -137,15 +142,15 @@ class FirebaseMsgService: FirebaseMessagingService() {
                 PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_CANCEL_CURRENT else PendingIntent.FLAG_CANCEL_CURRENT)
 
 
-            val flag = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) { PendingIntent.FLAG_MUTABLE } else 0
+            val flag = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) { PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT } else 0
             val remoteInput = RemoteInput.Builder(RESULT_KEY)
                 .setLabel("Type here...")
                 .build()
 
 
             /* done */
-            val replayDone = Intent(context, DoneReceiver::class.java)
-            val donePendingIntent = PendingIntent.getBroadcast(context, 1, replayDone, flag)
+            val replayDone = Intent(context, DoneReceiver::class.java).putExtra(ID_NOTIFICATION, idTask)
+            val donePendingIntent = PendingIntent.getBroadcast(context, UUID.randomUUID().hashCode(), replayDone, flag)
             val doneAction = NotificationCompat.Action.Builder(
                 0,
                 "Done",
@@ -154,8 +159,8 @@ class FirebaseMsgService: FirebaseMessagingService() {
 
 
             /* hold */
-            val replayHold = Intent(context, HoldReceiver::class.java)
-            val holdPendingIntent = PendingIntent.getBroadcast(context, 1, replayHold, flag)
+            val replayHold = Intent(context, HoldReceiver::class.java).putExtra(ID_NOTIFICATION, idTask)
+            val holdPendingIntent = PendingIntent.getBroadcast(context, UUID.randomUUID().hashCode(), replayHold, flag)
             val holdAction = NotificationCompat.Action.Builder(
                 0,
                 "Hold",
@@ -164,8 +169,8 @@ class FirebaseMsgService: FirebaseMessagingService() {
 
 
             /* cancel */
-            val replayCancel = Intent(context, CancelReceiver::class.java)
-            val cancelPendingIntent = PendingIntent.getBroadcast(context, 1, replayCancel, flag)
+            val replayCancel = Intent(context, CancelReceiver::class.java).putExtra(ID_NOTIFICATION, idTask)
+            val cancelPendingIntent = PendingIntent.getBroadcast(context, UUID.randomUUID().hashCode(), replayCancel, flag)
             val cancelAction = NotificationCompat.Action.Builder(
                 0,
                 "Cancel",
@@ -186,7 +191,7 @@ class FirebaseMsgService: FirebaseMessagingService() {
                 .addAction(cancelAction)
                 .setAutoCancel(true)
 
-            notificationManager.notify(ID_NOTIFICATION_TASK, mBuilder.build())
+            notificationManager.notify(idTask, mBuilder.build())
         }
 
         fun mBuilder(context: Context?, input: String?, type: String?) : NotificationCompat.Builder? {
@@ -202,6 +207,15 @@ class FirebaseMsgService: FirebaseMessagingService() {
                     .setAutoCancel(true)
             }
             return builder
+        }
+
+        fun processedNotification(data: Map<String, String>, context: Context, gson: Gson) {
+            val dataNotification = JSONArray(data["task"]).toList<TaskNotification>(gson)
+            dataNotification.forEach {
+                it.idTask?.let { idTask ->
+                    createNotificationUpdateTask(context, "Reminder Task in ${it.project}", "${it.taskName}", idTask)
+                }
+            }
         }
 
         /* change color action text
@@ -229,7 +243,7 @@ class FirebaseMsgService: FirebaseMessagingService() {
         const val CHANNEL_ID = "ProjectD"
         const val CHANNEL_NAME = "ProjectD Mobile"
         const val RESULT_KEY = "RESULT_KEY"
-        const val ID_NOTIFICATION_TASK = 202
+        const val ID_NOTIFICATION = "ID_NOTIFICATION_UPDATE_TASK"
     }
 
 }

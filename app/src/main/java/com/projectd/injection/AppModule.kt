@@ -8,6 +8,9 @@ import com.projectd.api.ApiService
 import com.projectd.data.Cons
 import com.projectd.data.Session
 import com.projectd.service.AudioHelper
+import com.projectd.service.receiver.CancelReceiver
+import com.projectd.service.receiver.DoneReceiver
+import com.projectd.service.receiver.HoldReceiver
 import com.projectd.ui.dialog.AbsentDialog.AbsentViewModel
 import com.projectd.ui.dialog.LoadingDialog
 import com.projectd.ui.dialog.ManagerChooserDialog.ManagerChooserViewModel
@@ -63,6 +66,9 @@ object AppModule {
         viewModel { UpdateProgressViewModel(get()) }
         viewModel { TaskPovViewModel(get()) }
         viewModel { TaskChooserViewModel(get()) }
+        viewModel { DoneReceiver.DoneViewModel(get()) }
+        viewModel { HoldReceiver.HoldViewModel(get()) }
+        viewModel { CancelReceiver.CancelViewModel(get()) }
     }
 
     val networkModule = module {

@@ -155,7 +155,7 @@ class DailySetupWorker(context: Context, workerParams: WorkerParameters): Corout
             HttpsURLConnection.setDefaultHostnameVerifier(hostnameVerifier)
         }
 
-        const val TAG = "daily-setup"
+        private const val TAG = "daily-setup"
         const val PRAYER_IMG_BMP = "prayer-img-bmp"
         const val PRAYER_IMG_URL = "prayer-img-url"
     }

@@ -39,6 +39,7 @@ class PrayerPlayer(private val context: Context): KoinComponent {
                 val seek = session.getInt(Cons.BUNDLE.PRAYER_SEEK)
                 it.seekTo(seek)
                 it.start()
+                showNotification()
             }
             mediaPlayer?.setOnCompletionListener {
                 session.setValue(Cons.BUNDLE.PRAYER_SEEK, 0)

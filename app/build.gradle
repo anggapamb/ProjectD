@@ -12,10 +12,10 @@ android {
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.projectd"
+        applicationId "com.newprojectd"
         minSdk 26
         targetSdk 33
-        versionCode 1
+        versionCode 2
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -31,6 +31,11 @@ android {
         debug {
             debuggable true
             manifestPlaceholders = [usesCleartextTraffic: true, crashlyticsEnabled: false, performanceEnabled: false]
+        }
+        applicationVariants.all { variant ->
+            variant.outputs.all { output ->
+                outputFileName = new File("projectd.v${versionCode}.beta${versionName}.apk")
+            }
         }
     }
     compileOptions {

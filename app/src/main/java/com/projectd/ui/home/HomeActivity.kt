@@ -12,7 +12,6 @@ import com.projectd.base.activity.BaseActivity
 import com.projectd.data.model.Prayer
 import com.projectd.databinding.ActivityHomeBinding
 import com.projectd.service.prayer.PrayerPlayer
-import com.projectd.service.worker.DailySetupWorker
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
@@ -30,14 +29,16 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(R.layout.a
         clearNotification()
 
         binding.vPrayerInformation.setOnClickListener { navController.navigate(R.id.actionHomeFragment) }
-        initDailySetup()
+        //initDailySetup()
 
         onBackPressedHandle()
     }
 
+    /* worker prayer
     private fun initDailySetup() {
         DailySetupWorker.setup(this)
     }
+    */
 
     fun popMsg(msg: String) = binding.root.snack(msg)
 

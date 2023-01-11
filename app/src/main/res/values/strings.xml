@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Project D</string>
+    <string name="app_name">Project D Beta</string>
     <string name="label_no_data_found">No data found.</string>
     <string name="label_no_permission">Not have permission.</string>
     <string name="cd_icon_voice_email">cd_icon_voice_email</string>
@@ -65,4 +65,5 @@
     <string name="default_channel_id">ProjectD</string>
     <string name="please_update_engineer_timeline">*Please update engineer timeline</string>
     <string name="label_lestari_taman_media">Lestari Taman Media</string>
+    <string name="hint_email">Email</string>
 </resources>

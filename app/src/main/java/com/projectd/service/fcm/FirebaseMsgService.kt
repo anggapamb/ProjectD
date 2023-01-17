@@ -242,6 +242,16 @@ class FirebaseMsgService: FirebaseMessagingService() {
         }
 
         fun mBuilder(context: Context?, input: String?, type: String?) : NotificationCompat.Builder? {
+            val pendingIntent: PendingIntent?
+            val mainIntent = Intent(context, HomeActivity::class.java).putExtra(
+                NOTIFICATION_UPDATE_TASK, true)
+
+            val stackBuilder = TaskStackBuilder.create(context)
+            stackBuilder.addNextIntent(mainIntent)
+
+            pendingIntent = stackBuilder.getPendingIntent(99, if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
+                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_CANCEL_CURRENT else PendingIntent.FLAG_CANCEL_CURRENT)
+
             val builder = context?.let {
                 NotificationCompat.Builder(it, CHANNEL_ID)
                     .setSmallIcon(R.drawable.ic_baseline_local_fire_department_24)
@@ -249,6 +259,7 @@ class FirebaseMsgService: FirebaseMessagingService() {
                     .setDefaults(NotificationCompat.DEFAULT_ALL)
                     .setCategory(NotificationCompat.CATEGORY_MESSAGE)
                     .setPriority(NotificationCompat.PRIORITY_HIGH)
+                    .setContentIntent(pendingIntent)
                     .setContentTitle("$type: $input")
                     .setStyle(null)
                     .setAutoCancel(true)
@@ -344,6 +355,7 @@ class FirebaseMsgService: FirebaseMessagingService() {
         const val CHANNEL_NAME = "ProjectD Mobile"
         const val RESULT_KEY = "RESULT_KEY"
         const val ID_NOTIFICATION = "ID_NOTIFICATION_UPDATE_TASK"
+        const val NOTIFICATION_UPDATE_TASK = "notification_update_task"
     }
 
 }

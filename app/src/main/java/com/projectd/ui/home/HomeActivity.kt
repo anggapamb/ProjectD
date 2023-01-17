@@ -11,6 +11,7 @@ import com.projectd.base.App
 import com.projectd.base.activity.BaseActivity
 import com.projectd.data.model.Prayer
 import com.projectd.databinding.ActivityHomeBinding
+import com.projectd.service.fcm.FirebaseMsgService
 import com.projectd.service.prayer.PrayerPlayer
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -32,6 +33,10 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(R.layout.a
         //initDailySetup()
 
         onBackPressedHandle()
+    }
+
+    fun fromNotificationUpdateTask(): Boolean {
+        return intent.getBooleanExtra(FirebaseMsgService.NOTIFICATION_UPDATE_TASK, false)
     }
 
     /* worker prayer

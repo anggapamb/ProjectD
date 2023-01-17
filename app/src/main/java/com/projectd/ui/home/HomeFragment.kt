@@ -37,6 +37,8 @@ import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
+import java.util.*
+import kotlin.collections.ArrayList
 
 class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
 
@@ -53,7 +55,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         requireActivity().window.statusBarColor = ContextCompat.getColor(requireContext(), R.color.white)
-        if (session.getUser() == null) navigateTo(R.id.actionLoginFragment)
+        if (session.getUser() == null) {
+            navigateTo(R.id.actionLoginFragment)
+        } else if (homeActivity.fromNotificationUpdateTask()) {
+            navigateTo(R.id.actionTaskFragment)
+        }
 
         initView()
         initData()
@@ -229,9 +235,13 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
             Timber.d("reset seek")
         }
 
-        val hour = DateTimeHelper().convert(DateTimeHelper().createAt(), "yyyy-MM-dd HH:mm:ss", "H").toInt()
-        if (hour in 8..9) {
-            viewModel.preparePrayer()
+        val calendar: Calendar = Calendar.getInstance()
+        val day = calendar.get(Calendar.DAY_OF_WEEK)
+        if (day != Calendar.SATURDAY && day != Calendar.SUNDAY) {
+            val hour = DateTimeHelper().convert(DateTimeHelper().createAt(), "yyyy-MM-dd HH:mm:ss", "H").toInt()
+            if (hour in 8..9) {
+                viewModel.preparePrayer()
+            }
         }
     }
 

@@ -180,7 +180,8 @@ class FirebaseMsgService: FirebaseMessagingService() {
             val notificationManager = NotificationManagerCompat.from(context)
 
             val pendingIntent: PendingIntent?
-            val mainIntent = Intent(context, HomeActivity::class.java)
+            val mainIntent = Intent(context, HomeActivity::class.java).putExtra(
+                NOTIFICATION_UPDATE_TASK, true)
 
             val stackBuilder = TaskStackBuilder.create(context)
             stackBuilder.addNextIntent(mainIntent)

@@ -16,7 +16,7 @@ android {
         minSdk 26
         targetSdk 33
         versionCode 2
-        versionName "1.0"
+        versionName "1.2"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField "String", "BASE_URL", "\"http://206.189.40.49:8111/\""
@@ -58,6 +58,7 @@ android {
 
 dependencies {
 
+    implementation project(':library')
     implementation 'com.github.crocodic-studio:AndroidCoreProject:4.0.7'
 
     implementation 'io.insert-koin:koin-android:3.2.0'
@@ -76,8 +77,6 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.4.2'
     implementation 'com.google.android.material:material:1.4.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-
-    implementation 'com.github.amarjain07:StickyScrollView:1.0.3'
 
     implementation 'androidx.appcompat:appcompat:1.7.0-alpha01'
 

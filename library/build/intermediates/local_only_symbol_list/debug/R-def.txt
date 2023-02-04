@@ -1,0 +1,6 @@
+R_DEF: Internal format may change without notice
+local
+attr? stickyFooter
+attr? stickyHeader
+string app_name
+styleable StickyScrollView stickyFooter stickyHeader

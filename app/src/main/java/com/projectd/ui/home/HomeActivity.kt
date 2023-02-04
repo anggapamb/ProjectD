@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import com.crocodic.core.data.CoreSession
 import com.crocodic.core.extension.clearNotification
 import com.crocodic.core.extension.snack
 import com.projectd.R
@@ -32,11 +33,12 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(R.layout.a
         binding.vPrayerInformation.setOnClickListener { navController.navigate(R.id.actionHomeFragment) }
         //initDailySetup()
 
+        fromNotificationUpdateTask()
         onBackPressedHandle()
     }
 
-    fun fromNotificationUpdateTask(): Boolean {
-        return intent.getBooleanExtra(FirebaseMsgService.NOTIFICATION_UPDATE_TASK, false)
+    private fun fromNotificationUpdateTask() {
+        CoreSession(this).setValue(IS_UPDATE_TASK, intent.getBooleanExtra(FirebaseMsgService.NOTIFICATION_UPDATE_TASK, false))
     }
 
     /* worker prayer
@@ -75,17 +77,28 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(R.layout.a
             .onBackPressedDispatcher
             .addCallback(this@HomeActivity, object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
-                    if (navController.currentDestination?.id == R.id.homeFragment) {
-                        if (backPressed + 2000 > System.currentTimeMillis()) {
-                            finishAffinity()
-                        } else {
-                            popMsg("Press back again to quit.")
+                    when (navController.currentDestination?.id) {
+                        R.id.homeFragment -> {
+                            if (backPressed + 2000 > System.currentTimeMillis()) {
+                                finishAffinity()
+                            } else {
+                                popMsg("Press back again to quit.")
+                            }
+                            backPressed = System.currentTimeMillis()
                         }
-                        backPressed = System.currentTimeMillis()
-                    } else {
-                        navController.navigateUp()
+                        R.id.taskFragment -> {
+                            CoreSession(this@HomeActivity).setValue(IS_UPDATE_TASK, false)
+                            navController.navigateUp()
+                        }
+                        else -> {
+                            navController.navigateUp()
+                        }
                     }
                 }
             })
+    }
+
+    companion object {
+        const val IS_UPDATE_TASK = "is_update_task"
     }
 }

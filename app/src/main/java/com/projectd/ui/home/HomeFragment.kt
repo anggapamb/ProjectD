@@ -14,6 +14,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.crocodic.core.base.adapter.CoreListAdapter
+import com.crocodic.core.data.CoreSession
 import com.crocodic.core.extension.tos
 import com.crocodic.core.helper.DateTimeHelper
 import com.projectd.R
@@ -29,10 +30,12 @@ import com.projectd.databinding.ItemMainMenuBinding
 import com.projectd.databinding.ItemSecondMenuBinding
 import com.projectd.databinding.ItemUpdateBinding
 import com.projectd.service.AudioHelper
+import com.projectd.service.fcm.FirebaseMsgService
 import com.projectd.ui.dialog.AbsentDialog
 import com.projectd.ui.dialog.TaskReportDialog
 import com.projectd.ui.task.add.TaskAddFragment
 import com.projectd.util.ViewBindingAdapter.Companion.openUrl
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -55,10 +58,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         requireActivity().window.statusBarColor = ContextCompat.getColor(requireContext(), R.color.white)
-        if (session.getUser() == null) {
-            navigateTo(R.id.actionLoginFragment)
-        } else if (homeActivity.fromNotificationUpdateTask()) {
-            navigateTo(R.id.actionTaskFragment)
+        lifecycleScope.launch {
+            delay(500)
+            val isUpdateTask = CoreSession(requireContext()).getBoolean(HomeActivity.IS_UPDATE_TASK)
+            if (session.getUser() == null) {
+                navigateTo(R.id.actionLoginFragment)
+            } else if (isUpdateTask) {
+                navigateTo(R.id.actionTaskFragment)
+            }
         }
 
         initView()

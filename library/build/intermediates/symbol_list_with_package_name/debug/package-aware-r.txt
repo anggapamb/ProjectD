@@ -1,0 +1,5 @@
+com.amar.library
+attr stickyFooter
+attr stickyHeader
+string app_name
+styleable StickyScrollView stickyFooter stickyHeader

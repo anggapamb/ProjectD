@@ -1,0 +1,6 @@
+int attr stickyFooter 0x0
+int attr stickyHeader 0x0
+int string app_name 0x0
+int[] styleable StickyScrollView { 0x0, 0x0 }
+int styleable StickyScrollView_stickyFooter 0
+int styleable StickyScrollView_stickyHeader 1

@@ -59,7 +59,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
         super.onViewCreated(view, savedInstanceState)
         requireActivity().window.statusBarColor = ContextCompat.getColor(requireContext(), R.color.white)
         lifecycleScope.launch {
-            delay(500)
+            delay(300)
             val isUpdateTask = CoreSession(requireContext()).getBoolean(HomeActivity.IS_UPDATE_TASK)
             if (session.getUser() == null) {
                 navigateTo(R.id.actionLoginFragment)

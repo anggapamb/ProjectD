@@ -53,12 +53,12 @@ class DailySetupWorker(context: Context, workerParams: WorkerParameters): Corout
 
                     val message = "${getEmoji(0x1F534)} LIVE ~ ${p.description}"
 
-                    if (p.photo.isNullOrEmpty()) {
+                    if (p.userOwner.photo.isNullOrEmpty()) {
                         FirebaseMsgService.createNotification(applicationContext, Cons.NOTIFICATION.ID_STARTUP, message, greeting.random())
                     } else {
-                        getImage(p.photo) { bmp ->
+                        getImage(p.userOwner.photo) { bmp ->
                             bmp?.let { bp ->
-                                session.setValue(PRAYER_IMG_URL, p.photo)
+                                session.setValue(PRAYER_IMG_URL, p.userOwner.photo)
                                 session.setValue(PRAYER_IMG_BMP, BitmapHelper.encodeToBase64(bp))
                             }
                             FirebaseMsgService.createNotification(applicationContext, Cons.NOTIFICATION.ID_STARTUP, message, greeting.random(), bmp)

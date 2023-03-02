@@ -101,10 +101,10 @@ object AppModule {
             .addInterceptor { chain ->
                 val original = chain.request()
                 val session = getKoin().get<Session>()
-                val token = session.getUser()?.token
+                val token = session.getString(Cons.DB.USER.ACCESS_TOKEN)
                 val fcmId = session.getString(Cons.DB.USER.FCM_ID)
                 val requestBuilder = original.newBuilder()
-                    .header("Authorization", "$token")
+                    .header("Authorization", "Bearer $token")
                     .header("device_token", fcmId)
                     .header("Content-Type", "application/json")
                     .method(original.method, original.body)

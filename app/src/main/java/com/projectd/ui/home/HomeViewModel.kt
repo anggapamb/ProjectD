@@ -41,9 +41,9 @@ class HomeViewModel(private val apiService: ApiService) : BaseViewModel() {
         )
     }
 
-    fun verifyTask(idTask: String?, token: String?, onResponse: () -> Unit) = viewModelScope.launch {
+    fun verifyTask(idTask: String?, onResponse: () -> Unit) = viewModelScope.launch {
         ApiObserver(
-            block = {apiService.verifyTask(idTask, token)},
+            block = {apiService.verifyTask(idTask)},
             toast = false,
             responseListener = object : ApiObserver.ResponseListener {
                 override suspend fun onSuccess(response: JSONObject) {
@@ -83,9 +83,9 @@ class HomeViewModel(private val apiService: ApiService) : BaseViewModel() {
         val todayCheck = data.single { it.key?.contains("today_check", true) == true }
         val menus = ArrayList<AdditionalMenu>(data)
 
-        if (user?.devision == Cons.DIVISION.MANAGER || user?.devision == Cons.DIVISION.PSDM) {
+        if (user?.devision?.id == Cons.DIVISION.MANAGER || user?.devision?.id == Cons.DIVISION.PSDM || user?.devision?.id == Cons.DIVISION.SUPER_ADMIN) {
             return menus
-        } else if (user?.isLeader == "true"){
+        } else if (user?.isLeader == true){
             return menus
         } else {
             menus.remove(todayCheck)

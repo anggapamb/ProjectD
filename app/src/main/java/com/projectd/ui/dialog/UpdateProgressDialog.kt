@@ -25,7 +25,7 @@ class UpdateProgressDialog(val project: Project, private val onDismiss: () -> Un
 
     private var binding: DialogUpdateProgressBinding? = null
     private val viewModel: UpdateProgressViewModel by viewModel()
-    private var progress: String = ""
+    private var progress: Int = 0
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.dialog_update_progress, container, false)
@@ -42,7 +42,7 @@ class UpdateProgressDialog(val project: Project, private val onDismiss: () -> Un
 
         binding?.seekBar?.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
-                progress = p1.toString()
+                progress = p1
             }
 
             override fun onStartTrackingTouch(p0: SeekBar?) { }
@@ -78,10 +78,9 @@ class UpdateProgressDialog(val project: Project, private val onDismiss: () -> Un
 
     class UpdateProgressViewModel(private val apiService: ApiService): BaseViewModel() {
 
-        fun updateProgress(data: Project, progress: String) = viewModelScope.launch{
+        fun updateProgress(project: Project, progress: Int) = viewModelScope.launch{
             ApiObserver(
-                block = {apiService.updateProject(data.id.toString(), data.projectName, data.description, data.startDate, data.endDate, data.projectDirector,
-                    data.difficulty, data.createdBy, progress)},
+                block = {apiService.updateProgressProject(project.id, progress)},
                 toast = false,
                 responseListener = object : ApiObserver.ResponseListener {
                     override suspend fun onSuccess(response: JSONObject) {

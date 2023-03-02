@@ -23,16 +23,16 @@ class ProjectAddViewModel(private val apiService: ApiService): BaseViewModel() {
         progress: String?) = viewModelScope.launch {
 
         if (projectName.isNullOrEmpty() || description.isNullOrEmpty() || startDate.isNullOrEmpty() || endDate.isNullOrEmpty() || projectDirector.isNullOrEmpty()
-            || difficult.isNullOrEmpty() || createdBy.isNullOrEmpty()) {
+            || difficult.isNullOrEmpty()) {
             _apiResponse.send(ApiResponse(ApiStatus.ERROR, message = "Please complete from."))
         } else {
             _apiResponse.send(ApiResponse(ApiStatus.LOADING, message = "Submitting..."))
             ApiObserver(
                 block = {
                         if (idProject.isNullOrEmpty()) {
-                            apiService.addProject(projectName, description, startDate, endDate, projectDirector, difficult, createdBy, null)
+                            apiService.addProject(projectName, description, startDate, endDate, projectDirector, difficult)
                         } else {
-                            apiService.updateProject(idProject,projectName, description, startDate, endDate, projectDirector, difficult, createdBy, progress)
+                            apiService.updateProject(idProject,projectName, description, startDate, endDate, projectDirector, difficult)
                         }
                 },
                 toast = true,

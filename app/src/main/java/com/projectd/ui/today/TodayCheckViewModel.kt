@@ -80,7 +80,7 @@ class TodayCheckViewModel(private val apiService: ApiService): BaseViewModel() {
         val filterTasks = ArrayList<Task?>(tasks)
         when (status) {
             "Standby" -> {
-                return if (user?.devision == Cons.DIVISION.MANAGER || user?.devision == Cons.DIVISION.PSDM) {
+                return if (user?.devision?.id == Cons.DIVISION.MANAGER || user?.devision?.id == Cons.DIVISION.PSDM || user?.devision?.id == Cons.DIVISION.SUPER_ADMIN) {
                     filterTasks.filter { it?.load?.contains(Task.STANDBY, true) == true }
                 } else {
                     val taskStandby = filterTasks.filter { it?.load?.contains(Task.STANDBY, true) == true }
@@ -89,7 +89,7 @@ class TodayCheckViewModel(private val apiService: ApiService): BaseViewModel() {
 
             }
             "Done" -> {
-                return if (user?.devision == Cons.DIVISION.MANAGER || user?.devision == Cons.DIVISION.PSDM) {
+                return if (user?.devision?.id == Cons.DIVISION.MANAGER || user?.devision?.id == Cons.DIVISION.PSDM || user?.devision?.id == Cons.DIVISION.SUPER_ADMIN) {
                     filterTasks.filter { it?.status?.contains(Task.DONE, true) == true }
                 } else {
                     val taskDone = filterTasks.filter { it?.status?.contains(Task.DONE, true) == true }
@@ -97,7 +97,7 @@ class TodayCheckViewModel(private val apiService: ApiService): BaseViewModel() {
                 }
             }
             "Cancel" -> {
-                return if (user?.devision == Cons.DIVISION.MANAGER || user?.devision == Cons.DIVISION.PSDM) {
+                return if (user?.devision?.id == Cons.DIVISION.MANAGER || user?.devision?.id == Cons.DIVISION.PSDM || user?.devision?.id == Cons.DIVISION.SUPER_ADMIN) {
                     filterTasks.filter { it?.status?.contains(Task.CANCEL, true) == true }
                 } else {
                     val taskCancel = filterTasks.filter { it?.status?.contains(Task.CANCEL, true) == true }
@@ -113,7 +113,7 @@ class TodayCheckViewModel(private val apiService: ApiService): BaseViewModel() {
                     }
                 }
 
-                return if (user?.devision == Cons.DIVISION.MANAGER || user?.devision == Cons.DIVISION.PSDM) {
+                return if (user?.devision?.id == Cons.DIVISION.MANAGER || user?.devision?.id == Cons.DIVISION.PSDM || user?.devision?.id == Cons.DIVISION.SUPER_ADMIN) {
                     list
                 } else {
                     list.filter { it?.devision?.contains(user?.devision.toString(), true) == true }
@@ -124,9 +124,9 @@ class TodayCheckViewModel(private val apiService: ApiService): BaseViewModel() {
         return filterTasks
     }
 
-    fun verifyTask(idTask: String?, token: String?, onResponse: () -> Unit) = viewModelScope.launch {
+    fun verifyTask(idTask: String?, onResponse: () -> Unit) = viewModelScope.launch {
         ApiObserver(
-            block = {apiService.verifyTask(idTask, token)},
+            block = {apiService.verifyTask(idTask)},
             toast = false,
             responseListener = object : ApiObserver.ResponseListener {
                 override suspend fun onSuccess(response: JSONObject) {
@@ -170,10 +170,10 @@ class TodayCheckViewModel(private val apiService: ApiService): BaseViewModel() {
     private fun customUserNotReady(data: List<User>): List<User?> {
         val dataUsers = ArrayList<User?>(data)
 
-        if (user?.devision == Cons.DIVISION.MANAGER || user?.devision == Cons.DIVISION.PSDM) {
+        if (user?.devision?.id == Cons.DIVISION.MANAGER || user?.devision?.id == Cons.DIVISION.PSDM || user?.devision?.id == Cons.DIVISION.SUPER_ADMIN) {
             return dataUsers
-        } else if (user?.isLeader == "true") {
-            return dataUsers.filter { it?.devision?.contains(user?.devision.toString(), true) == true }
+        } else if (user?.isLeader == true) {
+            return dataUsers.filter { it?.devision?.id?.toString()?.contains(user?.devision?.id.toString(), true) == true }
         }
 
         return dataUsers

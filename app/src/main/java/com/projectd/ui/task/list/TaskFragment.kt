@@ -64,9 +64,9 @@ class TaskFragment : BaseFragment<FragmentTaskBinding>(R.layout.fragment_task), 
                 val data = listTask[position]
                 holder.binding.data = data
 
-                if (viewModel.user?.devision == Cons.DIVISION.MANAGER || viewModel.user?.devision == Cons.DIVISION.PSDM) {
+                if (viewModel.user?.devision?.id == Cons.DIVISION.MANAGER || viewModel.user?.devision?.id == Cons.DIVISION.PSDM || viewModel.user?.devision?.id == Cons.DIVISION.SUPER_ADMIN) {
                     holder.binding.btnMore.isVisible = true
-                } else if (viewModel.user?.isLeader == "true") {
+                } else if (viewModel.user?.isLeader == true) {
                     holder.binding.btnMore.isVisible = true
                 }
 
@@ -84,7 +84,7 @@ class TaskFragment : BaseFragment<FragmentTaskBinding>(R.layout.fragment_task), 
                             when (which) {
                                 0 -> {
                                     if (data?.verified == "0") {
-                                        viewModel.verifyTask(data.id.toString(), viewModel.user?.token) { viewModel.taskByDate(selectedDate) }
+                                        viewModel.verifyTask(data.id.toString()) { viewModel.taskByDate(selectedDate) }
                                     } else {
                                         requireActivity().tos("Task has been verified by ${data?.verifiedBy}")
                                     }

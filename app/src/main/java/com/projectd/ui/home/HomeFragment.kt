@@ -61,23 +61,24 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
         lifecycleScope.launch {
             delay(500)
             val isUpdateTask = CoreSession(requireContext()).getBoolean(HomeActivity.IS_UPDATE_TASK)
-            if (session.getUser() == null) {
-                navigateTo(R.id.actionLoginFragment)
-            } else if (isUpdateTask) {
+            if (isUpdateTask) {
                 navigateTo(R.id.actionTaskFragment)
             }
         }
+        if (session.getUser() == null) {
+            navigateTo(R.id.actionLoginFragment)
+        } else {
+            initView()
+            initData()
+            observe()
+            getTaskToday()
 
-        initView()
-        initData()
-        observe()
-        getTaskToday()
+            viewModel.allMenus()
+            viewModel.getAbsent()
 
-        viewModel.allMenus()
-        viewModel.getAbsent()
-
-        initPrayer()
-        dataDummy()
+            initPrayer()
+            dataDummy()
+        }
     }
 
     private fun observe() {
@@ -159,9 +160,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
                     holder.binding.data = data
                     holder.binding.yourName = viewModel.user?.shortName()
 
-                    if (viewModel.user?.devision == Cons.DIVISION.MANAGER || viewModel.user?.devision == Cons.DIVISION.PSDM) {
+                    if (viewModel.user?.devision?.id == Cons.DIVISION.MANAGER || viewModel.user?.devision?.id == Cons.DIVISION.PSDM || viewModel.user?.devision?.id == Cons.DIVISION.SUPER_ADMIN) {
                         holder.binding.btnMore.isVisible = true
-                    } else if (viewModel.user?.isLeader == "true") {
+                    } else if (viewModel.user?.isLeader == true) {
                         holder.binding.btnMore.isVisible = true
                     }
 
@@ -170,7 +171,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
                             if ( data.status != Task.DONE) {
                                 TaskReportDialog(data) { getTaskToday() }.show(childFragmentManager, "report")
                             }
-                        } else if (viewModel.user?.devision == Cons.DIVISION.MANAGER || viewModel.user?.devision == Cons.DIVISION.PSDM) {
+                        } else if (viewModel.user?.devision?.id == Cons.DIVISION.MANAGER || viewModel.user?.devision?.id == Cons.DIVISION.PSDM || viewModel.user?.devision?.id == Cons.DIVISION.SUPER_ADMIN) {
                             val bundle = bundleOf(Cons.BUNDLE.DATA to data)
                             navigateTo(R.id.actionTaskPovFragment, bundle)
                         }
@@ -184,7 +185,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
                                 when (which) {
                                     0 -> {
                                         if (data?.verified == "0") {
-                                            viewModel.verifyTask(data.id.toString(), viewModel.user?.token) { getTaskToday() }
+                                            viewModel.verifyTask(data.id.toString()) { getTaskToday() }
                                         } else {
                                             requireActivity().tos("Task has been verified by ${data?.verifiedBy}")
                                         }

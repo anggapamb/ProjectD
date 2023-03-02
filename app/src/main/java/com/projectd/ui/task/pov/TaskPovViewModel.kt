@@ -41,9 +41,9 @@ class TaskPovViewModel(private val apiService: ApiService): BaseViewModel() {
         return tasks.filter { it.idLogin?.contains(idLogin.toString(), true) == true }
     }
 
-    fun verifyTask(idTask: String?, token: String?, onResponse: () -> Unit) = viewModelScope.launch {
+    fun verifyTask(idTask: String?, onResponse: () -> Unit) = viewModelScope.launch {
         ApiObserver(
-            block = {apiService.verifyTask(idTask, token)},
+            block = {apiService.verifyTask(idTask)},
             toast = false,
             responseListener = object : ApiObserver.ResponseListener {
                 override suspend fun onSuccess(response: JSONObject) {

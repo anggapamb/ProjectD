@@ -64,9 +64,9 @@ class TodayCheckListFragment : BaseFragment<FragmentTodayCheckListBinding>(R.lay
                     holder.binding.data = data
                     holder.binding.yourName = viewModel.user?.shortName()
 
-                    if (viewModel.user?.devision == Cons.DIVISION.MANAGER || viewModel.user?.devision == Cons.DIVISION.PSDM) {
+                    if (viewModel.user?.devision?.id == Cons.DIVISION.MANAGER || viewModel.user?.devision?.id == Cons.DIVISION.PSDM || viewModel.user?.devision?.id == Cons.DIVISION.SUPER_ADMIN) {
                         holder.binding.btnMore.isVisible = true
-                    } else if (viewModel.user?.isLeader == "true") {
+                    } else if (viewModel.user?.isLeader == true) {
                         holder.binding.btnMore.isVisible = true
                     }
 
@@ -75,7 +75,7 @@ class TodayCheckListFragment : BaseFragment<FragmentTodayCheckListBinding>(R.lay
                             if ( data.status != Task.DONE) {
                                 TaskReportDialog(data) { viewModel.taskToday(title) }.show(childFragmentManager, "report")
                             }
-                        } else if (viewModel.user?.devision == Cons.DIVISION.MANAGER || viewModel.user?.devision == Cons.DIVISION.PSDM) {
+                        } else if (viewModel.user?.devision?.id == Cons.DIVISION.MANAGER || viewModel.user?.devision?.id == Cons.DIVISION.PSDM || viewModel.user?.devision?.id == Cons.DIVISION.SUPER_ADMIN) {
                             val bundle = bundleOf(Cons.BUNDLE.DATA to data)
                             navigateTo(R.id.actionTaskPovFragment, bundle)
                         }
@@ -89,7 +89,7 @@ class TodayCheckListFragment : BaseFragment<FragmentTodayCheckListBinding>(R.lay
                                 when (which) {
                                     0 -> {
                                         if (data?.verified == "0") {
-                                            viewModel.verifyTask(data.id.toString(), viewModel.user?.token) { viewModel.taskToday(title) }
+                                            viewModel.verifyTask(data.id.toString()) { viewModel.taskToday(title) }
                                         } else {
                                             requireActivity().tos("Task has been verified by ${data?.verifiedBy}")
                                         }

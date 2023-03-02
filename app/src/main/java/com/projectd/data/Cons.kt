@@ -28,6 +28,8 @@ object Cons {
 
         object USER {
             const val FCM_ID = "fcmId"
+            const val ACCESS_TOKEN = "accessToken"
+            const val REFRESH_TOKEN = "refreshToken"
         }
 
         object PROJECT {
@@ -54,14 +56,9 @@ object Cons {
     }
 
     object DIVISION {
-        const val WEB = "web"
-        const val MOBILE = "mobile"
-        const val TESTER = "tester"
-        const val ANALYST = "analyst"
-        const val MARKETING = "marketing"
-        const val PSDM = "psdm"
-        const val SUPER_ADMIN = "super admin"
-        const val MANAGER = "manager"
+        const val PSDM = 6
+        const val SUPER_ADMIN = 7
+        const val MANAGER = 8
     }
 
     object PREVILLEGE {

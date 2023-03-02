@@ -64,9 +64,9 @@ class TaskPovFragment : BaseFragment<FragmentTaskPovBinding>(R.layout.fragment_t
                     holder.binding.data = data
                     holder.binding.yourName = viewModel.user?.shortName()
 
-                    if (viewModel.user?.devision == Cons.DIVISION.MANAGER || viewModel.user?.devision == Cons.DIVISION.PSDM) {
+                    if (viewModel.user?.devision?.id == Cons.DIVISION.MANAGER || viewModel.user?.devision?.id == Cons.DIVISION.PSDM || viewModel.user?.devision?.id == Cons.DIVISION.SUPER_ADMIN) {
                         holder.binding.btnMore.isVisible = true
-                    } else if (viewModel.user?.isLeader == "true") {
+                    } else if (viewModel.user?.isLeader == true) {
                         holder.binding.btnMore.isVisible = true
                     }
 
@@ -86,7 +86,7 @@ class TaskPovFragment : BaseFragment<FragmentTaskPovBinding>(R.layout.fragment_t
                                 when (which) {
                                     0 -> {
                                         if (data?.verified == "0") {
-                                            viewModel.verifyTask(data.id.toString(), viewModel.user?.token) { getTasks() }
+                                            viewModel.verifyTask(data.id.toString()) { getTasks() }
                                         } else {
                                             requireActivity().tos("Task has been verified by ${data?.verifiedBy}")
                                         }

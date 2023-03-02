@@ -7,6 +7,7 @@ import com.crocodic.core.api.ApiStatus
 import com.crocodic.core.extension.toObject
 import com.projectd.api.ApiService
 import com.projectd.base.viewmodel.BaseViewModel
+import com.projectd.data.Cons
 import com.projectd.data.model.User
 import kotlinx.coroutines.launch
 import org.json.JSONObject
@@ -25,8 +26,12 @@ class LoginViewModel(private val apiService: ApiService) : BaseViewModel() {
                 responseListener = object : ApiObserver.ResponseListener {
                     override suspend fun onSuccess(response: JSONObject) {
                         val message = response.getString("message")
+                        val accessToken = response.getString("access_token")
+                        val refreshToken = response.getString("refresh_token")
                         val data = response.getJSONObject("data").toObject<User>(gson)
                         session.saveUser(data)
+                        session.setValue(Cons.DB.USER.ACCESS_TOKEN, accessToken)
+                        session.setValue(Cons.DB.USER.REFRESH_TOKEN, refreshToken)
                         _apiResponse.send(ApiResponse(ApiStatus.SUCCESS, message = message))
                     }
 

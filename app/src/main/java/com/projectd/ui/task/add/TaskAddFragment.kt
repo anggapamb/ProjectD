@@ -15,7 +15,6 @@ import com.crocodic.core.helper.DateTimeHelper
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.projectd.R
 import com.projectd.base.fragment.BaseFragment
-import com.projectd.data.Cons
 import com.projectd.data.model.Task
 import com.projectd.databinding.FragmentTaskAddBinding
 import com.projectd.ui.dialog.ProjectChooserDialog
@@ -31,6 +30,7 @@ class TaskAddFragment : BaseFragment<FragmentTaskAddBinding>(R.layout.fragment_t
     private var selectedEndDate: String? = null
     private var load: String? = null
     private var timelineIsFilled = false
+    private var idProject: Int? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -148,9 +148,22 @@ class TaskAddFragment : BaseFragment<FragmentTaskAddBinding>(R.layout.fragment_t
     }
 
     private fun showProject() {
-        ProjectChooserDialog( {
-            binding?.etProject?.setText(it?.projectName)
+        ProjectChooserDialog( { project ->
+            binding?.etProject?.setText(project?.projectName)
 
+            binding?.vTimeline?.isVisible = true
+            idProject = project?.id
+            timelineIsFilled = false
+
+            project?.timelines?.forEach { timeLine ->
+                if (timeLine.devisionId == viewModel.user?.devision?.id) {
+                    binding?.vTimeline?.isVisible = false
+                    timelineIsFilled = true
+                    return@forEach
+                }
+            }
+
+            /*
             when (viewModel.user?.devision) {
                 Cons.DIVISION.MOBILE -> {
                     if (!it?.timeline?.mobile?.startDate.isNullOrEmpty() || !it?.timeline?.mobile?.endDate.isNullOrEmpty()) {
@@ -226,6 +239,7 @@ class TaskAddFragment : BaseFragment<FragmentTaskAddBinding>(R.layout.fragment_t
                     }
                 }
             }
+            */
 
         } , { clearFocus() }, { navigateTo(R.id.actionProjectAddFragment) }).show(childFragmentManager, "project")
     }
@@ -238,11 +252,15 @@ class TaskAddFragment : BaseFragment<FragmentTaskAddBinding>(R.layout.fragment_t
 
         dateRangePicker.addOnPositiveButtonClickListener {
             val startDate = Calendar.getInstance().apply {
-                timeInMillis = it.first
+                if (it.first != null) {
+                    timeInMillis = it.first!!
+                }
             }
 
             val endDate = Calendar.getInstance().apply {
-                timeInMillis = it.second
+                if (it.second != null) {
+                    timeInMillis = it.second!!
+                }
             }
 
             selectedStartDate = DateTimeHelper().fromDate(startDate.time)
@@ -266,7 +284,7 @@ class TaskAddFragment : BaseFragment<FragmentTaskAddBinding>(R.layout.fragment_t
     }
 
     private fun addTask() {
-        viewModel.addTask(binding?.etTask?.textOf(), binding?.etProject?.textOf(),
+        viewModel.addTask(binding?.etTask?.textOf(), idProject.toString(),
             selectedStartDate, selectedEndDate, load, viewModel.user?.shortName(), viewModel.user?.photo, timelineIsFilled)
     }
 

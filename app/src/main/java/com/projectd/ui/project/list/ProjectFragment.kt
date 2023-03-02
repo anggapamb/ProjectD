@@ -33,7 +33,7 @@ class ProjectFragment : BaseFragment<FragmentProjectBinding>(R.layout.fragment_p
         ) {
             val item = getItem(position)
             holder.binding.data = item
-            holder.binding.btnMore.isVisible = (item?.projectDirector == viewModel.user?.shortName() || item?.createdBy == viewModel.user?.shortName())
+            holder.binding.btnMore.isVisible = (item?.projectDirector?.id == viewModel.user?.id || item?.createdBy?.id == viewModel.user?.id)
 
             holder.binding.progressBar.progress = item?.progress?.toInt()!!
 

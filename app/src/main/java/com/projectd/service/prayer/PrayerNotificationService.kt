@@ -33,7 +33,7 @@ class PrayerNotificationService: Service() {
 
             val prayer = intent?.getParcelableExtra<Prayer>(Cons.BUNDLE.DATA)
 
-            val image = prayer?.photo
+            val image = prayer?.userOwner?.photo
 
             if (image.isNullOrEmpty()) {
                 startNotification(prayer)
@@ -41,12 +41,12 @@ class PrayerNotificationService: Service() {
                 val imgUrl = session.getString(DailySetupWorker.PRAYER_IMG_URL)
                 val imgBmp = session.getString(DailySetupWorker.PRAYER_IMG_BMP)
 
-                if (imgUrl == prayer.photo && imgBmp.isNotEmpty()) {
+                if (imgUrl == prayer.userOwner.photo && imgBmp.isNotEmpty()) {
                     startNotification(prayer, BitmapHelper.decodeBase64(applicationContext, imgBmp))
                 } else {
                     DailySetupWorker.getImage(image) {
                         it?.let { bp ->
-                            session.setValue(DailySetupWorker.PRAYER_IMG_URL, prayer.photo)
+                            session.setValue(DailySetupWorker.PRAYER_IMG_URL, prayer.userOwner.photo)
                             session.setValue(DailySetupWorker.PRAYER_IMG_BMP, BitmapHelper.encodeToBase64(bp))
                         }
                         startNotification(prayer, it)

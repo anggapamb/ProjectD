@@ -20,7 +20,7 @@ class TaskAddViewModel(private val apiService: ApiService): BaseViewModel() {
             } else {
                 _apiResponse.send(ApiResponse(ApiStatus.LOADING, message = "Submitting..."))
                 ApiObserver(
-                    block = {apiService.addTask(task, null, null, null, load, createBy, photo)},
+                    block = {apiService.addTask(task, null, null, null, load)},
                     toast = false,
                     responseListener = object : ApiObserver.ResponseListener {
                         override suspend fun onSuccess(response: JSONObject) {
@@ -45,7 +45,7 @@ class TaskAddViewModel(private val apiService: ApiService): BaseViewModel() {
                 } else {
                     _apiResponse.send(ApiResponse(ApiStatus.LOADING, message = "Submitting..."))
                     ApiObserver(
-                        block = {apiService.addTask(task, project, startD, endD, load, createBy, photo)},
+                        block = {apiService.addTask(task, project, startD, endD, load)},
                         toast = false,
                         responseListener = object : ApiObserver.ResponseListener {
                             override suspend fun onSuccess(response: JSONObject) {
@@ -68,7 +68,7 @@ class TaskAddViewModel(private val apiService: ApiService): BaseViewModel() {
                 } else {
                     _apiResponse.send(ApiResponse(ApiStatus.LOADING, message = "Submitting..."))
                     ApiObserver(
-                        block = {apiService.addTask(task, project, startD, endD, load, createBy, photo)},
+                        block = {apiService.addTask(task, project, startD, endD, load)},
                         toast = false,
                         responseListener = object : ApiObserver.ResponseListener {
                             override suspend fun onSuccess(response: JSONObject) {

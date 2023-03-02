@@ -73,7 +73,7 @@ class AbsentDialog(private val onSuccess: () -> Unit): BottomSheetDialogFragment
                 _apiResponse.send(ApiResponse(ApiStatus.ERROR, message = "Please complete from."))
             } else {
                 ApiObserver(
-                    block = {apiService.sendAbsent(name, reason, idLogin)},
+                    block = {apiService.sendAbsent(reason)},
                     toast = false,
                     responseListener = object : ApiObserver.ResponseListener {
                         override suspend fun onSuccess(response: JSONObject) {

@@ -14,12 +14,12 @@ import com.crocodic.core.helper.DateTimeHelper
 import com.projectd.R
 import com.projectd.base.fragment.BaseFragment
 import com.projectd.data.Cons
-import com.projectd.data.model.Task
+import com.projectd.data.model.TaskByDate
 import com.projectd.data.model.TaskDay
 import com.projectd.databinding.FragmentTaskBinding
 import com.projectd.databinding.ItemDayBinding
 import com.projectd.databinding.ItemTaskBinding
-import com.projectd.ui.dialog.TaskReportDialog
+import com.projectd.ui.dialog.TaskByDateReportDialog
 import com.projectd.ui.task.add.TaskAddFragment
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -28,7 +28,7 @@ class TaskFragment : BaseFragment<FragmentTaskBinding>(R.layout.fragment_task), 
     private val viewModel: TaskViewModel by viewModel()
     private var dayAdapter: DayTaskAdapter? = null
     private var selectedDate = DateTimeHelper().dateNow()
-    private val listTask = ArrayList<Task?>()
+    private val listTask = ArrayList<TaskByDate?>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -56,9 +56,9 @@ class TaskFragment : BaseFragment<FragmentTaskBinding>(R.layout.fragment_task), 
         binding?.rvDay?.scrollToPosition(15)
         viewModel.taskByDate()
 
-        binding?.rvTask?.adapter = object : CoreListAdapter<ItemTaskBinding, Task>(R.layout.item_task){
+        binding?.rvTask?.adapter = object : CoreListAdapter<ItemTaskBinding, TaskByDate>(R.layout.item_task){
             override fun onBindViewHolder(
-                holder: ItemViewHolder<ItemTaskBinding, Task>,
+                holder: ItemViewHolder<ItemTaskBinding, TaskByDate>,
                 position: Int
             ) {
                 val data = listTask[position]
@@ -71,8 +71,8 @@ class TaskFragment : BaseFragment<FragmentTaskBinding>(R.layout.fragment_task), 
                 }
 
                 holder.itemView.setOnClickListener {
-                    if (data?.status != Task.DONE && data?.load != TaskAddFragment.Companion.LOAD.STANDBY) {
-                        TaskReportDialog(data) { viewModel.taskByDate(selectedDate) }.show(childFragmentManager, "report")
+                    if (data?.status != TaskByDate.DONE && data?.load != TaskAddFragment.Companion.LOAD.STANDBY) {
+                        TaskByDateReportDialog(data) { viewModel.taskByDate(selectedDate) }.show(childFragmentManager, "report")
                     }
                 }
 
@@ -83,7 +83,7 @@ class TaskFragment : BaseFragment<FragmentTaskBinding>(R.layout.fragment_task), 
                             dialog.dismiss()
                             when (which) {
                                 0 -> {
-                                    if (data?.verified == "0") {
+                                    if (data?.verified == false) {
                                         viewModel.verifyTask(data.id.toString()) { viewModel.taskByDate(selectedDate) }
                                     } else {
                                         requireActivity().tos("Task has been verified by ${data?.verifiedBy}")

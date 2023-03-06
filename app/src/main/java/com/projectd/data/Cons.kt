@@ -29,7 +29,6 @@ object Cons {
         object USER {
             const val FCM_ID = "fcmId"
             const val ACCESS_TOKEN = "accessToken"
-            const val REFRESH_TOKEN = "refreshToken"
         }
 
         object PROJECT {

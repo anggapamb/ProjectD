@@ -6,6 +6,7 @@ import com.crocodic.core.api.ApiResponse
 import com.crocodic.core.extension.toList
 import com.crocodic.core.extension.toObject
 import com.projectd.api.ApiService
+import com.projectd.base.observe.BaseObserver
 import com.projectd.base.viewmodel.BaseViewModel
 import com.projectd.data.Cons
 import com.projectd.data.model.Absent
@@ -17,13 +18,13 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 
-class HomeViewModel(private val apiService: ApiService) : BaseViewModel() {
+class HomeViewModel(private val apiService: ApiService, private val observer: BaseObserver) : BaseViewModel() {
 
     private val _dataTasks: Channel<List<Task?>> = Channel()
     val dataTasks =_dataTasks.receiveAsFlow()
 
     fun taskToday() = viewModelScope.launch {
-        ApiObserver(
+        observer(
             block = {apiService.taskToday()},
             toast = false,
             responseListener = object : ApiObserver.ResponseListener {
@@ -42,7 +43,7 @@ class HomeViewModel(private val apiService: ApiService) : BaseViewModel() {
     }
 
     fun verifyTask(idTask: String?, onResponse: () -> Unit) = viewModelScope.launch {
-        ApiObserver(
+        observer(
             block = {apiService.verifyTask(idTask)},
             toast = false,
             responseListener = object : ApiObserver.ResponseListener {
@@ -62,7 +63,7 @@ class HomeViewModel(private val apiService: ApiService) : BaseViewModel() {
     val dataMenus = _dataMenus.receiveAsFlow()
 
     fun allMenus() = viewModelScope.launch {
-        ApiObserver(
+        observer(
             block = {apiService.addMenus()},
             toast = false,
             responseListener = object : ApiObserver.ResponseListener {
@@ -98,7 +99,7 @@ class HomeViewModel(private val apiService: ApiService) : BaseViewModel() {
     val dataAbsent = _dataAbsent.receiveAsFlow()
 
     fun getAbsent() = viewModelScope.launch {
-        ApiObserver(
+        observer(
             block = {apiService.getAbsent()},
             toast = false,
             responseListener = object : ApiObserver.ResponseListener {
@@ -119,7 +120,7 @@ class HomeViewModel(private val apiService: ApiService) : BaseViewModel() {
     val prayer = _prayer.receiveAsFlow()
 
     fun preparePrayer() = viewModelScope.launch {
-        ApiObserver(
+        observer(
             block = {apiService.showPrayer()},
             toast = false,
             responseListener = object : ApiObserver.ResponseListener {

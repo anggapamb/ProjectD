@@ -5,11 +5,12 @@ import com.crocodic.core.api.ApiObserver
 import com.crocodic.core.api.ApiResponse
 import com.crocodic.core.api.ApiStatus
 import com.projectd.api.ApiService
+import com.projectd.base.observe.BaseObserver
 import com.projectd.base.viewmodel.BaseViewModel
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 
-class ProjectAddViewModel(private val apiService: ApiService): BaseViewModel() {
+class ProjectAddViewModel(private val apiService: ApiService, private val observe: BaseObserver): BaseViewModel() {
 
     fun addProject(
         idProject: String?,
@@ -27,7 +28,7 @@ class ProjectAddViewModel(private val apiService: ApiService): BaseViewModel() {
             _apiResponse.send(ApiResponse(ApiStatus.ERROR, message = "Please complete from."))
         } else {
             _apiResponse.send(ApiResponse(ApiStatus.LOADING, message = "Submitting..."))
-            ApiObserver(
+            observe(
                 block = {
                         if (idProject.isNullOrEmpty()) {
                             apiService.addProject(projectName, description, startDate, endDate, projectDirector, difficult)

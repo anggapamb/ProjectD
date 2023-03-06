@@ -156,7 +156,7 @@ class TaskAddFragment : BaseFragment<FragmentTaskAddBinding>(R.layout.fragment_t
             timelineIsFilled = false
 
             project?.timelines?.forEach { timeLine ->
-                if (timeLine.devisionId == viewModel.user?.devision?.id) {
+                if (timeLine?.devisionId == viewModel.user?.devision?.id) {
                     binding?.vTimeline?.isVisible = false
                     timelineIsFilled = true
                     return@forEach

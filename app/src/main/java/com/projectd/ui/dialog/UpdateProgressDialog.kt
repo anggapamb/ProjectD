@@ -14,6 +14,7 @@ import com.crocodic.core.api.ApiStatus
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.projectd.R
 import com.projectd.api.ApiService
+import com.projectd.base.observe.BaseObserver
 import com.projectd.base.viewmodel.BaseViewModel
 import com.projectd.data.model.Project
 import com.projectd.databinding.DialogUpdateProgressBinding
@@ -35,7 +36,7 @@ class UpdateProgressDialog(val project: Project, private val onDismiss: () -> Un
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding?.seekBar?.progress = project.progress.toInt()
+        project.progress?.let { binding?.seekBar?.progress = it }
 
         binding?.seekBar?.min = 0
         binding?.seekBar?.max = 100
@@ -76,10 +77,10 @@ class UpdateProgressDialog(val project: Project, private val onDismiss: () -> Un
         }
     }
 
-    class UpdateProgressViewModel(private val apiService: ApiService): BaseViewModel() {
+    class UpdateProgressViewModel(private val apiService: ApiService, private val observer: BaseObserver): BaseViewModel() {
 
         fun updateProgress(project: Project, progress: Int) = viewModelScope.launch{
-            ApiObserver(
+            observer(
                 block = {apiService.updateProgressProject(project.id, progress)},
                 toast = false,
                 responseListener = object : ApiObserver.ResponseListener {

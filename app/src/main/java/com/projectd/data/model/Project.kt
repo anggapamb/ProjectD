@@ -8,49 +8,49 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class Project(
     @SerializedName("created_at")
-    val createdAt: String,
+    val createdAt: String?,
     @SerializedName("createdBy")
-    val createdBy: User,
+    val createdBy: User?,
     @SerializedName("description")
-    val description: String,
+    val description: String?,
     @SerializedName("difficulty")
-    val difficulty: String,
+    val difficulty: String?,
     @SerializedName("end_date")
-    val endDate: String,
+    val endDate: String?,
     @SerializedName("id")
-    val id: Int,
+    val id: Int?,
     @SerializedName("progress")
-    val progress: Int,
+    val progress: Int?,
     @SerializedName("projectDirector")
-    val projectDirector: User,
+    val projectDirector: User?,
     @SerializedName("project_name")
-    val projectName: String,
+    val projectName: String?,
     @SerializedName("start_date")
-    val startDate: String,
+    val startDate: String?,
     @SerializedName("timelines")
-    val timelines: List<Timeline>,
+    val timelines: List<Timeline?>,
     @SerializedName("updated_at")
-    val updatedAt: String
+    val updatedAt: String?
 ): Parcelable {
 
     @Parcelize
     data class User(
         @SerializedName("id")
-        val id: Int,
+        val id: Int?,
         @SerializedName("name")
-        val name: String
+        val name: String?
     ): Parcelable
 
     @Parcelize
     data class Timeline(
         @SerializedName("devision_id")
-        val devisionId: Int,
+        val devisionId: Int?,
         @SerializedName("end_date")
-        val endDate: String,
+        val endDate: String?,
         @SerializedName("id")
-        val id: Int,
+        val id: Int?,
         @SerializedName("start_date")
-        val startDate: String
+        val startDate: String?
     ): Parcelable
 
     fun prettyTimeline() = "${DateTimeHelper().convert(startDate, "yyyy-MM-dd", "d MMMM yyyy")} - ${DateTimeHelper().convert(endDate, "yyyy-MM-dd", "d MMMM yyyy")}"

@@ -5,11 +5,12 @@ import com.crocodic.core.api.ApiObserver
 import com.crocodic.core.api.ApiResponse
 import com.crocodic.core.api.ApiStatus
 import com.projectd.api.ApiService
+import com.projectd.base.observe.BaseObserver
 import com.projectd.base.viewmodel.BaseViewModel
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 
-class TaskAddViewModel(private val apiService: ApiService): BaseViewModel() {
+class TaskAddViewModel(private val apiService: ApiService, private val observer: BaseObserver): BaseViewModel() {
 
     fun addTask(task: String?, project: String?, startD: String?, endD: String?, load: String?, createBy: String?, photo: String?, timelineIsFilled: Boolean)
     = viewModelScope.launch {
@@ -19,7 +20,7 @@ class TaskAddViewModel(private val apiService: ApiService): BaseViewModel() {
                 _apiResponse.send(ApiResponse(ApiStatus.ERROR, message = "Please complete from."))
             } else {
                 _apiResponse.send(ApiResponse(ApiStatus.LOADING, message = "Submitting..."))
-                ApiObserver(
+                observer(
                     block = {apiService.addTask(task, null, null, null, load)},
                     toast = false,
                     responseListener = object : ApiObserver.ResponseListener {
@@ -44,7 +45,7 @@ class TaskAddViewModel(private val apiService: ApiService): BaseViewModel() {
                     _apiResponse.send(ApiResponse(ApiStatus.ERROR, message = "Please complete from."))
                 } else {
                     _apiResponse.send(ApiResponse(ApiStatus.LOADING, message = "Submitting..."))
-                    ApiObserver(
+                    observer(
                         block = {apiService.addTask(task, project, startD, endD, load)},
                         toast = false,
                         responseListener = object : ApiObserver.ResponseListener {
@@ -67,7 +68,7 @@ class TaskAddViewModel(private val apiService: ApiService): BaseViewModel() {
                     _apiResponse.send(ApiResponse(ApiStatus.ERROR, message = "Please complete from."))
                 } else {
                     _apiResponse.send(ApiResponse(ApiStatus.LOADING, message = "Submitting..."))
-                    ApiObserver(
+                    observer(
                         block = {apiService.addTask(task, project, startD, endD, load)},
                         toast = false,
                         responseListener = object : ApiObserver.ResponseListener {

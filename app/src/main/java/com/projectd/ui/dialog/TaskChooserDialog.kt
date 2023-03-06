@@ -15,6 +15,7 @@ import com.crocodic.core.extension.toList
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.projectd.R
 import com.projectd.api.ApiService
+import com.projectd.base.observe.BaseObserver
 import com.projectd.base.viewmodel.BaseViewModel
 import com.projectd.data.model.Task
 import com.projectd.databinding.DialogTaskChooserBinding
@@ -77,13 +78,13 @@ class TaskChooserDialog(private val onSelect: (Task?) -> Unit): BottomSheetDialo
         return dateFormat.format(cal.time)
     }
 
-    class TaskChooserViewModel(private val apiService: ApiService): BaseViewModel() {
+    class TaskChooserViewModel(private val apiService: ApiService, private val observer: BaseObserver): BaseViewModel() {
 
         private val _dataTasks: Channel<List<Task>> = Channel()
         val dataTasks = _dataTasks.receiveAsFlow()
 
         fun taskByDate(date: String) = viewModelScope.launch {
-            ApiObserver(
+            observer(
                 block = {apiService.taskByDate(date)},
                 toast = false,
                 responseListener = object : ApiObserver.ResponseListener {

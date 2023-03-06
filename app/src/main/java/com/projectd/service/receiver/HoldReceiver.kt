@@ -10,6 +10,7 @@ import com.crocodic.core.api.ApiObserver
 import com.crocodic.core.api.ApiResponse
 import com.crocodic.core.api.ApiStatus
 import com.projectd.api.ApiService
+import com.projectd.base.observe.BaseObserver
 import com.projectd.base.viewmodel.BaseViewModel
 import com.projectd.service.fcm.FirebaseMsgService.Companion.ID_NOTIFICATION
 import com.projectd.service.fcm.FirebaseMsgService.Companion.RESULT_KEY
@@ -48,10 +49,10 @@ class HoldReceiver : BroadcastReceiver(), KoinComponent {
         }
     }
 
-    class HoldViewModel(private val apiService: ApiService): BaseViewModel() {
+    class HoldViewModel(private val apiService: ApiService, private val observe: BaseObserver): BaseViewModel() {
 
         fun updateTask(idTask: String, description: String) = viewModelScope.launch {
-            ApiObserver(
+            observe(
                 block = {apiService.updateTask(idTask, "hold", description) },
                 toast = false,
                 responseListener = object : ApiObserver.ResponseListener {

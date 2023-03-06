@@ -15,22 +15,22 @@ import com.crocodic.core.extension.tos
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.projectd.R
 import com.projectd.api.ApiService
-import com.projectd.base.observe.BaseObserver
 import com.projectd.base.viewmodel.BaseViewModel
 import com.projectd.data.model.Task
-import com.projectd.databinding.DialogTaskReportBinding
+import com.projectd.data.model.TaskByDate
+import com.projectd.databinding.DialogTaskByDateReportBinding
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class TaskReportDialog(val task: Task?, private val onSuccess: () -> Unit): BottomSheetDialogFragment() {
+class TaskByDateReportDialog(val task: TaskByDate?, private val onSuccess: () -> Unit): BottomSheetDialogFragment() {
 
-    private var binding: DialogTaskReportBinding? = null
+    private var binding: DialogTaskByDateReportBinding? = null
     private val viewModel: TaskReportViewModel by viewModel()
     private var status: String? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = DataBindingUtil.inflate(inflater, R.layout.dialog_task_report, container, false)
+        binding = DataBindingUtil.inflate(inflater, R.layout.dialog_task_by_date_report, container, false)
         return binding?.root
     }
 
@@ -81,13 +81,13 @@ class TaskReportDialog(val task: Task?, private val onSuccess: () -> Unit): Bott
         }
     }
 
-    class TaskReportViewModel(private val apiService: ApiService, private val observer: BaseObserver): BaseViewModel() {
+    class TaskReportViewModel(private val apiService: ApiService): BaseViewModel() {
 
         fun updateStatus(idTask: String?, status: String?, description: String?) = viewModelScope.launch {
             if (idTask.isNullOrEmpty() || status.isNullOrEmpty() || description.isNullOrEmpty()) {
                 _apiResponse.send(ApiResponse(ApiStatus.ERROR, message = "Please complete from."))
             } else {
-                observer(
+                ApiObserver(
                     block = {apiService.updateTask(idTask, status, description)},
                     toast = false,
                     responseListener = object : ApiObserver.ResponseListener {

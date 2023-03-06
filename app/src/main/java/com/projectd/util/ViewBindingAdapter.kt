@@ -19,10 +19,7 @@ import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
 import com.crocodic.core.helper.DateTimeHelper
 import com.projectd.R
-import com.projectd.data.model.Absent
-import com.projectd.data.model.HomeMenu
-import com.projectd.data.model.Project
-import com.projectd.data.model.Task
+import com.projectd.data.model.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -244,6 +241,20 @@ class ViewBindingAdapter {
         @JvmStatic
         @BindingAdapter("taskStatus")
         fun taskStatus(view: TextView, task: Task?) {
+            task?.let {
+                val text = when (it.status) {
+                    Task.DONE -> "Done at ${it.prettyDone()}"
+                    Task.HOLD -> "Hold"
+                    Task.CANCEL -> "Cancel"
+                    else -> "On Going"
+                }
+                view.text = text
+            }
+        }
+
+        @JvmStatic
+        @BindingAdapter("taskStatus")
+        fun taskStatus(view: TextView, task: TaskByDate?) {
             task?.let {
                 val text = when (it.status) {
                     Task.DONE -> "Done at ${it.prettyDone()}"

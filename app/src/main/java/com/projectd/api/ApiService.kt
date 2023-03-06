@@ -132,11 +132,9 @@ interface ApiService {
         @Field("status") status: String?
     ): String
 
-    @POST("refresh-token")
-    suspend fun refreshToken(
-        @Header("Authorization") refreshToken: String
-    ):String
-
     @GET("user/profile")
     suspend fun getProfile(): String
+
+    @POST("refresh-token")
+    suspend fun refreshToken(): String
 }

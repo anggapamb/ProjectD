@@ -5,6 +5,7 @@ import com.crocodic.core.helper.okhttp.SSLTrust
 import com.google.gson.Gson
 import com.projectd.BuildConfig
 import com.projectd.api.ApiService
+import com.projectd.base.observe.BaseObserver
 import com.projectd.data.Cons
 import com.projectd.data.Session
 import com.projectd.service.AudioHelper
@@ -52,28 +53,29 @@ object AppModule {
     }
 
     val viewModelModule = module {
-        viewModel { HomeViewModel(get()) }
-        viewModel { LoginViewModel(get()) }
+        viewModel { HomeViewModel(get(), get()) }
+        viewModel { LoginViewModel(get(), get()) }
         viewModel { ProjectViewModel(get()) }
-        viewModel { ManagerChooserViewModel(get()) }
-        viewModel { ProjectAddViewModel(get()) }
-        viewModel { TaskViewModel(get()) }
+        viewModel { ManagerChooserViewModel(get(), get()) }
+        viewModel { ProjectAddViewModel(get(), get()) }
+        viewModel { TaskViewModel(get(), get()) }
         viewModel { ProjectChooserViewModel(get()) }
-        viewModel { TaskAddViewModel(get()) }
-        viewModel { TaskReportViewModel(get()) }
-        viewModel { AbsentViewModel(get()) }
-        viewModel { TodayCheckViewModel(get()) }
-        viewModel { UpdateProgressViewModel(get()) }
-        viewModel { TaskPovViewModel(get()) }
-        viewModel { TaskChooserViewModel(get()) }
-        viewModel { DoneReceiver.DoneViewModel(get()) }
-        viewModel { HoldReceiver.HoldViewModel(get()) }
-        viewModel { CancelReceiver.CancelViewModel(get()) }
+        viewModel { TaskAddViewModel(get(), get()) }
+        viewModel { TaskReportViewModel(get(), get()) }
+        viewModel { AbsentViewModel(get(), get()) }
+        viewModel { TodayCheckViewModel(get(), get()) }
+        viewModel { UpdateProgressViewModel(get(), get()) }
+        viewModel { TaskPovViewModel(get(), get()) }
+        viewModel { TaskChooserViewModel(get(), get()) }
+        viewModel { DoneReceiver.DoneViewModel(get(), get()) }
+        viewModel { HoldReceiver.HoldViewModel(get(), get()) }
+        viewModel { CancelReceiver.CancelViewModel(get(), get()) }
     }
 
     val networkModule = module {
         single { retrofitBuilder(retrofitHttpClient()) }
         single { createApiService(get()) }
+        single { BaseObserver(get(), get()) }
     }
 
     private fun retrofitBuilder(okHttpClient: OkHttpClient): Retrofit {

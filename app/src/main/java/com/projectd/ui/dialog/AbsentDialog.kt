@@ -16,6 +16,7 @@ import com.crocodic.core.extension.tos
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.projectd.R
 import com.projectd.api.ApiService
+import com.projectd.base.observe.BaseObserver
 import com.projectd.base.viewmodel.BaseViewModel
 import com.projectd.databinding.DialogAbsentBinding
 import kotlinx.coroutines.flow.collect
@@ -66,13 +67,13 @@ class AbsentDialog(private val onSuccess: () -> Unit): BottomSheetDialogFragment
         }
     }
 
-    class AbsentViewModel(private val apiService: ApiService): BaseViewModel() {
+    class AbsentViewModel(private val apiService: ApiService, private val observe: BaseObserver): BaseViewModel() {
 
         fun sendAbsent(name: String?, reason: String?, idLogin: String?) = viewModelScope.launch {
             if (name.isNullOrEmpty() || reason.isNullOrEmpty() || idLogin.isNullOrEmpty()) {
                 _apiResponse.send(ApiResponse(ApiStatus.ERROR, message = "Please complete from."))
             } else {
-                ApiObserver(
+                observe(
                     block = {apiService.sendAbsent(reason)},
                     toast = false,
                     responseListener = object : ApiObserver.ResponseListener {

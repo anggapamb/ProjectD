@@ -5,6 +5,7 @@ import com.crocodic.core.api.ApiObserver
 import com.crocodic.core.api.ApiResponse
 import com.crocodic.core.extension.toList
 import com.projectd.api.ApiService
+import com.projectd.base.observe.BaseObserver
 import com.projectd.base.viewmodel.BaseViewModel
 import com.projectd.data.Cons
 import com.projectd.data.model.Absent
@@ -16,13 +17,13 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 
-class TodayCheckViewModel(private val apiService: ApiService): BaseViewModel() {
+class TodayCheckViewModel(private val apiService: ApiService, private val observer: BaseObserver): BaseViewModel() {
 
     private val _dataAbsents: Channel<List<Absent?>> = Channel()
     val dataAbsents = _dataAbsents.receiveAsFlow()
 
     fun listAllAbsent() = viewModelScope.launch {
-        ApiObserver(
+        observer(
             block = {apiService.getListAllAbsent()},
             toast = false,
             responseListener = object : ApiObserver.ResponseListener {
@@ -40,7 +41,7 @@ class TodayCheckViewModel(private val apiService: ApiService): BaseViewModel() {
     }
 
     fun approvedAbsent(idAbsent: String, approved: String, onResponse: () -> Unit) = viewModelScope.launch {
-        ApiObserver(
+        observer(
             block = {apiService.approvedAbsent(idAbsent, approved)},
             toast = false,
             responseListener = object : ApiObserver.ResponseListener {
@@ -58,7 +59,7 @@ class TodayCheckViewModel(private val apiService: ApiService): BaseViewModel() {
     val dataTasks =_dataTasks.receiveAsFlow()
 
     fun taskToday(status: String) = viewModelScope.launch {
-        ApiObserver(
+        observer(
             block = {apiService.taskToday()},
             toast = false,
             responseListener = object : ApiObserver.ResponseListener {
@@ -125,7 +126,7 @@ class TodayCheckViewModel(private val apiService: ApiService): BaseViewModel() {
     }
 
     fun verifyTask(idTask: String?, onResponse: () -> Unit) = viewModelScope.launch {
-        ApiObserver(
+        observer(
             block = {apiService.verifyTask(idTask)},
             toast = false,
             responseListener = object : ApiObserver.ResponseListener {
@@ -145,7 +146,7 @@ class TodayCheckViewModel(private val apiService: ApiService): BaseViewModel() {
     val dataUsers = _dataUsers.receiveAsFlow()
 
     fun userNotReady() = viewModelScope.launch {
-        ApiObserver(
+        observer(
             block = {apiService.userNotReady()},
             toast = false,
             responseListener = object : ApiObserver.ResponseListener {

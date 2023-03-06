@@ -18,6 +18,7 @@ import com.crocodic.core.extension.toList
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.projectd.R
 import com.projectd.api.ApiService
+import com.projectd.base.observe.BaseObserver
 import com.projectd.base.viewmodel.BaseViewModel
 import com.projectd.data.model.Manager
 import com.projectd.databinding.DialogManagerChooserBinding
@@ -78,13 +79,13 @@ class ManagerChooserDialog(private val title :String, private val onSelect: (Man
         onCancel()
     }
 
-    class ManagerChooserViewModel(private val apiService: ApiService) : BaseViewModel() {
+    class ManagerChooserViewModel(private val apiService: ApiService, private val observer: BaseObserver) : BaseViewModel() {
 
         private val _dataManagers: Channel<List<Manager?>> = Channel()
         val dataManagers = _dataManagers.receiveAsFlow()
 
         fun managers() = viewModelScope.launch {
-            ApiObserver(
+            observer(
                 block = {apiService.managers()},
                 toast = false,
                 responseListener = object : ApiObserver.ResponseListener {

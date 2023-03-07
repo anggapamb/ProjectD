@@ -113,7 +113,7 @@ class ViewBindingAdapter {
         @BindingAdapter("textUpdated")
         fun textUpdated(view: TextView, textUpdated: Task?) {
             textUpdated?.let {
-                val who = if (it.createdBy == "You") "have" else "has"
+                val who = if (it.createdBy?.name == "You") "have" else "has"
 
                 var text = if (it.updatedAt.isNullOrEmpty()) {
                     "$who created new task."

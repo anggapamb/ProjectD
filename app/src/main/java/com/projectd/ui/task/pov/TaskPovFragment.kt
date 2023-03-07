@@ -71,8 +71,8 @@ class TaskPovFragment : BaseFragment<FragmentTaskPovBinding>(R.layout.fragment_t
                     }
 
                     holder.itemView.setOnClickListener {
-                        if (data?.idLogin == viewModel.user?.id.toString() && data.load != TaskAddFragment.Companion.LOAD.STANDBY) {
-                            if ( data.status != Task.DONE) {
+                        if (data?.createdBy?.id == viewModel.user?.id && data?.load != TaskAddFragment.Companion.LOAD.STANDBY) {
+                            if ( data?.status != Task.DONE) {
                                 TaskReportDialog(data) { getTasks() }.show(childFragmentManager, "report")
                             }
                         }
@@ -85,7 +85,7 @@ class TaskPovFragment : BaseFragment<FragmentTaskPovBinding>(R.layout.fragment_t
                                 dialog.dismiss()
                                 when (which) {
                                     0 -> {
-                                        if (data?.verified == "0") {
+                                        if (data?.verified == false) {
                                             viewModel.verifyTask(data.id.toString()) { getTasks() }
                                         } else {
                                             requireActivity().tos("Task has been verified by ${data?.verifiedBy}")
@@ -103,7 +103,7 @@ class TaskPovFragment : BaseFragment<FragmentTaskPovBinding>(R.layout.fragment_t
 
     private fun getTasks() {
         val task: Task? = arguments?.getParcelable(Cons.BUNDLE.DATA)
-        viewModel.taskToday(task?.idLogin)
+        viewModel.taskToday(task?.createdBy?.id.toString())
     }
 
 }

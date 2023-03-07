@@ -13,6 +13,7 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.crocodic.core.api.ApiStatus
 import com.crocodic.core.base.adapter.CoreListAdapter
 import com.crocodic.core.data.CoreSession
 import com.crocodic.core.extension.tos
@@ -36,6 +37,7 @@ import com.projectd.ui.dialog.TaskReportDialog
 import com.projectd.ui.task.add.TaskAddFragment
 import com.projectd.util.ViewBindingAdapter.Companion.openUrl
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -75,6 +77,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
 
             viewModel.allMenus()
             viewModel.getAbsent()
+            viewModel.getProfile()
 
             initPrayer()
             dataDummy()
@@ -142,13 +145,25 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
                          */
                     }
                 }
+
+                launch {
+                    viewModel.apiResponse.collect {
+                        if (it.status == ApiStatus.SUCCESS) {
+                            initView()
+
+                            viewModel.taskToday()
+                            viewModel.allMenus()
+                            viewModel.getAbsent()
+                        }
+                    }
+                }
             }
         }
     }
 
     private fun initView() {
         binding?.tvDateNow?.text = DateTimeHelper().datePrettyNow()
-        binding?.user = viewModel.user
+        binding?.user = session.getUser()
 
         listTask.let { tasks ->
             binding?.rvUpdate?.adapter = object : CoreListAdapter<ItemUpdateBinding, Task>(R.layout.item_update) {
@@ -158,20 +173,22 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
                 ) {
                     val data = tasks[position]
                     holder.binding.data = data
-                    holder.binding.yourName = viewModel.user?.shortName()
+                    holder.binding.yourName = session.getUser()?.name
 
-                    if (viewModel.user?.devision?.id == Cons.DIVISION.MANAGER || viewModel.user?.devision?.id == Cons.DIVISION.PSDM || viewModel.user?.devision?.id == Cons.DIVISION.SUPER_ADMIN) {
+                    if (session.getUser()?.devision?.id == Cons.DIVISION.MANAGER || session.getUser()?.devision?.id == Cons.DIVISION.PSDM || session.getUser()?.devision?.id == Cons.DIVISION.SUPER_ADMIN) {
                         holder.binding.btnMore.isVisible = true
-                    } else if (viewModel.user?.isLeader == true) {
-                        holder.binding.btnMore.isVisible = true
+                    } else if (session.getUser()?.isLeader == true) {
+                        if (data?.createdBy?.devision?.id == session.getUser()?.devision?.id) {
+                            holder.binding.btnMore.isVisible = true
+                        }
                     }
 
                     holder.itemView.setOnClickListener {
-                        if (data?.idLogin == viewModel.user?.id.toString() && data.load != TaskAddFragment.Companion.LOAD.STANDBY) {
-                            if ( data.status != Task.DONE) {
+                        if (data?.createdBy?.id == session.getUser()?.id && data?.load != TaskAddFragment.Companion.LOAD.STANDBY) {
+                            if ( data?.status != Task.DONE) {
                                 TaskReportDialog(data) { getTaskToday() }.show(childFragmentManager, "report")
                             }
-                        } else if (viewModel.user?.devision?.id == Cons.DIVISION.MANAGER || viewModel.user?.devision?.id == Cons.DIVISION.PSDM || viewModel.user?.devision?.id == Cons.DIVISION.SUPER_ADMIN) {
+                        } else if (session.getUser()?.devision?.id == Cons.DIVISION.MANAGER || session.getUser()?.devision?.id == Cons.DIVISION.PSDM || session.getUser()?.devision?.id == Cons.DIVISION.SUPER_ADMIN) {
                             val bundle = bundleOf(Cons.BUNDLE.DATA to data)
                             navigateTo(R.id.actionTaskPovFragment, bundle)
                         }
@@ -184,7 +201,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
                                 dialog.dismiss()
                                 when (which) {
                                     0 -> {
-                                        if (data?.verified == "0") {
+                                        if (data?.verified == false) {
                                             viewModel.verifyTask(data.id.toString()) { getTaskToday() }
                                         } else {
                                             requireActivity().tos("Task has been verified by ${data?.verifiedBy}")
@@ -218,11 +235,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
         }
 
         binding?.swipeRefresh?.setOnRefreshListener {
-            viewModel.apply {
-                taskToday()
-                allMenus()
-                getAbsent()
-            }
+            viewModel.getProfile()
         }
     }
 

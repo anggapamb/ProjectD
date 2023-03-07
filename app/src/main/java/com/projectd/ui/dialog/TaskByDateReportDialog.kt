@@ -15,6 +15,7 @@ import com.crocodic.core.extension.tos
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.projectd.R
 import com.projectd.api.ApiService
+import com.projectd.base.observe.BaseObserver
 import com.projectd.base.viewmodel.BaseViewModel
 import com.projectd.data.model.Task
 import com.projectd.data.model.TaskByDate
@@ -26,7 +27,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class TaskByDateReportDialog(val task: TaskByDate?, private val onSuccess: () -> Unit): BottomSheetDialogFragment() {
 
     private var binding: DialogTaskByDateReportBinding? = null
-    private val viewModel: TaskReportViewModel by viewModel()
+    private val viewModel: TaskByDateReportViewModel by viewModel()
     private var status: String? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -81,13 +82,13 @@ class TaskByDateReportDialog(val task: TaskByDate?, private val onSuccess: () ->
         }
     }
 
-    class TaskReportViewModel(private val apiService: ApiService): BaseViewModel() {
+    class TaskByDateReportViewModel(private val apiService: ApiService, private val observer: BaseObserver): BaseViewModel() {
 
         fun updateStatus(idTask: String?, status: String?, description: String?) = viewModelScope.launch {
             if (idTask.isNullOrEmpty() || status.isNullOrEmpty() || description.isNullOrEmpty()) {
                 _apiResponse.send(ApiResponse(ApiStatus.ERROR, message = "Please complete from."))
             } else {
-                ApiObserver(
+                observer(
                     block = {apiService.updateTask(idTask, status, description)},
                     toast = false,
                     responseListener = object : ApiObserver.ResponseListener {

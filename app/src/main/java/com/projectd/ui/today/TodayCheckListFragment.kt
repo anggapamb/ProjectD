@@ -71,8 +71,8 @@ class TodayCheckListFragment : BaseFragment<FragmentTodayCheckListBinding>(R.lay
                     }
 
                     holder.itemView.setOnClickListener {
-                        if (data?.idLogin == viewModel.user?.id.toString() && data.load != TaskAddFragment.Companion.LOAD.STANDBY) {
-                            if ( data.status != Task.DONE) {
+                        if (data?.createdBy?.id == viewModel.user?.id && data?.load != TaskAddFragment.Companion.LOAD.STANDBY) {
+                            if ( data?.status != Task.DONE) {
                                 TaskReportDialog(data) { viewModel.taskToday(title) }.show(childFragmentManager, "report")
                             }
                         } else if (viewModel.user?.devision?.id == Cons.DIVISION.MANAGER || viewModel.user?.devision?.id == Cons.DIVISION.PSDM || viewModel.user?.devision?.id == Cons.DIVISION.SUPER_ADMIN) {
@@ -88,7 +88,7 @@ class TodayCheckListFragment : BaseFragment<FragmentTodayCheckListBinding>(R.lay
                                 dialog.dismiss()
                                 when (which) {
                                     0 -> {
-                                        if (data?.verified == "0") {
+                                        if (data?.verified == false) {
                                             viewModel.verifyTask(data.id.toString()) { viewModel.taskToday(title) }
                                         } else {
                                             requireActivity().tos("Task has been verified by ${data?.verifiedBy}")

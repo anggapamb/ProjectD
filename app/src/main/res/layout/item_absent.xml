@@ -21,7 +21,7 @@
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:background="@drawable/bg_circle_placeholder"
-            app:imgCircleUrl='@{data.photo}'
+            app:imgCircleUrl='@{data.approvedBy}'
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="AB"
@@ -39,7 +39,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text='@{data.name}'
+                android:text='@{data.id.toString()}'
                 android:textColor="@color/text_default"
                 android:textSize="@dimen/text_small"
                 android:textStyle="bold"

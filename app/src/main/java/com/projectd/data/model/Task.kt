@@ -10,27 +10,19 @@ data class Task(
     @SerializedName("created_at")
     val createdAt: String?,
     @SerializedName("createdBy")
-    val createdBy: String?,
+    val createdBy: CreatedBy?,
     @SerializedName("description")
     val description: String?,
-    @SerializedName("devision")
-    val devision: String?,
     @SerializedName("done_at")
     val doneAt: String?,
-    @SerializedName("end_date")
-    val endDate: String?,
     @SerializedName("id")
     val id: Int?,
-    @SerializedName("id_login")
-    val idLogin: String?,
     @SerializedName("load")
     val load: String?,
-    @SerializedName("photo")
-    val photo: String?,
     @SerializedName("project")
-    val project: String?,
-    @SerializedName("start_date")
-    val startDate: String?,
+    val project: Int?,
+    @SerializedName("projectDetail")
+    val projectDetail: ProjectDetail?,
     @SerializedName("status")
     val status: String?,
     @SerializedName("task_name")
@@ -38,10 +30,38 @@ data class Task(
     @SerializedName("updated_at")
     val updatedAt: String?,
     @SerializedName("verified")
-    val verified: String?,
+    val verified: Boolean?,
     @SerializedName("verifiedBy")
-    val verifiedBy: String?
-) : Parcelable {
+    val verifiedBy: String?,
+): Parcelable {
+
+    @Parcelize
+    data class ProjectDetail(
+        @SerializedName("id")
+        val id: Int?,
+        @SerializedName("project_name")
+        val projectName: String?
+    ): Parcelable
+
+    @Parcelize
+    data class CreatedBy(
+        @SerializedName("id")
+        val id: Int?,
+        @SerializedName("name")
+        val name: String?,
+        @SerializedName("photo")
+        val photo: String?,
+        @SerializedName("devision")
+        val devision: Devision?
+    ): Parcelable
+
+    @Parcelize
+    data class Devision(
+        @SerializedName("id")
+        val id: Int?,
+        @SerializedName("devision_name")
+        val devisionName: String?
+    ): Parcelable
 
     fun prettyDone() = DateTimeHelper().convert(doneAt, "yyyy-MM-dd HH:mm:ss", "d MMMM, HH:mm")
 
@@ -56,4 +76,5 @@ data class Task(
         const val MEDIUM = "medium"
         const val HIGH = "high"
     }
+
 }

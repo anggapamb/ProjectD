@@ -77,7 +77,6 @@ interface ApiService {
         @Field("description") description: String?
     ): String
 
-    @FormUrlEncoded
     @POST("task/update-verified/{idTask}")
     suspend fun verifyTask(
         @Path("idTask") idTask: String?

@@ -39,7 +39,7 @@ class TaskPovViewModel(private val apiService: ApiService, private val observer:
 
     private fun customTask(data: List<Task>, idLogin: String?): List<Task?> {
         val tasks = ArrayList<Task>(data)
-        return tasks.filter { it.idLogin?.contains(idLogin.toString(), true) == true }
+        return tasks.filter { it.createdBy?.id.toString().contains(idLogin.toString(), true) }
     }
 
     fun verifyTask(idTask: String?, onResponse: () -> Unit) = viewModelScope.launch {

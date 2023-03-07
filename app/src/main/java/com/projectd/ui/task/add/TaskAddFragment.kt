@@ -105,7 +105,7 @@ class TaskAddFragment : BaseFragment<FragmentTaskAddBinding>(R.layout.fragment_t
             TaskChooserDialog {
 
                 binding?.etTask?.setText(it?.taskName)
-                binding?.etProject?.setText(it?.project)
+                binding?.etProject?.setText(it?.projectDetail?.projectName)
 
                 when (it?.load) {
                     Task.STANDBY -> {

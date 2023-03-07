@@ -37,24 +37,24 @@ class TodayAbsentFragment : BaseFragment<FragmentTodayAbsentBinding>(R.layout.fr
                 AlertDialog.Builder(requireContext()).apply {
                     setItems(moreDialogItems) { dialog, which ->
                         dialog.dismiss()
-                        when (which) {
-                            0 -> {
-                                if (data?.approved == null) {
-                                    viewModel.approvedAbsent("${data?.id}", "true") { viewModel.listAllAbsent() }
-                                } else {
-                                    val aprvl = if (data.approved == "true") "approved" else "rejected"
-                                    requireActivity().tos("Absent already $aprvl by ${data.approvedBy}")
-                                }
-                            }
-                            1 -> {
-                                if (data?.approved == null) {
-                                    viewModel.approvedAbsent("${data?.id}", "false") { viewModel.listAllAbsent() }
-                                } else {
-                                    val aprvl = if (data.approved == "true") "approved" else "rejected"
-                                    requireActivity().tos("Absent already $aprvl by ${data.approvedBy}")
-                                }
-                            }
-                        }
+//                        when (which) {
+//                            0 -> {
+//                                if (data?.approved == null) {
+//                                    viewModel.approvedAbsent("${data?.id}", "true") { viewModel.listAllAbsent() }
+//                                } else {
+//                                    val aprvl = if (data.approved == "true") "approved" else "rejected"
+//                                    requireActivity().tos("Absent already $aprvl by ${data.approvedBy}")
+//                                }
+//                            }
+//                            1 -> {
+//                                if (data?.approved == null) {
+//                                    viewModel.approvedAbsent("${data?.id}", "false") { viewModel.listAllAbsent() }
+//                                } else {
+//                                    val aprvl = if (data.approved == "true") "approved" else "rejected"
+//                                    requireActivity().tos("Absent already $aprvl by ${data.approvedBy}")
+//                                }
+//                            }
+//                        }
                     }
                 }.show()
             }

@@ -18,6 +18,7 @@ import com.projectd.api.ApiService
 import com.projectd.base.observe.BaseObserver
 import com.projectd.base.viewmodel.BaseViewModel
 import com.projectd.data.model.Task
+import com.projectd.data.model.TaskByDate
 import com.projectd.databinding.DialogTaskChooserBinding
 import com.projectd.databinding.ItemTaskChooserBinding
 import kotlinx.coroutines.channels.Channel
@@ -29,11 +30,11 @@ import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
-class TaskChooserDialog(private val onSelect: (Task?) -> Unit): BottomSheetDialogFragment() {
+class TaskChooserDialog(private val onSelect: (TaskByDate?) -> Unit): BottomSheetDialogFragment() {
 
     private var binding: DialogTaskChooserBinding? = null
     private val viewModel: TaskChooserViewModel by viewModel()
-    private val listTask = ArrayList<Task?>()
+    private val listTask = ArrayList<TaskByDate?>()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.dialog_task_chooser, container, false)
@@ -49,7 +50,7 @@ class TaskChooserDialog(private val onSelect: (Task?) -> Unit): BottomSheetDialo
     }
 
     private fun initView() {
-        binding?.rvTask?.adapter = CoreListAdapter<ItemTaskChooserBinding, Task>(R.layout.item_task_chooser)
+        binding?.rvTask?.adapter = CoreListAdapter<ItemTaskChooserBinding, TaskByDate>(R.layout.item_task_chooser)
             .initItem(listTask) { _, data ->
                 onSelect(data)
                 this@TaskChooserDialog.dismiss()
@@ -80,7 +81,7 @@ class TaskChooserDialog(private val onSelect: (Task?) -> Unit): BottomSheetDialo
 
     class TaskChooserViewModel(private val apiService: ApiService, private val observer: BaseObserver): BaseViewModel() {
 
-        private val _dataTasks: Channel<List<Task>> = Channel()
+        private val _dataTasks: Channel<List<TaskByDate>> = Channel()
         val dataTasks = _dataTasks.receiveAsFlow()
 
         fun taskByDate(date: String) = viewModelScope.launch {
@@ -89,7 +90,7 @@ class TaskChooserDialog(private val onSelect: (Task?) -> Unit): BottomSheetDialo
                 toast = false,
                 responseListener = object : ApiObserver.ResponseListener {
                     override suspend fun onSuccess(response: JSONObject) {
-                        val data = response.getJSONArray("data").toList<Task>(gson)
+                        val data = response.getJSONArray("data").toList<TaskByDate>(gson)
                         _dataTasks.send(customData(data))
                     }
 
@@ -101,9 +102,9 @@ class TaskChooserDialog(private val onSelect: (Task?) -> Unit): BottomSheetDialo
             )
         }
 
-        private fun customData(data: List<Task>): List<Task> {
-            val tasks = ArrayList<Task>()
-            data.forEach { if (it.status != Task.DONE) { tasks.add(it) } }
+        private fun customData(data: List<TaskByDate>): List<TaskByDate> {
+            val tasks = ArrayList<TaskByDate>()
+            data.forEach { if (it.status != Task.DONE && it.load != Task.STANDBY) { tasks.add(it) } }
             return tasks
         }
     }

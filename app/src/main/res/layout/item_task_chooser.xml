@@ -5,7 +5,7 @@
 
         <variable
             name="data"
-            type="com.projectd.data.model.Task" />
+            type="com.projectd.data.model.TaskByDate" />
     </data>
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -38,7 +38,7 @@
             android:ellipsize="middle"
             android:maxLines="1"
             android:singleLine="true"
-            android:text='@{"Created by " + data.createdBy}'
+            android:text='@{"Created by You"}'
             android:textColor="@color/text_bg_green"
             android:textSize="@dimen/text_smallest"
             tools:text="Created by Aliando" />
@@ -63,7 +63,7 @@
                     android:background="@drawable/bg_project_green"
                     android:paddingHorizontal="6dp"
                     android:paddingVertical="3dp"
-                    android:text="@{data.project}"
+                    android:text="@{data.projectDetail.projectName}"
                     android:textColor="@color/text_bg_green"
                     android:textSize="@dimen/text_smallest"
                     tools:text="Aseanindo" />

@@ -85,7 +85,7 @@ class TodayCheckViewModel(private val apiService: ApiService, private val observ
                     filterTasks.filter { it?.load?.contains(Task.STANDBY, true) == true }
                 } else {
                     val taskStandby = filterTasks.filter { it?.load?.contains(Task.STANDBY, true) == true }
-                    taskStandby.filter { it?.devision?.contains(user?.devision.toString(), true) == true}
+                    taskStandby.filter { it?.createdBy?.devision?.id.toString().contains(user?.devision?.id.toString(), true) }
                 }
 
             }
@@ -94,7 +94,7 @@ class TodayCheckViewModel(private val apiService: ApiService, private val observ
                     filterTasks.filter { it?.status?.contains(Task.DONE, true) == true }
                 } else {
                     val taskDone = filterTasks.filter { it?.status?.contains(Task.DONE, true) == true }
-                    taskDone.filter { it?.devision?.contains(user?.devision.toString(), true) == true}
+                    taskDone.filter { it?.createdBy?.id.toString().contains(user?.devision?.id.toString(), true) }
                 }
             }
             "Cancel" -> {
@@ -102,7 +102,7 @@ class TodayCheckViewModel(private val apiService: ApiService, private val observ
                     filterTasks.filter { it?.status?.contains(Task.CANCEL, true) == true }
                 } else {
                     val taskCancel = filterTasks.filter { it?.status?.contains(Task.CANCEL, true) == true }
-                    taskCancel.filter { it?.devision?.contains(user?.devision.toString(), true) == true}
+                    taskCancel.filter { it?.createdBy?.id.toString().contains(user?.devision?.id.toString(), true) }
                 }
             }
             "On-going" -> {
@@ -117,7 +117,7 @@ class TodayCheckViewModel(private val apiService: ApiService, private val observ
                 return if (user?.devision?.id == Cons.DIVISION.MANAGER || user?.devision?.id == Cons.DIVISION.PSDM || user?.devision?.id == Cons.DIVISION.SUPER_ADMIN) {
                     list
                 } else {
-                    list.filter { it?.devision?.contains(user?.devision.toString(), true) == true }
+                    list.filter { it?.createdBy?.id.toString().contains(user?.devision?.id.toString(), true) }
                 }
             }
          }

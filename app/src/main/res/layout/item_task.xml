@@ -69,7 +69,7 @@
             android:text='@{"Verified by " + data.verifiedBy}'
             android:textColor="@color/text_bg_green"
             android:textSize="@dimen/text_smallest"
-            android:visibility='@{data.verified == null ? View.GONE : View.VISIBLE}'
+            android:visibility='@{data.verified ? View.VISIBLE : View.GONE}'
             app:drawableStartCompat="@drawable/ic_baseline_verified_24"
             app:drawableTint="@color/text_bg_green"
             tools:text="Verified by Aliando" />

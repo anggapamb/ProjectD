@@ -16,6 +16,7 @@ import com.projectd.ui.dialog.AbsentDialog.AbsentViewModel
 import com.projectd.ui.dialog.LoadingDialog
 import com.projectd.ui.dialog.ManagerChooserDialog.ManagerChooserViewModel
 import com.projectd.ui.dialog.ProjectChooserDialog.ProjectChooserViewModel
+import com.projectd.ui.dialog.TaskByDateReportDialog.TaskByDateReportViewModel
 import com.projectd.ui.dialog.TaskChooserDialog.TaskChooserViewModel
 import com.projectd.ui.dialog.TaskReportDialog.TaskReportViewModel
 import com.projectd.ui.dialog.UpdateProgressDialog.UpdateProgressViewModel
@@ -62,6 +63,7 @@ object AppModule {
         viewModel { ProjectChooserViewModel(get()) }
         viewModel { TaskAddViewModel(get(), get()) }
         viewModel { TaskReportViewModel(get(), get()) }
+        viewModel { TaskByDateReportViewModel(get(), get()) }
         viewModel { AbsentViewModel(get(), get()) }
         viewModel { TodayCheckViewModel(get(), get()) }
         viewModel { UpdateProgressViewModel(get(), get()) }

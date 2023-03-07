@@ -39,7 +39,7 @@
             android:layout_marginHorizontal="16dp"
             android:textColor="@color/text_gray"
             android:textSize="@dimen/text_small"
-            android:text='@{data.project}'
+            android:text='@{data.projectDetail.projectName}'
             tools:text="Project Name" />
 
         <TextView

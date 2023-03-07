@@ -158,8 +158,20 @@ class ViewBindingAdapter {
         fun absentApproval(view: TextView, absent: Absent?) {
             absent?.let {
                 view.text = when (it.approved) {
-                    Absent.APPROVE -> "${getEmoji(0x2705)} Approved by ${it.approvedBy}"
-                    Absent.REJECT -> "${getEmoji(0x274C)} Rejected by ${it.approvedBy}"
+                    Absent.APPROVE -> "${getEmoji(0x2705)} Approved by ${it.approvedBy?.name}"
+                    Absent.REJECT -> "${getEmoji(0x274C)} Rejected by ${it.approvedBy?.name}"
+                    else -> "Pending Approval"
+                }
+            }
+        }
+
+        @JvmStatic
+        @BindingAdapter("allAbsentApproval")
+        fun allAbsentApproval(view: TextView, absent: AllAbsent?) {
+            absent?.let {
+                view.text = when (it.approved) {
+                    Absent.APPROVE -> "${getEmoji(0x2705)} Approved by ${it.approvedBy?.name}"
+                    Absent.REJECT -> "${getEmoji(0x274C)} Rejected by ${it.approvedBy?.name}"
                     else -> "Pending Approval"
                 }
             }

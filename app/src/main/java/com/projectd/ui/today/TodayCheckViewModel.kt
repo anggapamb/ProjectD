@@ -9,6 +9,7 @@ import com.projectd.base.observe.BaseObserver
 import com.projectd.base.viewmodel.BaseViewModel
 import com.projectd.data.Cons
 import com.projectd.data.model.Absent
+import com.projectd.data.model.AllAbsent
 import com.projectd.data.model.Task
 import com.projectd.data.model.User
 import com.projectd.ui.task.add.TaskAddFragment
@@ -16,10 +17,11 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import org.json.JSONObject
+import timber.log.Timber
 
 class TodayCheckViewModel(private val apiService: ApiService, private val observer: BaseObserver): BaseViewModel() {
 
-    private val _dataAbsents: Channel<List<Absent?>> = Channel()
+    private val _dataAbsents: Channel<List<AllAbsent?>> = Channel()
     val dataAbsents = _dataAbsents.receiveAsFlow()
 
     fun listAllAbsent() = viewModelScope.launch {
@@ -28,7 +30,7 @@ class TodayCheckViewModel(private val apiService: ApiService, private val observ
             toast = false,
             responseListener = object : ApiObserver.ResponseListener {
                 override suspend fun onSuccess(response: JSONObject) {
-                    val data = response.getJSONArray("data").toList<Absent>(gson)
+                    val data = response.getJSONArray("data").toList<AllAbsent>(gson)
                     _dataAbsents.send(data)
                 }
 
@@ -81,28 +83,28 @@ class TodayCheckViewModel(private val apiService: ApiService, private val observ
         val filterTasks = ArrayList<Task?>(tasks)
         when (status) {
             "Standby" -> {
-                return if (user?.devision?.id == Cons.DIVISION.MANAGER || user?.devision?.id == Cons.DIVISION.PSDM || user?.devision?.id == Cons.DIVISION.SUPER_ADMIN) {
+                return if (session.getUser()?.id == Cons.DIVISION.MANAGER || session.getUser()?.id == Cons.DIVISION.PSDM || session.getUser()?.id == Cons.DIVISION.SUPER_ADMIN) {
                     filterTasks.filter { it?.load?.contains(Task.STANDBY, true) == true }
                 } else {
                     val taskStandby = filterTasks.filter { it?.load?.contains(Task.STANDBY, true) == true }
-                    taskStandby.filter { it?.createdBy?.devision?.id.toString().contains(user?.devision?.id.toString(), true) }
+                    taskStandby.filter { it?.createdBy?.devision?.id.toString().contains(session.getUser()?.id.toString(), true) }
                 }
 
             }
             "Done" -> {
-                return if (user?.devision?.id == Cons.DIVISION.MANAGER || user?.devision?.id == Cons.DIVISION.PSDM || user?.devision?.id == Cons.DIVISION.SUPER_ADMIN) {
+                return if (session.getUser()?.id == Cons.DIVISION.MANAGER || session.getUser()?.id == Cons.DIVISION.PSDM || session.getUser()?.id == Cons.DIVISION.SUPER_ADMIN) {
                     filterTasks.filter { it?.status?.contains(Task.DONE, true) == true }
                 } else {
                     val taskDone = filterTasks.filter { it?.status?.contains(Task.DONE, true) == true }
-                    taskDone.filter { it?.createdBy?.id.toString().contains(user?.devision?.id.toString(), true) }
+                    taskDone.filter { it?.createdBy?.id.toString().contains(session.getUser()?.id.toString(), true) }
                 }
             }
             "Cancel" -> {
-                return if (user?.devision?.id == Cons.DIVISION.MANAGER || user?.devision?.id == Cons.DIVISION.PSDM || user?.devision?.id == Cons.DIVISION.SUPER_ADMIN) {
+                return if (session.getUser()?.id == Cons.DIVISION.MANAGER || session.getUser()?.id == Cons.DIVISION.PSDM || session.getUser()?.id == Cons.DIVISION.SUPER_ADMIN) {
                     filterTasks.filter { it?.status?.contains(Task.CANCEL, true) == true }
                 } else {
                     val taskCancel = filterTasks.filter { it?.status?.contains(Task.CANCEL, true) == true }
-                    taskCancel.filter { it?.createdBy?.id.toString().contains(user?.devision?.id.toString(), true) }
+                    taskCancel.filter { it?.createdBy?.id.toString().contains(session.getUser()?.id.toString(), true) }
                 }
             }
             "On-going" -> {
@@ -114,10 +116,10 @@ class TodayCheckViewModel(private val apiService: ApiService, private val observ
                     }
                 }
 
-                return if (user?.devision?.id == Cons.DIVISION.MANAGER || user?.devision?.id == Cons.DIVISION.PSDM || user?.devision?.id == Cons.DIVISION.SUPER_ADMIN) {
+                return if (session.getUser()?.id == Cons.DIVISION.MANAGER || session.getUser()?.id == Cons.DIVISION.PSDM || session.getUser()?.id == Cons.DIVISION.SUPER_ADMIN) {
                     list
                 } else {
-                    list.filter { it?.createdBy?.id.toString().contains(user?.devision?.id.toString(), true) }
+                    list.filter { it?.createdBy?.id.toString().contains(session.getUser()?.id.toString(), true) }
                 }
             }
          }
@@ -171,10 +173,10 @@ class TodayCheckViewModel(private val apiService: ApiService, private val observ
     private fun customUserNotReady(data: List<User>): List<User?> {
         val dataUsers = ArrayList<User?>(data)
 
-        if (user?.devision?.id == Cons.DIVISION.MANAGER || user?.devision?.id == Cons.DIVISION.PSDM || user?.devision?.id == Cons.DIVISION.SUPER_ADMIN) {
+        if (session.getUser()?.id == Cons.DIVISION.MANAGER || session.getUser()?.id == Cons.DIVISION.PSDM || session.getUser()?.id == Cons.DIVISION.SUPER_ADMIN) {
             return dataUsers
         } else if (user?.isLeader == true) {
-            return dataUsers.filter { it?.devision?.id?.toString()?.contains(user?.devision?.id.toString(), true) == true }
+            return dataUsers.filter { it?.devision?.id?.toString()?.contains(session.getUser()?.id.toString(), true) == true }
         }
 
         return dataUsers

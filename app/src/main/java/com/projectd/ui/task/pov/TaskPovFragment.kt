@@ -43,6 +43,7 @@ class TaskPovFragment : BaseFragment<FragmentTaskPovBinding>(R.layout.fragment_t
                             rvTask.adapter?.notifyDataSetChanged()
                             listTask.addAll(it)
                             rvTask.adapter?.notifyItemInserted(0)
+                            ivLoading.isVisible = false
                         }
                     }
                 }
@@ -88,7 +89,7 @@ class TaskPovFragment : BaseFragment<FragmentTaskPovBinding>(R.layout.fragment_t
                                         if (data?.verified == false) {
                                             viewModel.verifyTask(data.id.toString()) { getTasks() }
                                         } else {
-                                            requireActivity().tos("Task has been verified by ${data?.verifiedBy}")
+                                            requireActivity().tos("Task has been verified by ${data?.verifiedBy?.name}")
                                         }
                                     }
                                 }

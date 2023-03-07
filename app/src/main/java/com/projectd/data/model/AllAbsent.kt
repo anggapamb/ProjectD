@@ -7,18 +7,32 @@ import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class Absent(
+data class AllAbsent(
     @SerializedName("approved")
     val approved: Boolean?,
     @SerializedName("approvedBy")
     val approvedBy: ApprovedBy?,
     @SerializedName("date")
     val date: String?,
+    @SerializedName("detailUserAbsent")
+    val detailUserAbsent: DetailUserAbsent?,
     @SerializedName("id")
     val id: Int?,
     @SerializedName("reason")
-    val reason: String?
+    val reason: String?,
+    @SerializedName("user")
+    val user: Int?
 ): Parcelable {
+
+    @Parcelize
+    data class DetailUserAbsent(
+        @SerializedName("id")
+        val id: Int?,
+        @SerializedName("name")
+        val name: String?,
+        @SerializedName("photo")
+        val photo: String?
+    ):Parcelable
 
     @Parcelize
     data class ApprovedBy(

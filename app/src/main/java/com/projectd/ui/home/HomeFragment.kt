@@ -149,7 +149,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
                 launch {
                     viewModel.apiResponse.collect {
                         if (it.status == ApiStatus.SUCCESS) {
-                            initView()
+                            binding?.user = session.getUser()
 
                             viewModel.taskToday()
                             viewModel.allMenus()
@@ -181,6 +181,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
                         if (data?.createdBy?.devision?.id == session.getUser()?.devision?.id) {
                             holder.binding.btnMore.isVisible = true
                         }
+                    } else {
+                        holder.binding.btnMore.isVisible = false
                     }
 
                     holder.itemView.setOnClickListener {
@@ -204,7 +206,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
                                         if (data?.verified == false) {
                                             viewModel.verifyTask(data.id.toString()) { getTaskToday() }
                                         } else {
-                                            requireActivity().tos("Task has been verified by ${data?.verifiedBy}")
+                                            requireActivity().tos("Task has been verified by ${data?.verifiedBy?.name}")
                                         }
                                     }
                                 }

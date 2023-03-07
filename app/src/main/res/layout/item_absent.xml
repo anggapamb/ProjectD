@@ -6,7 +6,7 @@
     <data>
         <variable
             name="data"
-            type="com.projectd.data.model.Absent" />
+            type="com.projectd.data.model.AllAbsent" />
 
         <import type="android.view.View" />
     </data>
@@ -21,7 +21,7 @@
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:background="@drawable/bg_circle_placeholder"
-            app:imgCircleUrl='@{data.approvedBy}'
+            app:imgCircleUrl='@{data.detailUserAbsent.photo}'
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="AB"
@@ -39,7 +39,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text='@{data.id.toString()}'
+                android:text='@{data.detailUserAbsent.name}'
                 android:textColor="@color/text_default"
                 android:textSize="@dimen/text_small"
                 android:textStyle="bold"
@@ -119,7 +119,7 @@
                 android:layout_marginHorizontal="12dp"
                 android:layout_marginTop="4dp"
                 android:gravity="center_vertical"
-                app:absentApproval='@{data}'
+                app:allAbsentApproval='@{data}'
                 android:textColor="@color/text_bg_red"
                 android:textSize="@dimen/text_smallest"
                 tools:text="Approved by Aliando" />

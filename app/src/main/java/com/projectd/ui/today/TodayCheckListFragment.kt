@@ -13,17 +13,20 @@ import com.crocodic.core.extension.tos
 import com.projectd.R
 import com.projectd.base.fragment.BaseFragment
 import com.projectd.data.Cons
+import com.projectd.data.Session
 import com.projectd.data.model.Task
 import com.projectd.databinding.FragmentTodayCheckListBinding
 import com.projectd.databinding.ItemUpdateBinding
 import com.projectd.ui.dialog.TaskReportDialog
 import com.projectd.ui.task.add.TaskAddFragment
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class TodayCheckListFragment : BaseFragment<FragmentTodayCheckListBinding>(R.layout.fragment_today_check_list) {
 
     private val viewModel: TodayCheckViewModel by viewModel()
+    private val session: Session by inject()
     private val listTask = ArrayList<Task?>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -62,20 +65,20 @@ class TodayCheckListFragment : BaseFragment<FragmentTodayCheckListBinding>(R.lay
                 ) {
                     val data = tasks[position]
                     holder.binding.data = data
-                    holder.binding.yourName = viewModel.user?.shortName()
+                    holder.binding.yourName = session.getUser()?.shortName()
 
-                    if (viewModel.user?.devision?.id == Cons.DIVISION.MANAGER || viewModel.user?.devision?.id == Cons.DIVISION.PSDM || viewModel.user?.devision?.id == Cons.DIVISION.SUPER_ADMIN) {
+                    if (session.getUser()?.devision?.id == Cons.DIVISION.MANAGER || session.getUser()?.devision?.id == Cons.DIVISION.PSDM || session.getUser()?.devision?.id == Cons.DIVISION.SUPER_ADMIN) {
                         holder.binding.btnMore.isVisible = true
-                    } else if (viewModel.user?.isLeader == true) {
+                    } else if (session.getUser()?.isLeader == true) {
                         holder.binding.btnMore.isVisible = true
                     }
 
                     holder.itemView.setOnClickListener {
-                        if (data?.createdBy?.id == viewModel.user?.id && data?.load != TaskAddFragment.Companion.LOAD.STANDBY) {
+                        if (data?.createdBy?.id == session.getUser()?.id && data?.load != TaskAddFragment.Companion.LOAD.STANDBY) {
                             if ( data?.status != Task.DONE) {
                                 TaskReportDialog(data) { viewModel.taskToday(title) }.show(childFragmentManager, "report")
                             }
-                        } else if (viewModel.user?.devision?.id == Cons.DIVISION.MANAGER || viewModel.user?.devision?.id == Cons.DIVISION.PSDM || viewModel.user?.devision?.id == Cons.DIVISION.SUPER_ADMIN) {
+                        } else if (session.getUser()?.devision?.id == Cons.DIVISION.MANAGER || session.getUser()?.devision?.id == Cons.DIVISION.PSDM || session.getUser()?.devision?.id == Cons.DIVISION.SUPER_ADMIN) {
                             val bundle = bundleOf(Cons.BUNDLE.DATA to data)
                             navigateTo(R.id.actionTaskPovFragment, bundle)
                         }

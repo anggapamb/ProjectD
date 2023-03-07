@@ -125,7 +125,7 @@
                 android:layout_marginTop="4dp"
                 android:drawablePadding="3dp"
                 android:gravity="center_vertical"
-                android:text='@{"Verified by " + data.verifiedBy}'
+                android:text='@{"Verified by " + data.verifiedBy.name}'
                 android:textColor="@color/brand_50"
                 android:textSize="@dimen/text_smallest"
                 android:visibility='@{data.verified ? View.VISIBLE : View.GONE}'

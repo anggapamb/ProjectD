@@ -32,9 +32,9 @@ data class TaskByDate(
     @SerializedName("verified")
     val verified: Boolean?,
     @SerializedName("verified_by")
-    val verifiedBy: String?,
+    val verifiedById: String?,
     @SerializedName("verifiedBy")
-    val verifiedBy2: String?
+    val verifiedBy: VerifiedBy?
 ): Parcelable {
 
     @Parcelize
@@ -43,6 +43,14 @@ data class TaskByDate(
         val id: Int?,
         @SerializedName("project_name")
         val projectName: String?
+    ): Parcelable
+
+    @Parcelize
+    data class VerifiedBy(
+        @SerializedName("id")
+        val id: Int?,
+        @SerializedName("name")
+        val name: String?
     ): Parcelable
 
     fun prettyDone() = DateTimeHelper().convert(doneAt, "yyyy-MM-dd HH:mm:ss", "d MMMM, HH:mm")

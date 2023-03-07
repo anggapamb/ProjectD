@@ -31,7 +31,9 @@ data class AllAbsent(
         @SerializedName("name")
         val name: String?,
         @SerializedName("photo")
-        val photo: String?
+        val photo: String?,
+        @SerializedName("id_devision")
+        val idDevision: Int?
     ):Parcelable
 
     @Parcelize
@@ -44,6 +46,8 @@ data class AllAbsent(
         val photo: String?,
         @SerializedName("email")
         val email: String?,
+        @SerializedName("id_devision")
+        val idDevision: Int?
     ): Parcelable
 
     fun prettyDate() = DateTimeHelper().convert(date, "yyyy-MM-dd", "d MMMM yyyy")

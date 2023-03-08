@@ -101,7 +101,7 @@ interface ApiService {
     @POST("absent/update-approved/{idAbsent}")
     suspend fun approvedAbsent(
         @Path("idAbsent") idAbsent: String,
-        @Field("approved") approved: String
+        @Field("approved") approved: Boolean
     ): String
 
     @FormUrlEncoded

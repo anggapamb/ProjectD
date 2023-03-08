@@ -12,6 +12,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import org.json.JSONObject
+import timber.log.Timber
 
 class TaskPovViewModel(private val apiService: ApiService, private val observer: BaseObserver): BaseViewModel() {
 
@@ -39,7 +40,13 @@ class TaskPovViewModel(private val apiService: ApiService, private val observer:
 
     private fun customTask(data: List<Task>, idLogin: String?): List<Task?> {
         val tasks = ArrayList<Task>(data)
-        return tasks.filter { it.createdBy?.id.toString().contains(idLogin.toString(), true) }
+        val dataFilter = ArrayList<Task>()
+        tasks.forEach {
+            if (it.createdBy?.id.toString() == idLogin.toString()) {
+                dataFilter.add(it)
+            }
+        }
+        return dataFilter
     }
 
     fun verifyTask(idTask: String?, onResponse: () -> Unit) = viewModelScope.launch {

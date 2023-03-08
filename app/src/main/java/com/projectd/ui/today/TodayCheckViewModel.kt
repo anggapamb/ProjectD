@@ -42,24 +42,30 @@ class TodayCheckViewModel(private val apiService: ApiService, private val observ
     private fun customDataAbsent(data: List<AllAbsent>) : List<AllAbsent?> {
         val dataUsers = ArrayList<AllAbsent?>(data)
 
-        if (session.getUser()?.id == Cons.DIVISION.MANAGER || session.getUser()?.id == Cons.DIVISION.PSDM || session.getUser()?.id == Cons.DIVISION.SUPER_ADMIN) {
+        if (session.getUser()?.devision?.id == Cons.DIVISION.MANAGER || session.getUser()?.devision?.id == Cons.DIVISION.PSDM || session.getUser()?.devision?.id == Cons.DIVISION.SUPER_ADMIN) {
             return dataUsers
         } else if (user?.isLeader == true) {
-            return dataUsers.filter { it?.detailUserAbsent?.idDevision?.toString()?.contains(session.getUser()?.devision?.id.toString(), true) == true }
+            val dataSend = ArrayList<AllAbsent?>()
+            dataUsers.forEach {
+                if (it?.detailUserAbsent?.idDevision == session.getUser()?.devision?.id) {
+                    dataSend.add(it)
+                }
+            }
+            return dataSend
         }
 
         return dataUsers
     }
 
-    fun approvedAbsent(idAbsent: String, approved: String, onResponse: () -> Unit) = viewModelScope.launch {
+    fun approvedAbsent(idAbsent: String, approved: Boolean, onResponse: () -> Unit) = viewModelScope.launch {
         observer(
             block = {apiService.approvedAbsent(idAbsent, approved)},
             toast = false,
             responseListener = object : ApiObserver.ResponseListener {
                 override suspend fun onSuccess(response: JSONObject) {
                     onResponse.invoke()
-                    val status = if (approved == "true") { "approved" } else { "rejected" }
-                    apiService.notificationAbsent(idAbsent, status)
+                    val status = if (approved) { "approved" } else { "rejected" }
+                    //apiService.notificationAbsent(idAbsent, status)
                 }
 
             }
@@ -92,28 +98,46 @@ class TodayCheckViewModel(private val apiService: ApiService, private val observ
         val filterTasks = ArrayList<Task?>(tasks)
         when (status) {
             "Standby" -> {
-                return if (session.getUser()?.id == Cons.DIVISION.MANAGER || session.getUser()?.id == Cons.DIVISION.PSDM || session.getUser()?.id == Cons.DIVISION.SUPER_ADMIN) {
+                return if (session.getUser()?.devision?.id == Cons.DIVISION.MANAGER || session.getUser()?.devision?.id == Cons.DIVISION.PSDM || session.getUser()?.devision?.id == Cons.DIVISION.SUPER_ADMIN) {
                     filterTasks.filter { it?.load?.contains(Task.STANDBY, true) == true }
                 } else {
                     val taskStandby = filterTasks.filter { it?.load?.contains(Task.STANDBY, true) == true }
-                    taskStandby.filter { it?.createdBy?.devision?.id.toString().contains(session.getUser()?.devision?.id.toString(), true) }
+                    val dataSend = ArrayList<Task?>()
+                    taskStandby.forEach {
+                        if (it?.createdBy?.devision?.id == session.getUser()?.devision?.id) {
+                            dataSend.add(it)
+                        }
+                    }
+                    dataSend
                 }
 
             }
             "Done" -> {
-                return if (session.getUser()?.id == Cons.DIVISION.MANAGER || session.getUser()?.id == Cons.DIVISION.PSDM || session.getUser()?.id == Cons.DIVISION.SUPER_ADMIN) {
+                return if (session.getUser()?.devision?.id == Cons.DIVISION.MANAGER || session.getUser()?.devision?.id == Cons.DIVISION.PSDM || session.getUser()?.devision?.id == Cons.DIVISION.SUPER_ADMIN) {
                     filterTasks.filter { it?.status?.contains(Task.DONE, true) == true }
                 } else {
                     val taskDone = filterTasks.filter { it?.status?.contains(Task.DONE, true) == true }
-                    taskDone.filter { it?.createdBy?.devision?.id.toString().contains(session.getUser()?.devision?.id.toString(), true) }
+                    val dataSend = ArrayList<Task?>()
+                    taskDone.forEach {
+                        if (it?.createdBy?.devision?.id == session.getUser()?.devision?.id) {
+                            dataSend.add(it)
+                        }
+                    }
+                    dataSend
                 }
             }
             "Cancel" -> {
-                return if (session.getUser()?.id == Cons.DIVISION.MANAGER || session.getUser()?.id == Cons.DIVISION.PSDM || session.getUser()?.id == Cons.DIVISION.SUPER_ADMIN) {
+                return if (session.getUser()?.devision?.id == Cons.DIVISION.MANAGER || session.getUser()?.devision?.id == Cons.DIVISION.PSDM || session.getUser()?.devision?.id == Cons.DIVISION.SUPER_ADMIN) {
                     filterTasks.filter { it?.status?.contains(Task.CANCEL, true) == true }
                 } else {
                     val taskCancel = filterTasks.filter { it?.status?.contains(Task.CANCEL, true) == true }
-                    taskCancel.filter { it?.createdBy?.devision?.id.toString().contains(session.getUser()?.devision?.id.toString(), true) }
+                    val dataSend = ArrayList<Task?>()
+                    taskCancel.forEach {
+                        if (it?.createdBy?.devision?.id == session.getUser()?.devision?.id) {
+                            dataSend.add(it)
+                        }
+                    }
+                    dataSend
                 }
             }
             "On-going" -> {
@@ -125,10 +149,16 @@ class TodayCheckViewModel(private val apiService: ApiService, private val observ
                     }
                 }
 
-                return if (session.getUser()?.id == Cons.DIVISION.MANAGER || session.getUser()?.id == Cons.DIVISION.PSDM || session.getUser()?.id == Cons.DIVISION.SUPER_ADMIN) {
+                return if (session.getUser()?.devision?.id == Cons.DIVISION.MANAGER || session.getUser()?.devision?.id == Cons.DIVISION.PSDM || session.getUser()?.devision?.id == Cons.DIVISION.SUPER_ADMIN) {
                     list
                 } else {
-                    list.filter { it?.createdBy?.devision?.id.toString().contains(session.getUser()?.devision?.id.toString(), true) }
+                    val dataSend = ArrayList<Task?>()
+                    list.forEach {
+                        if (it?.createdBy?.devision?.id == session.getUser()?.devision?.id) {
+                            dataSend.add(it)
+                        }
+                    }
+                    dataSend
                 }
             }
          }
@@ -182,10 +212,16 @@ class TodayCheckViewModel(private val apiService: ApiService, private val observ
     private fun customUserNotReady(data: List<UserNotReady>): List<UserNotReady?> {
         val dataUsers = ArrayList<UserNotReady?>(data)
 
-        if (session.getUser()?.id == Cons.DIVISION.MANAGER || session.getUser()?.id == Cons.DIVISION.PSDM || session.getUser()?.id == Cons.DIVISION.SUPER_ADMIN) {
+        if (session.getUser()?.devision?.id == Cons.DIVISION.MANAGER || session.getUser()?.devision?.id == Cons.DIVISION.PSDM || session.getUser()?.devision?.id == Cons.DIVISION.SUPER_ADMIN) {
             return dataUsers
         } else if (user?.isLeader == true) {
-            return dataUsers.filter { it?.idDevision?.toString()?.contains(session.getUser()?.devision?.id.toString(), true) == true }
+            val dataSend = ArrayList<UserNotReady?>()
+            dataUsers.forEach {
+                if (it?.idDevision == session.getUser()?.devision?.id) {
+                    dataSend.add(it)
+                }
+            }
+            return dataSend
         }
 
         return dataUsers

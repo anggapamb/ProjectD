@@ -175,7 +175,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
                     holder.binding.data = data
                     holder.binding.yourName = session.getUser()?.name
 
-                    if (session.getUser()?.devision?.id == Cons.DIVISION.MANAGER || session.getUser()?.devision?.id == Cons.DIVISION.PSDM || session.getUser()?.devision?.id == Cons.DIVISION.SUPER_ADMIN) {
+                    if (session.getUser()?.devision?.id == Cons.DIVISION.MANAGER || session.getUser()?.devision?.id == Cons.DIVISION.PSDM) {
                         holder.binding.btnMore.isVisible = true
                     } else if (session.getUser()?.isLeader == true) {
                         if (data?.createdBy?.devision?.id == session.getUser()?.devision?.id) {

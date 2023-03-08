@@ -67,7 +67,7 @@ class TodayCheckListFragment : BaseFragment<FragmentTodayCheckListBinding>(R.lay
                     holder.binding.data = data
                     holder.binding.yourName = session.getUser()?.shortName()
 
-                    if (session.getUser()?.devision?.id == Cons.DIVISION.MANAGER || session.getUser()?.devision?.id == Cons.DIVISION.PSDM || session.getUser()?.devision?.id == Cons.DIVISION.SUPER_ADMIN) {
+                    if (session.getUser()?.devision?.id == Cons.DIVISION.MANAGER || session.getUser()?.devision?.id == Cons.DIVISION.PSDM) {
                         holder.binding.btnMore.isVisible = true
                     } else if (session.getUser()?.isLeader == true) {
                         holder.binding.btnMore.isVisible = true
@@ -94,7 +94,7 @@ class TodayCheckListFragment : BaseFragment<FragmentTodayCheckListBinding>(R.lay
                                         if (data?.verified == false) {
                                             viewModel.verifyTask(data.id.toString()) { viewModel.taskToday(title) }
                                         } else {
-                                            requireActivity().tos("Task has been verified by ${data?.verifiedBy}")
+                                            requireActivity().tos("Task has been verified by ${data?.verifiedBy?.name}")
                                         }
                                     }
                                 }

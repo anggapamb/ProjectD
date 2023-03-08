@@ -19,6 +19,7 @@ import com.projectd.ui.dialog.TaskReportDialog
 import com.projectd.ui.task.add.TaskAddFragment
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import timber.log.Timber
 
 class TaskPovFragment : BaseFragment<FragmentTaskPovBinding>(R.layout.fragment_task_pov) {
 
@@ -65,7 +66,7 @@ class TaskPovFragment : BaseFragment<FragmentTaskPovBinding>(R.layout.fragment_t
                     holder.binding.data = data
                     holder.binding.yourName = viewModel.user?.shortName()
 
-                    if (viewModel.user?.devision?.id == Cons.DIVISION.MANAGER || viewModel.user?.devision?.id == Cons.DIVISION.PSDM || viewModel.user?.devision?.id == Cons.DIVISION.SUPER_ADMIN) {
+                    if (viewModel.user?.devision?.id == Cons.DIVISION.MANAGER || viewModel.user?.devision?.id == Cons.DIVISION.PSDM) {
                         holder.binding.btnMore.isVisible = true
                     } else if (viewModel.user?.isLeader == true) {
                         holder.binding.btnMore.isVisible = true

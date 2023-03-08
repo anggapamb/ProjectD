@@ -42,7 +42,7 @@ class TodayAbsentFragment : BaseFragment<FragmentTodayAbsentBinding>(R.layout.fr
                         when (which) {
                             0 -> {
                                 if (data?.approved == null) {
-                                    viewModel.approvedAbsent("${data?.id}", "true") { viewModel.listAllAbsent() }
+                                    viewModel.approvedAbsent("${data?.id}", true) { viewModel.listAllAbsent() }
                                 } else {
                                     val aprvl = if (data.approved == true) "approved" else "rejected"
                                     requireActivity().tos("Absent already $aprvl by ${data.approvedBy?.name}")
@@ -50,7 +50,7 @@ class TodayAbsentFragment : BaseFragment<FragmentTodayAbsentBinding>(R.layout.fr
                             }
                             1 -> {
                                 if (data?.approved == null) {
-                                    viewModel.approvedAbsent("${data?.id}", "false") { viewModel.listAllAbsent() }
+                                    viewModel.approvedAbsent("${data?.id}", false) { viewModel.listAllAbsent() }
                                 } else {
                                     val aprvl = if (data.approved == true) "approved" else "rejected"
                                     requireActivity().tos("Absent already $aprvl by ${data.approvedBy?.name}")

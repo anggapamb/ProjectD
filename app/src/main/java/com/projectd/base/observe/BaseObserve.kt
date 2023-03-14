@@ -20,7 +20,10 @@ class BaseObserver(
         toast: Boolean = false,
         responseListener: ApiObserver.ResponseListener
     ) {
-        ApiObserver(block, responseListener = object : ApiObserver.ResponseListener {
+        ApiObserver(
+            block,
+            toast,
+            responseListener = object : ApiObserver.ResponseListener {
             override suspend fun onSuccess(response: JSONObject) {
                 responseListener.onSuccess(response)
             }
@@ -42,11 +45,11 @@ class BaseObserver(
                             }
                         })
                 }
-                responseListener.onError(response)
+                //responseListener.onError(response)
             }
 
             override suspend fun onExpired(response: ApiResponse) {
-                responseListener.onExpired(response)
+                //responseListener.onExpired(response)
             }
         })
     }

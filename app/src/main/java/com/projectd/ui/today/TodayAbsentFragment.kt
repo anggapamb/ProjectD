@@ -15,6 +15,7 @@ import com.projectd.data.model.Absent
 import com.projectd.data.model.AllAbsent
 import com.projectd.databinding.FragmentTodayAbsentBinding
 import com.projectd.databinding.ItemAbsentBinding
+import com.projectd.ui.dialog.NoInternetDialog
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
@@ -63,6 +64,9 @@ class TodayAbsentFragment : BaseFragment<FragmentTodayAbsentBinding>(R.layout.fr
 
         binding?.swipeRefresh?.setOnRefreshListener {
             viewModel.listAllAbsent()
+            if (!isOnline(context)) {
+                NoInternetDialog().show(childFragmentManager, "no_internet")
+            }
         }
     }
 

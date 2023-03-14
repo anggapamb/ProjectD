@@ -272,7 +272,7 @@ class FirebaseMsgService: FirebaseMessagingService() {
             val dataNotification = JSONArray(data["task"]).toList<TaskNotification>(gson)
             dataNotification.forEach {
                 it.idTask?.let { idTask ->
-                    createNotificationUpdateTask(context, "Reminder Task in ${it.project}", "${it.taskName}", idTask)
+                    createNotificationUpdateTask(context, "Reminder Task in ${it.projectName}", "${it.taskName}", idTask)
                 }
             }
         }

@@ -36,7 +36,10 @@ class UpdateProgressDialog(val project: Project, private val onDismiss: () -> Un
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        project.progress?.let { binding?.seekBar?.progress = it }
+        project.progress?.let {
+            binding?.seekBar?.progress = it
+            progress = it
+        }
 
         binding?.seekBar?.min = 0
         binding?.seekBar?.max = 100

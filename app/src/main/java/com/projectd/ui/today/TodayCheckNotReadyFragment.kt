@@ -13,6 +13,7 @@ import com.projectd.data.model.User
 import com.projectd.data.model.UserNotReady
 import com.projectd.databinding.FragmentTodayCheckNotReadyBinding
 import com.projectd.databinding.ItemUserNotReadyBinding
+import com.projectd.ui.dialog.NoInternetDialog
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -52,6 +53,9 @@ class TodayCheckNotReadyFragment : BaseFragment<FragmentTodayCheckNotReadyBindin
 
         binding?.swipeRefresh?.setOnRefreshListener {
             viewModel.userNotReady()
+            if (!isOnline(context)) {
+                NoInternetDialog().show(childFragmentManager, "no_internet")
+            }
         }
     }
 

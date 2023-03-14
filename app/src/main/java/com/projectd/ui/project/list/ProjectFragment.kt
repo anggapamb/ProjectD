@@ -18,6 +18,7 @@ import com.projectd.data.model.Project
 import com.projectd.databinding.FragmentProjectBinding
 import com.projectd.databinding.ItemProjectBinding
 import com.projectd.databinding.StateLoadingBinding
+import com.projectd.ui.dialog.NoInternetDialog
 import com.projectd.ui.dialog.UpdateProgressDialog
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -74,6 +75,9 @@ class ProjectFragment : BaseFragment<FragmentProjectBinding>(R.layout.fragment_p
 
         binding?.swipeRefresh?.setOnRefreshListener {
             observe()
+            if (!isOnline(context)) {
+                NoInternetDialog().show(childFragmentManager, "no_internet")
+            }
         }
     }
 

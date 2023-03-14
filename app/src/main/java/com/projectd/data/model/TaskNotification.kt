@@ -10,5 +10,7 @@ data class TaskNotification(
     @SerializedName("project")
     val project: String?,
     @SerializedName("task_name")
-    val taskName: String?
+    val taskName: String?,
+    @SerializedName("project_name")
+    val projectName: String?
 )

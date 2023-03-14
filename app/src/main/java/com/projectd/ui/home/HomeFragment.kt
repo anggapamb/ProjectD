@@ -33,6 +33,7 @@ import com.projectd.databinding.ItemUpdateBinding
 import com.projectd.service.AudioHelper
 import com.projectd.service.fcm.FirebaseMsgService
 import com.projectd.ui.dialog.AbsentDialog
+import com.projectd.ui.dialog.NoInternetDialog
 import com.projectd.ui.dialog.TaskReportDialog
 import com.projectd.ui.task.add.TaskAddFragment
 import com.projectd.util.ViewBindingAdapter.Companion.openUrl
@@ -238,6 +239,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
 
         binding?.swipeRefresh?.setOnRefreshListener {
             viewModel.getProfile()
+            if (!isOnline(context)) {
+                NoInternetDialog().show(childFragmentManager, "no_internet")
+            }
         }
     }
 

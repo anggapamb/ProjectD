@@ -17,6 +17,7 @@ import com.projectd.data.Session
 import com.projectd.data.model.Task
 import com.projectd.databinding.FragmentTodayCheckListBinding
 import com.projectd.databinding.ItemUpdateBinding
+import com.projectd.ui.dialog.NoInternetDialog
 import com.projectd.ui.dialog.TaskReportDialog
 import com.projectd.ui.task.add.TaskAddFragment
 import kotlinx.coroutines.launch
@@ -108,6 +109,9 @@ class TodayCheckListFragment : BaseFragment<FragmentTodayCheckListBinding>(R.lay
 
         binding?.swipeRefresh?.setOnRefreshListener {
             viewModel.taskToday(title)
+            if (!isOnline(context)) {
+                NoInternetDialog().show(childFragmentManager, "no_internet")
+            }
         }
 
         viewModel.taskToday(title)

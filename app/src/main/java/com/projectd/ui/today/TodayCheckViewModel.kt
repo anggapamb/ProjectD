@@ -64,8 +64,12 @@ class TodayCheckViewModel(private val apiService: ApiService, private val observ
             responseListener = object : ApiObserver.ResponseListener {
                 override suspend fun onSuccess(response: JSONObject) {
                     onResponse.invoke()
-                    val status = if (approved) { "approved" } else { "rejected" }
+                    //val status = if (approved) { "approved" } else { "rejected" }
                     //apiService.notificationAbsent(idAbsent, status)
+                }
+
+                override suspend fun onError(response: ApiResponse) {
+                    onResponse.invoke()
                 }
 
             }

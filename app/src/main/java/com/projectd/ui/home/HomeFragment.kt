@@ -183,9 +183,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
                     if (session.getUser()?.devision?.id == Cons.DIVISION.MANAGER || session.getUser()?.devision?.id == Cons.DIVISION.PSDM) {
                         holder.binding.btnMore.isVisible = true
                     } else if (session.getUser()?.isLeader == true) {
-                        if (data?.createdBy?.devision?.id == session.getUser()?.devision?.id) {
-                            holder.binding.btnMore.isVisible = true
-                        }
+                        holder.binding.btnMore.isVisible = data?.createdBy?.devision?.id == session.getUser()?.devision?.id
                     } else {
                         holder.binding.btnMore.isVisible = false
                     }

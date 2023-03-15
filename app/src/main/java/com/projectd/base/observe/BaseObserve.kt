@@ -45,11 +45,11 @@ class BaseObserver(
                             }
                         })
                 }
-                //responseListener.onError(response)
+                responseListener.onError(response)
             }
 
             override suspend fun onExpired(response: ApiResponse) {
-                //responseListener.onExpired(response)
+                responseListener.onExpired(response)
             }
         })
     }

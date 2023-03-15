@@ -126,6 +126,10 @@ class HomeViewModel(private val apiService: ApiService, private val observer: Ba
                     _prayer.send(data)
                 }
 
+                override suspend fun onError(response: ApiResponse) {
+
+                }
+
             }
         )
     }
@@ -156,6 +160,10 @@ class HomeViewModel(private val apiService: ApiService, private val observer: Ba
                         )
                     )
                     _apiResponse.send(ApiResponse(ApiStatus.SUCCESS))
+                }
+
+                override suspend fun onError(response: ApiResponse) {
+
                 }
 
             }

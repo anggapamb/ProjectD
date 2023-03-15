@@ -109,8 +109,9 @@ class TodayCheckListFragment : BaseFragment<FragmentTodayCheckListBinding>(R.lay
 
         binding?.swipeRefresh?.setOnRefreshListener {
             viewModel.taskToday(title)
-            if (!isOnline(context)) {
+            if (!isOnline(requireContext())) {
                 NoInternetDialog().show(childFragmentManager, "no_internet")
+                binding?.swipeRefresh?.isRefreshing = false
             }
         }
 

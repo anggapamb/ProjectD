@@ -75,8 +75,9 @@ class ProjectFragment : BaseFragment<FragmentProjectBinding>(R.layout.fragment_p
 
         binding?.swipeRefresh?.setOnRefreshListener {
             observe()
-            if (!isOnline(context)) {
+            if (!isOnline(requireContext())) {
                 NoInternetDialog().show(childFragmentManager, "no_internet")
+                binding?.swipeRefresh?.isRefreshing = false
             }
         }
     }

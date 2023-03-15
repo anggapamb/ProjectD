@@ -82,6 +82,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
 
             initPrayer()
             dataDummy()
+
+            binding?.ivAvatar?.setOnClickListener {
+                navigateTo(R.id.actionProfileFragment)
+            }
         }
     }
 
@@ -239,8 +243,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
 
         binding?.swipeRefresh?.setOnRefreshListener {
             viewModel.getProfile()
-            if (!isOnline(context)) {
+            if (!isOnline(requireContext())) {
                 NoInternetDialog().show(childFragmentManager, "no_internet")
+                binding?.swipeRefresh?.isRefreshing = false
             }
         }
     }

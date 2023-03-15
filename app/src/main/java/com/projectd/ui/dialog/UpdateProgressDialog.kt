@@ -92,7 +92,6 @@ class UpdateProgressDialog(val project: Project, private val onDismiss: () -> Un
                     }
 
                     override suspend fun onError(response: ApiResponse) {
-                        super.onError(response)
                         _apiResponse.send(ApiResponse(ApiStatus.ERROR))
                     }
                 }

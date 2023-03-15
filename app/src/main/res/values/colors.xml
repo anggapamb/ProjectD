@@ -30,4 +30,5 @@
     <color name="text_bg_blue">#5F7A91</color>
     <color name="text_bg_red">#9C485E</color>
     <color name="bg_login_window">#E8ECEF</color>
+    <color name="blue">#0679FD</color>
 </resources>

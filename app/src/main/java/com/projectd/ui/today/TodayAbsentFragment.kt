@@ -64,8 +64,9 @@ class TodayAbsentFragment : BaseFragment<FragmentTodayAbsentBinding>(R.layout.fr
 
         binding?.swipeRefresh?.setOnRefreshListener {
             viewModel.listAllAbsent()
-            if (!isOnline(context)) {
+            if (!isOnline(requireContext())) {
                 NoInternetDialog().show(childFragmentManager, "no_internet")
+                binding?.swipeRefresh?.isRefreshing = false
             }
         }
     }

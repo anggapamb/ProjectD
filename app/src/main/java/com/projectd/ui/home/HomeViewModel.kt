@@ -32,7 +32,6 @@ class HomeViewModel(private val apiService: ApiService, private val observer: Ba
                 }
 
                 override suspend fun onError(response: ApiResponse) {
-                    super.onError(response)
                     _dataTasks.send(emptyList())
                 }
 

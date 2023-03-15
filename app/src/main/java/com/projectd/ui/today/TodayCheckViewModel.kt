@@ -86,7 +86,6 @@ class TodayCheckViewModel(private val apiService: ApiService, private val observ
                 }
 
                 override suspend fun onError(response: ApiResponse) {
-                    super.onError(response)
                     _dataTasks.send(emptyList())
                 }
 

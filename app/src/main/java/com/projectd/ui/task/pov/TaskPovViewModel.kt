@@ -30,7 +30,6 @@ class TaskPovViewModel(private val apiService: ApiService, private val observer:
                 }
 
                 override suspend fun onError(response: ApiResponse) {
-                    super.onError(response)
                     _dataTasks.send(emptyList())
                 }
 

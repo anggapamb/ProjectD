@@ -25,6 +25,9 @@
         <action
             android:id="@+id/actionTaskPovFragment"
             app:destination="@id/taskPovFragment" />
+        <action
+            android:id="@+id/actionProfileFragment"
+            app:destination="@id/profileFragment" />
     </fragment>
     <fragment
         android:id="@+id/loginFragment"
@@ -80,4 +83,9 @@
             android:id="@+id/actionTaskPovFragment"
             app:destination="@id/taskPovFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.projectd.ui.profile.ProfileFragment"
+        android:label="fragment_profile"
+        tools:layout="@layout/fragment_profile" />
 </navigation>

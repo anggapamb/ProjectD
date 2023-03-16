@@ -1,5 +1,8 @@
 package com.projectd.injection
 
+import android.app.Application
+import android.content.Context
+import com.chuckerteam.chucker.api.ChuckerInterceptor
 import com.crocodic.core.data.CoreSession
 import com.crocodic.core.helper.okhttp.SSLTrust
 import com.google.gson.Gson
@@ -30,6 +33,7 @@ import com.projectd.ui.task.pov.TaskPovViewModel
 import com.projectd.ui.today.TodayCheckViewModel
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
@@ -75,7 +79,7 @@ object AppModule {
     }
 
     val networkModule = module {
-        single { retrofitBuilder(retrofitHttpClient()) }
+        single { retrofitBuilder(retrofitHttpClient(androidContext())) }
         single { createApiService(get()) }
         single { BaseObserver(get(), get()) }
     }
@@ -93,7 +97,7 @@ object AppModule {
         return retrofit.create(ApiService::class.java)
     }
 
-    private fun retrofitHttpClient(): OkHttpClient {
+    private fun retrofitHttpClient(context: Context): OkHttpClient {
         val unsafeTrustManager = SSLTrust().createUnsafeTrustManager()
         val sslContext = SSLContext.getInstance("SSL")
         sslContext.init(null, arrayOf(unsafeTrustManager), null)
@@ -121,6 +125,7 @@ object AppModule {
             val interceptors = HttpLoggingInterceptor()
             interceptors.level = HttpLoggingInterceptor.Level.BODY
             okHttpClient.addInterceptor(interceptors)
+            //okHttpClient.addInterceptor(ChuckerInterceptor(context))
         }
         return okHttpClient.build()
     }

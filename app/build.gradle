@@ -87,6 +87,9 @@ dependencies {
     implementation "com.airbnb.android:lottie:3.4.1"
 
     implementation 'com.guolindev.permissionx:permissionx:1.7.1'
+
+    debugImplementation "com.github.chuckerteam.chucker:library:3.5.2"
+    releaseImplementation "com.github.chuckerteam.chucker:library-no-op:3.5.2"
 }
 
 kapt {

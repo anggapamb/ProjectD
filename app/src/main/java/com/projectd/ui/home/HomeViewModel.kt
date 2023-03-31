@@ -151,12 +151,12 @@ class HomeViewModel(private val apiService: ApiService, private val observer: Ba
                         User(
                             devision = User.Devision(nameDivision, idDivision),
                             email = email,
-                            id = user?.id,
+                            id = session.getUser()?.id,
                             isLeader = isLeader,
                             name = name,
                             phone = phone,
                             photo = photo,
-                            statusAccount = user?.statusAccount
+                            statusAccount = session.getUser()?.statusAccount
                         )
                     )
                     _apiResponse.send(ApiResponse(ApiStatus.SUCCESS))

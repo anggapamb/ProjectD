@@ -13,8 +13,6 @@ open class BaseViewModel: CoreViewModel(), KoinComponent {
     protected val session: Session by inject()
     protected val gson: Gson by inject()
 
-    var user: User? = session.getUser()
-
     override fun apiLogout() { }
 
     override fun apiRenewToken() { }

@@ -14,6 +14,7 @@ import com.crocodic.core.helper.DateTimeHelper
 import com.projectd.R
 import com.projectd.base.fragment.BaseFragment
 import com.projectd.data.Cons
+import com.projectd.data.Session
 import com.projectd.data.model.TaskByDate
 import com.projectd.data.model.TaskDay
 import com.projectd.databinding.FragmentTaskBinding
@@ -21,11 +22,13 @@ import com.projectd.databinding.ItemDayBinding
 import com.projectd.databinding.ItemTaskBinding
 import com.projectd.ui.dialog.TaskByDateReportDialog
 import com.projectd.ui.task.add.TaskAddFragment
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class TaskFragment : BaseFragment<FragmentTaskBinding>(R.layout.fragment_task), View.OnClickListener {
 
     private val viewModel: TaskViewModel by viewModel()
+    private val session: Session by inject()
     private var dayAdapter: DayTaskAdapter? = null
     private var selectedDate = DateTimeHelper().dateNow()
     private val listTask = ArrayList<TaskByDate?>()
@@ -64,10 +67,14 @@ class TaskFragment : BaseFragment<FragmentTaskBinding>(R.layout.fragment_task), 
                 val data = listTask[position]
                 holder.binding.data = data
 
-                if (viewModel.user?.devision?.id == Cons.DIVISION.MANAGER || viewModel.user?.devision?.id == Cons.DIVISION.PSDM) {
-                    holder.binding.btnMore.isVisible = true
-                } else if (viewModel.user?.isLeader == true) {
-                    holder.binding.btnMore.isVisible = true
+                when (session.getUser()?.devision?.id) {
+                    Cons.DIVISION.MANAGER -> {
+                        holder.binding.btnMore.isVisible = data?.projectDetail?.idProjectDirector == session.getUser()?.id
+                    }
+                    Cons.DIVISION.PSDM -> {
+                        holder.binding.btnMore.isVisible = data?.load != TaskAddFragment.Companion.LOAD.STANDBY
+                    }
+                    else -> holder.binding.btnMore.isVisible = session.getUser()?.isLeader == true
                 }
 
                 holder.itemView.setOnClickListener {

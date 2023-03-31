@@ -42,7 +42,9 @@ data class TaskByDate(
         @SerializedName("id")
         val id: Int?,
         @SerializedName("project_name")
-        val projectName: String?
+        val projectName: String?,
+        @SerializedName("project_director")
+        val idProjectDirector: Int?
     ): Parcelable
 
     @Parcelize

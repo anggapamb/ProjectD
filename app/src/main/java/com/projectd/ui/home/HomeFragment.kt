@@ -83,9 +83,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
             initPrayer()
             dataDummy()
 
-            binding?.ivAvatar?.setOnClickListener {
-                navigateTo(R.id.actionProfileFragment)
-            }
+//            binding?.ivAvatar?.setOnClickListener {
+//                navigateTo(R.id.actionProfileFragment)
+//            }
         }
     }
 
@@ -180,9 +180,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
                     holder.binding.data = data
                     holder.binding.yourName = session.getUser()?.name
 
-                    if (session.getUser()?.devision?.id == Cons.DIVISION.MANAGER || session.getUser()?.devision?.id == Cons.DIVISION.PSDM) {
-                        holder.binding.btnMore.isVisible = true
-                    } else if (session.getUser()?.isLeader == true) {
+                    if (session.getUser()?.devision?.id == Cons.DIVISION.MANAGER) {
+                        holder.binding.btnMore.isVisible = data?.projectDetail?.idProjectDirector == session.getUser()?.id
+                    } else if (session.getUser()?.devision?.id == Cons.DIVISION.PSDM) {
+                        holder.binding.btnMore.isVisible = data?.load != TaskAddFragment.Companion.LOAD.STANDBY
+                    }
+                    else if (session.getUser()?.isLeader == true) {
                         holder.binding.btnMore.isVisible = data?.createdBy?.devision?.id == session.getUser()?.devision?.id
                     } else {
                         holder.binding.btnMore.isVisible = false

@@ -15,17 +15,20 @@ import com.crocodic.core.helper.DateTimeHelper
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.projectd.R
 import com.projectd.base.fragment.BaseFragment
+import com.projectd.data.Session
 import com.projectd.data.model.Task
 import com.projectd.databinding.FragmentTaskAddBinding
 import com.projectd.ui.dialog.ProjectChooserDialog
 import com.projectd.ui.dialog.TaskChooserDialog
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.*
 
 class TaskAddFragment : BaseFragment<FragmentTaskAddBinding>(R.layout.fragment_task_add), View.OnClickListener {
 
     private val viewModel: TaskAddViewModel by viewModel()
+    private val session: Session by inject()
     private var selectedStartDate: String? = null
     private var selectedEndDate: String? = null
     private var load: String? = null
@@ -156,7 +159,7 @@ class TaskAddFragment : BaseFragment<FragmentTaskAddBinding>(R.layout.fragment_t
             timelineIsFilled = false
 
             project?.timelines?.forEach { timeLine ->
-                if (timeLine?.devisionId == viewModel.user?.devision?.id) {
+                if (timeLine?.devisionId == session.getUser()?.devision?.id) {
                     binding?.vTimeline?.isVisible = false
                     timelineIsFilled = true
                     return@forEach
@@ -285,7 +288,7 @@ class TaskAddFragment : BaseFragment<FragmentTaskAddBinding>(R.layout.fragment_t
 
     private fun addTask() {
         viewModel.addTask(binding?.etTask?.textOf(), idProject.toString(),
-            selectedStartDate, selectedEndDate, load, viewModel.user?.shortName(), viewModel.user?.photo, timelineIsFilled)
+            selectedStartDate, selectedEndDate, load, session.getUser()?.shortName(), session.getUser()?.photo, timelineIsFilled)
     }
 
     override fun onClick(p0: View?) {

@@ -44,7 +44,7 @@ class TodayCheckViewModel(private val apiService: ApiService, private val observ
 
         if (session.getUser()?.devision?.id == Cons.DIVISION.MANAGER || session.getUser()?.devision?.id == Cons.DIVISION.PSDM || session.getUser()?.devision?.id == Cons.DIVISION.SUPER_ADMIN) {
             return dataUsers
-        } else if (user?.isLeader == true) {
+        } else if (session.getUser()?.isLeader == true) {
             val dataSend = ArrayList<AllAbsent?>()
             dataUsers.forEach {
                 if (it?.detailUserAbsent?.idDevision == session.getUser()?.devision?.id) {
@@ -217,7 +217,7 @@ class TodayCheckViewModel(private val apiService: ApiService, private val observ
 
         if (session.getUser()?.devision?.id == Cons.DIVISION.MANAGER || session.getUser()?.devision?.id == Cons.DIVISION.PSDM || session.getUser()?.devision?.id == Cons.DIVISION.SUPER_ADMIN) {
             return dataUsers
-        } else if (user?.isLeader == true) {
+        } else if (session.getUser()?.isLeader == true) {
             val dataSend = ArrayList<UserNotReady?>()
             dataUsers.forEach {
                 if (it?.idDevision == session.getUser()?.devision?.id) {

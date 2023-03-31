@@ -12,18 +12,21 @@ import com.crocodic.core.extension.tos
 import com.projectd.R
 import com.projectd.base.fragment.BaseFragment
 import com.projectd.data.Cons
+import com.projectd.data.Session
 import com.projectd.data.model.Task
 import com.projectd.databinding.FragmentTaskPovBinding
 import com.projectd.databinding.ItemUpdateBinding
 import com.projectd.ui.dialog.TaskReportDialog
 import com.projectd.ui.task.add.TaskAddFragment
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
 
 class TaskPovFragment : BaseFragment<FragmentTaskPovBinding>(R.layout.fragment_task_pov) {
 
     private val viewModel: TaskPovViewModel by viewModel()
+    private val session: Session by inject()
     private val listTask = ArrayList<Task?>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -64,16 +67,20 @@ class TaskPovFragment : BaseFragment<FragmentTaskPovBinding>(R.layout.fragment_t
                 ) {
                     val data = tasks[position]
                     holder.binding.data = data
-                    holder.binding.yourName = viewModel.user?.shortName()
+                    holder.binding.yourName = session.getUser()?.shortName()
 
-                    if (viewModel.user?.devision?.id == Cons.DIVISION.MANAGER || viewModel.user?.devision?.id == Cons.DIVISION.PSDM) {
-                        holder.binding.btnMore.isVisible = true
-                    } else if (viewModel.user?.isLeader == true) {
-                        holder.binding.btnMore.isVisible = true
+                    when (session.getUser()?.devision?.id) {
+                        Cons.DIVISION.MANAGER -> {
+                            holder.binding.btnMore.isVisible = data?.projectDetail?.idProjectDirector == session.getUser()?.id
+                        }
+                        Cons.DIVISION.PSDM -> {
+                            holder.binding.btnMore.isVisible = data?.load != TaskAddFragment.Companion.LOAD.STANDBY
+                        }
+                        else -> holder.binding.btnMore.isVisible = session.getUser()?.isLeader == true
                     }
 
                     holder.itemView.setOnClickListener {
-                        if (data?.createdBy?.id == viewModel.user?.id && data?.load != TaskAddFragment.Companion.LOAD.STANDBY) {
+                        if (data?.createdBy?.id == session.getUser()?.id && data?.load != TaskAddFragment.Companion.LOAD.STANDBY) {
                             if ( data?.status != Task.DONE) {
                                 TaskReportDialog(data) { getTasks() }.show(childFragmentManager, "report")
                             }

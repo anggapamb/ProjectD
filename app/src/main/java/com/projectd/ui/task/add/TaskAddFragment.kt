@@ -87,18 +87,21 @@ class TaskAddFragment : BaseFragment<FragmentTaskAddBinding>(R.layout.fragment_t
                     load = LOAD.LOW
                     binding?.apply {
                         ilProject.isVisible = true
+                        vTimeline.isVisible = !timelineIsFilled
                     }
                 }
                 R.id.rb_medium_task -> {
                     load = LOAD.MEDIUM
                     binding?.apply {
                         ilProject.isVisible = true
+                        vTimeline.isVisible = !timelineIsFilled
                     }
                 }
                 R.id.rb_high_task -> {
                     load = LOAD.HIGH
                     binding?.apply {
                         ilProject.isVisible = true
+                        vTimeline.isVisible = !timelineIsFilled
                     }
                 }
             }

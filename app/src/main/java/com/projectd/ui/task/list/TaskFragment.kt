@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -24,6 +25,10 @@ import com.projectd.ui.dialog.TaskByDateReportDialog
 import com.projectd.ui.task.add.TaskAddFragment
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
 
 class TaskFragment : BaseFragment<FragmentTaskBinding>(R.layout.fragment_task), View.OnClickListener {
 
@@ -135,14 +140,28 @@ class TaskFragment : BaseFragment<FragmentTaskBinding>(R.layout.fragment_task), 
         }
     }
 
+    private fun tomorrowDate(): String {
+        val dateFormat: DateFormat = SimpleDateFormat("yyyy-MM-dd")
+        val cal: Calendar = Calendar.getInstance()
+        cal.add(Calendar.DATE, +1)
+        return dateFormat.format(cal.time)
+    }
+
     override fun onClick(p0: View?) {
         when (p0) {
             binding?.btnAddTask -> {
-                if (selectedDate != DateTimeHelper().dateNow()) {
-                    Toast.makeText(requireContext(), "Cannot create other today task", Toast.LENGTH_SHORT).show()
-                    return
+                val bundle = bundleOf(Cons.BUNDLE.DATA to selectedDate)
+                when (selectedDate) {
+                    DateTimeHelper().dateNow() -> {
+                        navigateTo(R.id.actionTaskAddFragment, bundle)
+                    }
+                    tomorrowDate() -> {
+                        navigateTo(R.id.actionTaskAddFragment, bundle)
+                    }
+                    else -> {
+                        Toast.makeText(requireContext(), "Task date must be today or tomorrow", Toast.LENGTH_SHORT).show()
+                    }
                 }
-                navigateTo(R.id.actionTaskAddFragment)
             }
         }
     }

@@ -67,6 +67,7 @@ interface ApiService {
         @Field("start_date") start_date: String?,
         @Field("end_date") end_date: String?,
         @Field("load") load: String?,
+        @Field("task_date") task_date: String?,
     ): String
 
     @FormUrlEncoded

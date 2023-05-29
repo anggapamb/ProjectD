@@ -24,7 +24,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import timber.log.Timber
+import java.text.DateFormat
+import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.abs
 
@@ -183,11 +184,28 @@ class ViewBindingAdapter {
             imgUrl?.let { Glide.with(view.context).load(it).into(view) }
         }
 
+        private fun yesterdayDate(): String {
+            val dateFormat: DateFormat = SimpleDateFormat("yyyy-MM-dd")
+            val cal: Calendar = Calendar.getInstance()
+            cal.add(Calendar.DATE, -1)
+            return dateFormat.format(cal.time)
+        }
+
         @JvmStatic
         @BindingAdapter("timeTo")
         fun timeTo(view: TextView, timeTo: String?) {
             timeTo?.let {
                 val calendar = Calendar.getInstance().apply { time = DateTimeHelper().toDateTime(it) }
+                val date = SimpleDateFormat("yyyy-MM-dd").format(calendar.time)
+
+                if (date == yesterdayDate()) {
+                    val hour = SimpleDateFormat("HH:mm").format(calendar.time)
+                    val time = "yesterday $hour"
+                    view.text = time
+                    return
+                }
+
+
                 val timeTarget = calendar.timeInMillis
                 val timeCurrent = Calendar.getInstance().timeInMillis
                 val timeDifferent = timeTarget - timeCurrent

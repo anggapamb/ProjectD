@@ -15,6 +15,7 @@ import com.crocodic.core.helper.DateTimeHelper
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.projectd.R
 import com.projectd.base.fragment.BaseFragment
+import com.projectd.data.Cons
 import com.projectd.data.Session
 import com.projectd.data.model.Task
 import com.projectd.databinding.FragmentTaskAddBinding
@@ -34,11 +35,14 @@ class TaskAddFragment : BaseFragment<FragmentTaskAddBinding>(R.layout.fragment_t
     private var load: String? = null
     private var timelineIsFilled = false
     private var idProject: Int? = null
+    private var selectedTaskDate: String? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         binding?.btnSave?.setOnClickListener(this)
+
+        selectedTaskDate = arguments?.getString(Cons.BUNDLE.DATA)
 
         initView()
         observe()
@@ -291,7 +295,7 @@ class TaskAddFragment : BaseFragment<FragmentTaskAddBinding>(R.layout.fragment_t
 
     private fun addTask() {
         viewModel.addTask(binding?.etTask?.textOf(), idProject.toString(),
-            selectedStartDate, selectedEndDate, load, session.getUser()?.shortName(), session.getUser()?.photo, timelineIsFilled)
+            selectedStartDate, selectedEndDate, load, session.getUser()?.shortName(), session.getUser()?.photo, timelineIsFilled, "$selectedTaskDate")
     }
 
     override fun onClick(p0: View?) {

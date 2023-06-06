@@ -127,6 +127,27 @@ class ViewBindingAdapter {
         }
 
         @JvmStatic
+        @BindingAdapter("name", "yourName", requireAll = true)
+        fun shortNameText(view: TextView, name: String?, yourName: String?) {
+            name?.let {
+                var textName = it
+                textName = if (it == yourName) {
+                    "You"
+                } else {
+                    val spName = it.split(" ")
+                    val shortName = if (spName.size >= 2) {
+                        "${spName[0]} ${spName[spName.lastIndex]}"
+                    } else {
+                        spName[0]
+                    }
+                    shortName
+                }
+
+                view.text = textName
+            }
+        }
+
+        @JvmStatic
         @BindingAdapter("textMenu")
         fun textMenu(view: TextView, textMenu: HomeMenu?) {
             textMenu?.let {

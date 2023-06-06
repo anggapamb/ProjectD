@@ -42,7 +42,8 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text='@{data.createdBy.name.equals(yourName) ? "You" : data.createdBy.name }'
+                name='@{data.createdBy.name}'
+                yourName='@{yourName}'
                 android:textColor="@color/text_default"
                 android:textSize="@dimen/text_small"
                 android:textStyle="bold"

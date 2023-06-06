@@ -204,10 +204,6 @@ class HomeActivity : BaseActivity<ActivityHomeBinding, HomeViewModel>(R.layout.a
                             }
                             backPressed = System.currentTimeMillis()
                         }
-                        R.id.taskFragment -> {
-                            CoreSession(this@HomeActivity).setValue(IS_UPDATE_TASK, false)
-                            navController.navigateUp()
-                        }
                         else -> {
                             navController.navigateUp()
                         }

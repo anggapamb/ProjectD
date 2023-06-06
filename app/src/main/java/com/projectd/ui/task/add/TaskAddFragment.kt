@@ -21,6 +21,7 @@ import com.projectd.data.model.Task
 import com.projectd.databinding.FragmentTaskAddBinding
 import com.projectd.ui.dialog.ProjectChooserDialog
 import com.projectd.ui.dialog.TaskChooserDialog
+import com.projectd.util.setNavigationResult
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -46,6 +47,9 @@ class TaskAddFragment : BaseFragment<FragmentTaskAddBinding>(R.layout.fragment_t
 
         initView()
         observe()
+
+        val bool = selectedTaskDate == DateTimeHelper().dateNow()
+        setNavigationResult(RESULT.key, bool)
     }
 
     private fun observe() {
@@ -310,6 +314,10 @@ class TaskAddFragment : BaseFragment<FragmentTaskAddBinding>(R.layout.fragment_t
             const val LOW = "low"
             const val MEDIUM = "medium"
             const val HIGH = "high"
+        }
+
+        object RESULT {
+            const val key = "task_add"
         }
     }
 

@@ -23,6 +23,8 @@ import com.projectd.databinding.ItemDayBinding
 import com.projectd.databinding.ItemTaskBinding
 import com.projectd.ui.dialog.TaskByDateReportDialog
 import com.projectd.ui.task.add.TaskAddFragment
+import com.projectd.util.getNavigationResultBoolean
+import com.projectd.util.setNavigationResult
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.DateFormat
@@ -45,6 +47,8 @@ class TaskFragment : BaseFragment<FragmentTaskBinding>(R.layout.fragment_task), 
 
         initView()
         observe()
+
+        setNavigationResult(FROM_TASK, true)
     }
 
     private fun initView() {
@@ -61,8 +65,19 @@ class TaskFragment : BaseFragment<FragmentTaskBinding>(R.layout.fragment_task), 
         }
 
         binding?.rvDay?.adapter = dayAdapter
-        binding?.rvDay?.scrollToPosition(15)
-        viewModel.taskByDate()
+
+        val getResult = getNavigationResultBoolean(TaskAddFragment.Companion.RESULT.key)
+        when (getResult?.value ?: true) {
+            true -> {
+                binding?.rvDay?.scrollToPosition(15)
+                viewModel.taskByDate()
+            }
+            false -> {
+                viewModel.taskByDate(tomorrowDate())
+                dayAdapter?.setSelected(16)
+            }
+        }
+
 
         binding?.rvTask?.adapter = object : CoreListAdapter<ItemTaskBinding, TaskByDate>(R.layout.item_task){
             override fun onBindViewHolder(
@@ -164,6 +179,10 @@ class TaskFragment : BaseFragment<FragmentTaskBinding>(R.layout.fragment_task), 
                 }
             }
         }
+    }
+
+    companion object {
+        const val FROM_TASK = "from_task"
     }
 
 }

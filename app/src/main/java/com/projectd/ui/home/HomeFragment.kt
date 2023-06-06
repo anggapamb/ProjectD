@@ -31,14 +31,14 @@ import com.projectd.databinding.ItemMainMenuBinding
 import com.projectd.databinding.ItemSecondMenuBinding
 import com.projectd.databinding.ItemUpdateBinding
 import com.projectd.service.AudioHelper
-import com.projectd.service.fcm.FirebaseMsgService
 import com.projectd.ui.dialog.AbsentDialog
 import com.projectd.ui.dialog.NoInternetDialog
 import com.projectd.ui.dialog.TaskReportDialog
 import com.projectd.ui.task.add.TaskAddFragment
+import com.projectd.ui.task.list.TaskFragment
 import com.projectd.util.ViewBindingAdapter.Companion.openUrl
+import com.projectd.util.getNavigationResultBoolean
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -63,6 +63,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
         requireActivity().window.statusBarColor = ContextCompat.getColor(requireContext(), R.color.white)
         lifecycleScope.launch {
             delay(500)
+            val fromTask = getNavigationResultBoolean(TaskFragment.FROM_TASK)?.value ?: false
+            if (fromTask) {
+                CoreSession(requireContext()).setValue(HomeActivity.IS_UPDATE_TASK, false)
+            }
             val isUpdateTask = CoreSession(requireContext()).getBoolean(HomeActivity.IS_UPDATE_TASK)
             if (isUpdateTask) {
                 navigateTo(R.id.actionTaskFragment)

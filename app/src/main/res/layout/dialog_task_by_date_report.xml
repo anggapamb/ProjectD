@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="data"
+            type="com.projectd.data.model.TaskByDate" />
+
+        <variable
+            name="loading"
+            type="Boolean" />
+
+        <import type="android.view.View" />
+    </data>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_round_12_white_top"
+        android:orientation="vertical"
+        android:paddingBottom="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="16dp"
+            android:textColor="@color/text_default"
+            android:textSize="@dimen/text_large"
+            android:textStyle="bold"
+            android:text='@{data.taskName}'
+            tools:text="Fixing issue log" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:textColor="@color/text_gray"
+            android:textSize="@dimen/text_small"
+            android:text='@{data.projectDetail.projectName}'
+            tools:text="Project Name" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginVertical="8dp"
+            android:text="@string/label_how_about_this_task"
+            android:textColor="@color/text_default"
+            android:textSize="@dimen/text_default" />
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipToPadding="false"
+            android:overScrollMode="never"
+            android:paddingHorizontal="16dp"
+            android:scrollIndicators="none"
+            android:scrollbars="none">
+
+            <RadioGroup
+                android:id="@+id/rg_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/rb_done"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/rb_done"
+                    android:textColor="@color/text_default"
+                    android:textSize="@dimen/text_default"
+                    app:buttonTint="@color/brand_accent" />
+
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/rb_hold"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:text="@string/rb_hold"
+                    android:textColor="@color/text_default"
+                    android:textSize="@dimen/text_default"
+                    app:buttonTint="@color/brand_accent" />
+
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/rb_cancel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:text="@string/rb_cancel"
+                    android:textColor="@color/text_default"
+                    android:textSize="@dimen/text_default"
+                    app:buttonTint="@color/brand_accent" />
+
+            </RadioGroup>
+
+        </HorizontalScrollView>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/il_reason"
+            style="@style/Theme.ProjectD.InputText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="8dp"
+            android:hint="@string/hint_write_some_learning_by_this_task">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_reason"
+                android:layout_width="match_parent"
+                android:layout_height="96dp"
+                android:gravity="start"
+                android:inputType="textCapSentences|textMultiLine"
+                android:textSize="@dimen/text_default" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <Button
+            android:id="@+id/btn_submit"
+            style="@style/Theme.ProjectD.Button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:alpha='@{loading ? 0.5F : 1F}'
+            android:clickable='@{loading ? false : true}'
+            android:text="@string/button_submit"
+            android:textSize="@dimen/text_default" />
+
+    </LinearLayout>
+
+</layout>

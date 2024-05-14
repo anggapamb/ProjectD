@@ -5,20 +5,22 @@ import com.crocodic.core.api.ApiObserver
 import com.crocodic.core.api.ApiResponse
 import com.crocodic.core.extension.toList
 import com.projectd.api.ApiService
+import com.projectd.base.observe.BaseObserver
 import com.projectd.base.viewmodel.BaseViewModel
 import com.projectd.data.model.Task
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import org.json.JSONObject
+import timber.log.Timber
 
-class TaskPovViewModel(private val apiService: ApiService): BaseViewModel() {
+class TaskPovViewModel(private val apiService: ApiService, private val observer: BaseObserver): BaseViewModel() {
 
     private val _dataTasks: Channel<List<Task?>> = Channel()
     val dataTasks =_dataTasks.receiveAsFlow()
 
     fun taskToday(idLogin: String?) = viewModelScope.launch {
-        ApiObserver(
+        observer(
             block = {apiService.taskToday()},
             toast = false,
             responseListener = object : ApiObserver.ResponseListener {
@@ -28,7 +30,6 @@ class TaskPovViewModel(private val apiService: ApiService): BaseViewModel() {
                 }
 
                 override suspend fun onError(response: ApiResponse) {
-                    super.onError(response)
                     _dataTasks.send(emptyList())
                 }
 
@@ -38,12 +39,18 @@ class TaskPovViewModel(private val apiService: ApiService): BaseViewModel() {
 
     private fun customTask(data: List<Task>, idLogin: String?): List<Task?> {
         val tasks = ArrayList<Task>(data)
-        return tasks.filter { it.idLogin?.contains(idLogin.toString(), true) == true }
+        val dataFilter = ArrayList<Task>()
+        tasks.forEach {
+            if (it.createdBy?.id.toString() == idLogin.toString()) {
+                dataFilter.add(it)
+            }
+        }
+        return dataFilter
     }
 
-    fun verifyTask(idTask: String?, token: String?, onResponse: () -> Unit) = viewModelScope.launch {
-        ApiObserver(
-            block = {apiService.verifyTask(idTask, token)},
+    fun verifyTask(idTask: String?, onResponse: () -> Unit) = viewModelScope.launch {
+        observer(
+            block = {apiService.verifyTask(idTask)},
             toast = false,
             responseListener = object : ApiObserver.ResponseListener {
                 override suspend fun onSuccess(response: JSONObject) {

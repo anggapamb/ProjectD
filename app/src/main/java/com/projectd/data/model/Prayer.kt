@@ -11,23 +11,30 @@ data class Prayer(
     @SerializedName("description")
     val description: String?,
     @SerializedName("favorit")
-    val favorit: String?,
+    val favorit: Int?,
     @SerializedName("file")
     val `file`: String?,
     @SerializedName("file_name")
     val fileName: String?,
-    @SerializedName("id")
-    val id: Int?,
-    @SerializedName("name_photo")
-    val namePhoto: String?,
-    @SerializedName("photo")
-    val photo: String?,
-    @SerializedName("status")
-    val status: String?,
     @SerializedName("updated_at")
     val updatedAt: String?,
     @SerializedName("user")
-    val user: String?
-) : Parcelable {
+    val user: Int?,
+    @SerializedName("userOwner")
+    val userOwner: UserOwner?
+): Parcelable {
+
+    @Parcelize
+    data class UserOwner(
+        @SerializedName("email")
+        val email: String?,
+        @SerializedName("id")
+        val id: Int?,
+        @SerializedName("name")
+        val name: String?,
+        @SerializedName("photo")
+        val photo: String?
+    ): Parcelable
+
     enum class PlayBack { PLAY, PAUSE, STOP }
 }

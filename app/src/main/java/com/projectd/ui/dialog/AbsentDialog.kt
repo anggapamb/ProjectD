@@ -16,9 +16,9 @@ import com.crocodic.core.extension.tos
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.projectd.R
 import com.projectd.api.ApiService
+import com.projectd.base.observe.BaseObserver
 import com.projectd.base.viewmodel.BaseViewModel
 import com.projectd.databinding.DialogAbsentBinding
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -44,7 +44,7 @@ class AbsentDialog(private val onSuccess: () -> Unit): BottomSheetDialogFragment
 
         binding?.btnSubmit?.setOnClickListener {
             if (!binding?.etReason?.textOf().isNullOrEmpty()) { activity?.tos("Submitting..", true) }
-            viewModel.sendAbsent(viewModel.user?.name, binding?.etReason?.textOf(), viewModel.user?.id.toString())
+            viewModel.sendAbsent(binding?.etReason?.textOf())
         }
     }
 
@@ -59,6 +59,7 @@ class AbsentDialog(private val onSuccess: () -> Unit): BottomSheetDialogFragment
 
                     ApiStatus.ERROR -> {
                         Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show()
+                        dismiss()
                     }
                     else -> {}
                 }
@@ -66,14 +67,14 @@ class AbsentDialog(private val onSuccess: () -> Unit): BottomSheetDialogFragment
         }
     }
 
-    class AbsentViewModel(private val apiService: ApiService): BaseViewModel() {
+    class AbsentViewModel(private val apiService: ApiService, private val observe: BaseObserver): BaseViewModel() {
 
-        fun sendAbsent(name: String?, reason: String?, idLogin: String?) = viewModelScope.launch {
-            if (name.isNullOrEmpty() || reason.isNullOrEmpty() || idLogin.isNullOrEmpty()) {
+        fun sendAbsent(reason: String?) = viewModelScope.launch {
+            if (reason.isNullOrEmpty()) {
                 _apiResponse.send(ApiResponse(ApiStatus.ERROR, message = "Please complete from."))
             } else {
-                ApiObserver(
-                    block = {apiService.sendAbsent(name, reason, idLogin)},
+                observe(
+                    block = {apiService.sendAbsent(reason)},
                     toast = false,
                     responseListener = object : ApiObserver.ResponseListener {
                         override suspend fun onSuccess(response: JSONObject) {

@@ -12,17 +12,21 @@ import com.crocodic.core.extension.tos
 import com.projectd.R
 import com.projectd.base.fragment.BaseFragment
 import com.projectd.data.Cons
+import com.projectd.data.Session
 import com.projectd.data.model.Task
 import com.projectd.databinding.FragmentTaskPovBinding
 import com.projectd.databinding.ItemUpdateBinding
 import com.projectd.ui.dialog.TaskReportDialog
 import com.projectd.ui.task.add.TaskAddFragment
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import timber.log.Timber
 
 class TaskPovFragment : BaseFragment<FragmentTaskPovBinding>(R.layout.fragment_task_pov) {
 
     private val viewModel: TaskPovViewModel by viewModel()
+    private val session: Session by inject()
     private val listTask = ArrayList<Task?>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -43,6 +47,7 @@ class TaskPovFragment : BaseFragment<FragmentTaskPovBinding>(R.layout.fragment_t
                             rvTask.adapter?.notifyDataSetChanged()
                             listTask.addAll(it)
                             rvTask.adapter?.notifyItemInserted(0)
+                            ivLoading.isVisible = false
                         }
                     }
                 }
@@ -62,17 +67,21 @@ class TaskPovFragment : BaseFragment<FragmentTaskPovBinding>(R.layout.fragment_t
                 ) {
                     val data = tasks[position]
                     holder.binding.data = data
-                    holder.binding.yourName = viewModel.user?.shortName()
+                    holder.binding.yourName = session.getUser()?.shortName()
 
-                    if (viewModel.user?.devision == Cons.DIVISION.MANAGER || viewModel.user?.devision == Cons.DIVISION.PSDM) {
-                        holder.binding.btnMore.isVisible = true
-                    } else if (viewModel.user?.isLeader == "true") {
-                        holder.binding.btnMore.isVisible = true
+                    when (session.getUser()?.devision?.id) {
+                        Cons.DIVISION.MANAGER -> {
+                            holder.binding.btnMore.isVisible = data?.projectDetail?.idProjectDirector == session.getUser()?.id
+                        }
+                        Cons.DIVISION.PSDM -> {
+                            holder.binding.btnMore.isVisible = data?.load != TaskAddFragment.Companion.LOAD.STANDBY
+                        }
+                        else -> holder.binding.btnMore.isVisible = session.getUser()?.isLeader == true
                     }
 
                     holder.itemView.setOnClickListener {
-                        if (data?.idLogin == viewModel.user?.id.toString() && data.load != TaskAddFragment.Companion.LOAD.STANDBY) {
-                            if ( data.status != Task.DONE) {
+                        if (data?.createdBy?.id == session.getUser()?.id && data?.load != TaskAddFragment.Companion.LOAD.STANDBY) {
+                            if ( data?.status != Task.DONE) {
                                 TaskReportDialog(data) { getTasks() }.show(childFragmentManager, "report")
                             }
                         }
@@ -85,10 +94,10 @@ class TaskPovFragment : BaseFragment<FragmentTaskPovBinding>(R.layout.fragment_t
                                 dialog.dismiss()
                                 when (which) {
                                     0 -> {
-                                        if (data?.verified == "0") {
-                                            viewModel.verifyTask(data.id.toString(), viewModel.user?.token) { getTasks() }
+                                        if (data?.verified == false) {
+                                            viewModel.verifyTask(data.id.toString()) { getTasks() }
                                         } else {
-                                            requireActivity().tos("Task has been verified by ${data?.verifiedBy}")
+                                            requireActivity().tos("Task has been verified by ${data?.verifiedBy?.name}")
                                         }
                                     }
                                 }
@@ -103,7 +112,7 @@ class TaskPovFragment : BaseFragment<FragmentTaskPovBinding>(R.layout.fragment_t
 
     private fun getTasks() {
         val task: Task? = arguments?.getParcelable(Cons.BUNDLE.DATA)
-        viewModel.taskToday(task?.idLogin)
+        viewModel.taskToday(task?.createdBy?.id.toString())
     }
 
 }

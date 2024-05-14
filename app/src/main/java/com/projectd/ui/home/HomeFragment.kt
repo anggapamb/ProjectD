@@ -13,6 +13,7 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.crocodic.core.api.ApiStatus
 import com.crocodic.core.base.adapter.CoreListAdapter
 import com.crocodic.core.data.CoreSession
 import com.crocodic.core.extension.tos
@@ -30,11 +31,13 @@ import com.projectd.databinding.ItemMainMenuBinding
 import com.projectd.databinding.ItemSecondMenuBinding
 import com.projectd.databinding.ItemUpdateBinding
 import com.projectd.service.AudioHelper
-import com.projectd.service.fcm.FirebaseMsgService
 import com.projectd.ui.dialog.AbsentDialog
+import com.projectd.ui.dialog.NoInternetDialog
 import com.projectd.ui.dialog.TaskReportDialog
 import com.projectd.ui.task.add.TaskAddFragment
+import com.projectd.ui.task.list.TaskFragment
 import com.projectd.util.ViewBindingAdapter.Companion.openUrl
+import com.projectd.util.getNavigationResultBoolean
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
@@ -60,24 +63,34 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
         requireActivity().window.statusBarColor = ContextCompat.getColor(requireContext(), R.color.white)
         lifecycleScope.launch {
             delay(500)
+            val fromTask = getNavigationResultBoolean(TaskFragment.FROM_TASK)?.value ?: false
+            if (fromTask) {
+                CoreSession(requireContext()).setValue(HomeActivity.IS_UPDATE_TASK, false)
+            }
             val isUpdateTask = CoreSession(requireContext()).getBoolean(HomeActivity.IS_UPDATE_TASK)
-            if (session.getUser() == null) {
-                navigateTo(R.id.actionLoginFragment)
-            } else if (isUpdateTask) {
+            if (isUpdateTask) {
                 navigateTo(R.id.actionTaskFragment)
             }
         }
+        if (session.getUser() == null) {
+            navigateTo(R.id.actionLoginFragment)
+        } else {
+            initView()
+            initData()
+            observe()
+            getTaskToday()
 
-        initView()
-        initData()
-        observe()
-        getTaskToday()
+            viewModel.allMenus()
+            viewModel.getAbsent()
+            viewModel.getProfile()
 
-        viewModel.allMenus()
-        viewModel.getAbsent()
+            initPrayer()
+            dataDummy()
 
-        initPrayer()
-        dataDummy()
+//            binding?.ivAvatar?.setOnClickListener {
+//                navigateTo(R.id.actionProfileFragment)
+//            }
+        }
     }
 
     private fun observe() {
@@ -141,13 +154,25 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
                          */
                     }
                 }
+
+                launch {
+                    viewModel.apiResponse.collect {
+                        if (it.status == ApiStatus.SUCCESS) {
+                            binding?.user = session.getUser()
+
+                            viewModel.taskToday()
+                            viewModel.allMenus()
+                            viewModel.getAbsent()
+                        }
+                    }
+                }
             }
         }
     }
 
     private fun initView() {
         binding?.tvDateNow?.text = DateTimeHelper().datePrettyNow()
-        binding?.user = viewModel.user
+        binding?.user = session.getUser()
 
         listTask.let { tasks ->
             binding?.rvUpdate?.adapter = object : CoreListAdapter<ItemUpdateBinding, Task>(R.layout.item_update) {
@@ -157,20 +182,25 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
                 ) {
                     val data = tasks[position]
                     holder.binding.data = data
-                    holder.binding.yourName = viewModel.user?.shortName()
+                    holder.binding.yourName = session.getUser()?.name
 
-                    if (viewModel.user?.devision == Cons.DIVISION.MANAGER || viewModel.user?.devision == Cons.DIVISION.PSDM) {
-                        holder.binding.btnMore.isVisible = true
-                    } else if (viewModel.user?.isLeader == "true") {
-                        holder.binding.btnMore.isVisible = true
+                    if (session.getUser()?.devision?.id == Cons.DIVISION.MANAGER) {
+                        holder.binding.btnMore.isVisible = data?.projectDetail?.idProjectDirector == session.getUser()?.id
+                    } else if (session.getUser()?.devision?.id == Cons.DIVISION.PSDM) {
+                        holder.binding.btnMore.isVisible = data?.load != TaskAddFragment.Companion.LOAD.STANDBY
+                    }
+                    else if (session.getUser()?.isLeader == true) {
+                        holder.binding.btnMore.isVisible = data?.createdBy?.devision?.id == session.getUser()?.devision?.id
+                    } else {
+                        holder.binding.btnMore.isVisible = false
                     }
 
                     holder.itemView.setOnClickListener {
-                        if (data?.idLogin == viewModel.user?.id.toString() && data.load != TaskAddFragment.Companion.LOAD.STANDBY) {
-                            if ( data.status != Task.DONE) {
+                        if (data?.createdBy?.id == session.getUser()?.id && data?.load != TaskAddFragment.Companion.LOAD.STANDBY) {
+                            if ( data?.status != Task.DONE) {
                                 TaskReportDialog(data) { getTaskToday() }.show(childFragmentManager, "report")
                             }
-                        } else if (viewModel.user?.devision == Cons.DIVISION.MANAGER || viewModel.user?.devision == Cons.DIVISION.PSDM) {
+                        } else if (session.getUser()?.devision?.id == Cons.DIVISION.MANAGER || session.getUser()?.devision?.id == Cons.DIVISION.PSDM || session.getUser()?.devision?.id == Cons.DIVISION.SUPER_ADMIN) {
                             val bundle = bundleOf(Cons.BUNDLE.DATA to data)
                             navigateTo(R.id.actionTaskPovFragment, bundle)
                         }
@@ -183,10 +213,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
                                 dialog.dismiss()
                                 when (which) {
                                     0 -> {
-                                        if (data?.verified == "0") {
-                                            viewModel.verifyTask(data.id.toString(), viewModel.user?.token) { getTaskToday() }
+                                        if (data?.verified == false) {
+                                            viewModel.verifyTask(data.id.toString()) { getTaskToday() }
                                         } else {
-                                            requireActivity().tos("Task has been verified by ${data?.verifiedBy}")
+                                            requireActivity().tos("Task has been verified by ${data?.verifiedBy?.name}")
                                         }
                                     }
                                 }
@@ -217,10 +247,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
         }
 
         binding?.swipeRefresh?.setOnRefreshListener {
-            viewModel.apply {
-                taskToday()
-                allMenus()
-                getAbsent()
+            viewModel.getProfile()
+            if (!isOnline(requireContext())) {
+                NoInternetDialog().show(childFragmentManager, "no_internet")
+                binding?.swipeRefresh?.isRefreshing = false
             }
         }
     }

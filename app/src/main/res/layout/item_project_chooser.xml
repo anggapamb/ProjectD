@@ -82,7 +82,7 @@
                     android:background="@drawable/bg_project_yellow"
                     android:paddingHorizontal="6dp"
                     android:paddingVertical="3dp"
-                    android:text='@{data.projectDirector}'
+                    android:text='@{data.projectDirector.name}'
                     android:textColor="@color/text_bg_yellow"
                     android:textSize="@dimen/text_smallest"
                     tools:text="Riki" />

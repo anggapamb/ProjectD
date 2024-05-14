@@ -19,15 +19,13 @@ import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
 import com.crocodic.core.helper.DateTimeHelper
 import com.projectd.R
-import com.projectd.data.model.Absent
-import com.projectd.data.model.HomeMenu
-import com.projectd.data.model.Project
-import com.projectd.data.model.Task
+import com.projectd.data.model.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import timber.log.Timber
+import java.text.DateFormat
+import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.abs
 
@@ -116,7 +114,7 @@ class ViewBindingAdapter {
         @BindingAdapter("textUpdated")
         fun textUpdated(view: TextView, textUpdated: Task?) {
             textUpdated?.let {
-                val who = if (it.createdBy == "You") "have" else "has"
+                val who = if (it.createdBy?.name == "You") "have" else "has"
 
                 var text = if (it.updatedAt.isNullOrEmpty()) {
                     "$who created new task."
@@ -125,6 +123,27 @@ class ViewBindingAdapter {
                 }
 
                 view.text = text
+            }
+        }
+
+        @JvmStatic
+        @BindingAdapter("name", "yourName", requireAll = true)
+        fun shortNameText(view: TextView, name: String?, yourName: String?) {
+            name?.let {
+                var textName = it
+                textName = if (it == yourName) {
+                    "You"
+                } else {
+                    val spName = it.split(" ")
+                    val shortName = if (spName.size >= 2) {
+                        "${spName[0]} ${spName[spName.lastIndex]}"
+                    } else {
+                        spName[0]
+                    }
+                    shortName
+                }
+
+                view.text = textName
             }
         }
 
@@ -161,8 +180,20 @@ class ViewBindingAdapter {
         fun absentApproval(view: TextView, absent: Absent?) {
             absent?.let {
                 view.text = when (it.approved) {
-                    Absent.APPROVE -> "${getEmoji(0x2705)} Approved by ${it.approvedBy}"
-                    Absent.REJECT -> "${getEmoji(0x274C)} Rejected by ${it.approvedBy}"
+                    Absent.APPROVE -> "${getEmoji(0x2705)} Approved by ${it.approvedBy?.name}"
+                    Absent.REJECT -> "${getEmoji(0x274C)} Rejected by ${it.approvedBy?.name}"
+                    else -> "Pending Approval"
+                }
+            }
+        }
+
+        @JvmStatic
+        @BindingAdapter("allAbsentApproval")
+        fun allAbsentApproval(view: TextView, absent: AllAbsent?) {
+            absent?.let {
+                view.text = when (it.approved) {
+                    Absent.APPROVE -> "${getEmoji(0x2705)} Approved by ${it.approvedBy?.name}"
+                    Absent.REJECT -> "${getEmoji(0x274C)} Rejected by ${it.approvedBy?.name}"
                     else -> "Pending Approval"
                 }
             }
@@ -174,11 +205,28 @@ class ViewBindingAdapter {
             imgUrl?.let { Glide.with(view.context).load(it).into(view) }
         }
 
+        private fun yesterdayDate(): String {
+            val dateFormat: DateFormat = SimpleDateFormat("yyyy-MM-dd")
+            val cal: Calendar = Calendar.getInstance()
+            cal.add(Calendar.DATE, -1)
+            return dateFormat.format(cal.time)
+        }
+
         @JvmStatic
         @BindingAdapter("timeTo")
         fun timeTo(view: TextView, timeTo: String?) {
             timeTo?.let {
                 val calendar = Calendar.getInstance().apply { time = DateTimeHelper().toDateTime(it) }
+                val date = SimpleDateFormat("yyyy-MM-dd").format(calendar.time)
+
+                if (date == yesterdayDate()) {
+                    val hour = SimpleDateFormat("HH:mm").format(calendar.time)
+                    val time = "yesterday $hour"
+                    view.text = time
+                    return
+                }
+
+
                 val timeTarget = calendar.timeInMillis
                 val timeCurrent = Calendar.getInstance().timeInMillis
                 val timeDifferent = timeTarget - timeCurrent
@@ -244,6 +292,20 @@ class ViewBindingAdapter {
         @JvmStatic
         @BindingAdapter("taskStatus")
         fun taskStatus(view: TextView, task: Task?) {
+            task?.let {
+                val text = when (it.status) {
+                    Task.DONE -> "Done at ${it.prettyDone()}"
+                    Task.HOLD -> "Hold"
+                    Task.CANCEL -> "Cancel"
+                    else -> "On Going"
+                }
+                view.text = text
+            }
+        }
+
+        @JvmStatic
+        @BindingAdapter("taskStatus")
+        fun taskStatus(view: TextView, task: TaskByDate?) {
             task?.let {
                 val text = when (it.status) {
                     Task.DONE -> "Done at ${it.prettyDone()}"

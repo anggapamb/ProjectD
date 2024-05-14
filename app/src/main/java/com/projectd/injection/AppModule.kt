@@ -1,10 +1,14 @@
 package com.projectd.injection
 
+import android.app.Application
+import android.content.Context
+import com.chuckerteam.chucker.api.ChuckerInterceptor
 import com.crocodic.core.data.CoreSession
 import com.crocodic.core.helper.okhttp.SSLTrust
 import com.google.gson.Gson
 import com.projectd.BuildConfig
 import com.projectd.api.ApiService
+import com.projectd.base.observe.BaseObserver
 import com.projectd.data.Cons
 import com.projectd.data.Session
 import com.projectd.service.AudioHelper
@@ -15,6 +19,7 @@ import com.projectd.ui.dialog.AbsentDialog.AbsentViewModel
 import com.projectd.ui.dialog.LoadingDialog
 import com.projectd.ui.dialog.ManagerChooserDialog.ManagerChooserViewModel
 import com.projectd.ui.dialog.ProjectChooserDialog.ProjectChooserViewModel
+import com.projectd.ui.dialog.TaskByDateReportDialog.TaskByDateReportViewModel
 import com.projectd.ui.dialog.TaskChooserDialog.TaskChooserViewModel
 import com.projectd.ui.dialog.TaskReportDialog.TaskReportViewModel
 import com.projectd.ui.dialog.UpdateProgressDialog.UpdateProgressViewModel
@@ -28,6 +33,7 @@ import com.projectd.ui.task.pov.TaskPovViewModel
 import com.projectd.ui.today.TodayCheckViewModel
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
@@ -52,28 +58,30 @@ object AppModule {
     }
 
     val viewModelModule = module {
-        viewModel { HomeViewModel(get()) }
-        viewModel { LoginViewModel(get()) }
+        viewModel { HomeViewModel(get(), get()) }
+        viewModel { LoginViewModel(get(), get()) }
         viewModel { ProjectViewModel(get()) }
-        viewModel { ManagerChooserViewModel(get()) }
-        viewModel { ProjectAddViewModel(get()) }
-        viewModel { TaskViewModel(get()) }
+        viewModel { ManagerChooserViewModel(get(), get()) }
+        viewModel { ProjectAddViewModel(get(), get()) }
+        viewModel { TaskViewModel(get(), get()) }
         viewModel { ProjectChooserViewModel(get()) }
-        viewModel { TaskAddViewModel(get()) }
-        viewModel { TaskReportViewModel(get()) }
-        viewModel { AbsentViewModel(get()) }
-        viewModel { TodayCheckViewModel(get()) }
-        viewModel { UpdateProgressViewModel(get()) }
-        viewModel { TaskPovViewModel(get()) }
-        viewModel { TaskChooserViewModel(get()) }
-        viewModel { DoneReceiver.DoneViewModel(get()) }
-        viewModel { HoldReceiver.HoldViewModel(get()) }
-        viewModel { CancelReceiver.CancelViewModel(get()) }
+        viewModel { TaskAddViewModel(get(), get()) }
+        viewModel { TaskReportViewModel(get(), get()) }
+        viewModel { TaskByDateReportViewModel(get(), get()) }
+        viewModel { AbsentViewModel(get(), get()) }
+        viewModel { TodayCheckViewModel(get(), get()) }
+        viewModel { UpdateProgressViewModel(get(), get()) }
+        viewModel { TaskPovViewModel(get(), get()) }
+        viewModel { TaskChooserViewModel(get(), get()) }
+        viewModel { DoneReceiver.DoneViewModel(get(), get()) }
+        viewModel { HoldReceiver.HoldViewModel(get(), get()) }
+        viewModel { CancelReceiver.CancelViewModel(get(), get()) }
     }
 
     val networkModule = module {
-        single { retrofitBuilder(retrofitHttpClient()) }
+        single { retrofitBuilder(retrofitHttpClient(androidContext())) }
         single { createApiService(get()) }
+        single { BaseObserver(get(), get()) }
     }
 
     private fun retrofitBuilder(okHttpClient: OkHttpClient): Retrofit {
@@ -89,7 +97,7 @@ object AppModule {
         return retrofit.create(ApiService::class.java)
     }
 
-    private fun retrofitHttpClient(): OkHttpClient {
+    private fun retrofitHttpClient(context: Context): OkHttpClient {
         val unsafeTrustManager = SSLTrust().createUnsafeTrustManager()
         val sslContext = SSLContext.getInstance("SSL")
         sslContext.init(null, arrayOf(unsafeTrustManager), null)
@@ -101,10 +109,10 @@ object AppModule {
             .addInterceptor { chain ->
                 val original = chain.request()
                 val session = getKoin().get<Session>()
-                val token = session.getUser()?.token
+                val token = session.getString(Cons.DB.USER.ACCESS_TOKEN)
                 val fcmId = session.getString(Cons.DB.USER.FCM_ID)
                 val requestBuilder = original.newBuilder()
-                    .header("Authorization", "$token")
+                    .header("Authorization", "Bearer $token")
                     .header("device_token", fcmId)
                     .header("Content-Type", "application/json")
                     .method(original.method, original.body)
@@ -117,6 +125,7 @@ object AppModule {
             val interceptors = HttpLoggingInterceptor()
             interceptors.level = HttpLoggingInterceptor.Level.BODY
             okHttpClient.addInterceptor(interceptors)
+            //okHttpClient.addInterceptor(ChuckerInterceptor(context))
         }
         return okHttpClient.build()
     }

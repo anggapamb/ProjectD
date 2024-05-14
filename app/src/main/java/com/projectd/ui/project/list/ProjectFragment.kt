@@ -14,18 +14,22 @@ import com.crocodic.core.base.adapter.PaginationLoadState
 import com.projectd.R
 import com.projectd.base.fragment.BaseFragment
 import com.projectd.data.Cons
+import com.projectd.data.Session
 import com.projectd.data.model.Project
 import com.projectd.databinding.FragmentProjectBinding
 import com.projectd.databinding.ItemProjectBinding
 import com.projectd.databinding.StateLoadingBinding
+import com.projectd.ui.dialog.NoInternetDialog
 import com.projectd.ui.dialog.UpdateProgressDialog
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class ProjectFragment : BaseFragment<FragmentProjectBinding>(R.layout.fragment_project), View.OnClickListener {
 
     private val viewModel: ProjectViewModel by viewModel()
+    private val session: Session by inject()
     private val adapter = object : PaginationAdapter<ItemProjectBinding, Project>(R.layout.item_project) {
         override fun onBindViewHolder(
             holder: ItemViewHolder<ItemProjectBinding, Project>,
@@ -33,7 +37,7 @@ class ProjectFragment : BaseFragment<FragmentProjectBinding>(R.layout.fragment_p
         ) {
             val item = getItem(position)
             holder.binding.data = item
-            holder.binding.btnMore.isVisible = (item?.projectDirector == viewModel.user?.shortName() || item?.createdBy == viewModel.user?.shortName())
+            holder.binding.btnMore.isVisible = (item?.projectDirector?.id == session.getUser()?.id || item?.createdBy?.id == session.getUser()?.id)
 
             holder.binding.progressBar.progress = item?.progress?.toInt()!!
 
@@ -74,6 +78,10 @@ class ProjectFragment : BaseFragment<FragmentProjectBinding>(R.layout.fragment_p
 
         binding?.swipeRefresh?.setOnRefreshListener {
             observe()
+            if (!isOnline(requireContext())) {
+                NoInternetDialog().show(childFragmentManager, "no_internet")
+                binding?.swipeRefresh?.isRefreshing = false
+            }
         }
     }
 

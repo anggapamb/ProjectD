@@ -10,14 +10,16 @@ import com.crocodic.core.base.adapter.CoreListAdapter
 import com.projectd.R
 import com.projectd.base.fragment.BaseFragment
 import com.projectd.data.model.User
+import com.projectd.data.model.UserNotReady
 import com.projectd.databinding.FragmentTodayCheckNotReadyBinding
 import com.projectd.databinding.ItemUserNotReadyBinding
+import com.projectd.ui.dialog.NoInternetDialog
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class TodayCheckNotReadyFragment : BaseFragment<FragmentTodayCheckNotReadyBinding>(R.layout.fragment_today_check_not_ready) {
 
-    private val listUser =  ArrayList<User?>()
+    private val listUser =  ArrayList<UserNotReady?>()
     private val viewModel: TodayCheckViewModel by viewModel()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -46,11 +48,15 @@ class TodayCheckNotReadyFragment : BaseFragment<FragmentTodayCheckNotReadyBindin
     }
 
     private fun initView() {
-        binding?.rvUser?.adapter = CoreListAdapter<ItemUserNotReadyBinding, User>(R.layout.item_user_not_ready)
+        binding?.rvUser?.adapter = CoreListAdapter<ItemUserNotReadyBinding, UserNotReady>(R.layout.item_user_not_ready)
             .initItem(listUser)
 
         binding?.swipeRefresh?.setOnRefreshListener {
             viewModel.userNotReady()
+            if (!isOnline(requireContext())) {
+                NoInternetDialog().show(childFragmentManager, "no_internet")
+                binding?.swipeRefresh?.isRefreshing = false
+            }
         }
     }
 

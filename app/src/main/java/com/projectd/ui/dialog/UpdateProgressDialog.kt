@@ -14,6 +14,7 @@ import com.crocodic.core.api.ApiStatus
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.projectd.R
 import com.projectd.api.ApiService
+import com.projectd.base.observe.BaseObserver
 import com.projectd.base.viewmodel.BaseViewModel
 import com.projectd.data.model.Project
 import com.projectd.databinding.DialogUpdateProgressBinding
@@ -25,7 +26,7 @@ class UpdateProgressDialog(val project: Project, private val onDismiss: () -> Un
 
     private var binding: DialogUpdateProgressBinding? = null
     private val viewModel: UpdateProgressViewModel by viewModel()
-    private var progress: String = ""
+    private var progress: Int = 0
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.dialog_update_progress, container, false)
@@ -35,14 +36,17 @@ class UpdateProgressDialog(val project: Project, private val onDismiss: () -> Un
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding?.seekBar?.progress = project.progress.toInt()
+        project.progress?.let {
+            binding?.seekBar?.progress = it
+            progress = it
+        }
 
         binding?.seekBar?.min = 0
         binding?.seekBar?.max = 100
 
         binding?.seekBar?.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
-                progress = p1.toString()
+                progress = p1
             }
 
             override fun onStartTrackingTouch(p0: SeekBar?) { }
@@ -76,12 +80,11 @@ class UpdateProgressDialog(val project: Project, private val onDismiss: () -> Un
         }
     }
 
-    class UpdateProgressViewModel(private val apiService: ApiService): BaseViewModel() {
+    class UpdateProgressViewModel(private val apiService: ApiService, private val observer: BaseObserver): BaseViewModel() {
 
-        fun updateProgress(data: Project, progress: String) = viewModelScope.launch{
-            ApiObserver(
-                block = {apiService.updateProject(data.id.toString(), data.projectName, data.description, data.startDate, data.endDate, data.projectDirector,
-                    data.difficulty, data.createdBy, progress)},
+        fun updateProgress(project: Project, progress: Int) = viewModelScope.launch{
+            observer(
+                block = {apiService.updateProgressProject(project.id, progress)},
                 toast = false,
                 responseListener = object : ApiObserver.ResponseListener {
                     override suspend fun onSuccess(response: JSONObject) {
@@ -89,7 +92,6 @@ class UpdateProgressDialog(val project: Project, private val onDismiss: () -> Un
                     }
 
                     override suspend fun onError(response: ApiResponse) {
-                        super.onError(response)
                         _apiResponse.send(ApiResponse(ApiStatus.ERROR))
                     }
                 }

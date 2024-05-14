@@ -12,15 +12,18 @@ import com.crocodic.core.extension.tos
 import com.projectd.R
 import com.projectd.base.fragment.BaseFragment
 import com.projectd.data.model.Absent
+import com.projectd.data.model.AllAbsent
 import com.projectd.databinding.FragmentTodayAbsentBinding
 import com.projectd.databinding.ItemAbsentBinding
+import com.projectd.ui.dialog.NoInternetDialog
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import timber.log.Timber
 
 class TodayAbsentFragment : BaseFragment<FragmentTodayAbsentBinding>(R.layout.fragment_today_absent) {
 
     private val viewModel: TodayCheckViewModel by viewModel()
-    private val listAbsent = ArrayList<Absent?>()
+    private val listAbsent = ArrayList<AllAbsent?>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -31,7 +34,7 @@ class TodayAbsentFragment : BaseFragment<FragmentTodayAbsentBinding>(R.layout.fr
     }
 
     private fun initView() {
-        binding?.rvUpdate?.adapter = CoreListAdapter<ItemAbsentBinding, Absent>(R.layout.item_absent)
+        binding?.rvUpdate?.adapter = CoreListAdapter<ItemAbsentBinding, AllAbsent>(R.layout.item_absent)
             .initItem(listAbsent) { _, data ->
                 val moreDialogItems = arrayOf("Approve", "Reject")
                 AlertDialog.Builder(requireContext()).apply {
@@ -40,18 +43,18 @@ class TodayAbsentFragment : BaseFragment<FragmentTodayAbsentBinding>(R.layout.fr
                         when (which) {
                             0 -> {
                                 if (data?.approved == null) {
-                                    viewModel.approvedAbsent("${data?.id}", "true") { viewModel.listAllAbsent() }
+                                    viewModel.approvedAbsent("${data?.id}", true) { viewModel.listAllAbsent() }
                                 } else {
-                                    val aprvl = if (data.approved == "true") "approved" else "rejected"
-                                    requireActivity().tos("Absent already $aprvl by ${data.approvedBy}")
+                                    val aprvl = if (data.approved == true) "approved" else "rejected"
+                                    requireActivity().tos("Absent already $aprvl by ${data.approvedBy?.name}")
                                 }
                             }
                             1 -> {
                                 if (data?.approved == null) {
-                                    viewModel.approvedAbsent("${data?.id}", "false") { viewModel.listAllAbsent() }
+                                    viewModel.approvedAbsent("${data?.id}", false) { viewModel.listAllAbsent() }
                                 } else {
-                                    val aprvl = if (data.approved == "true") "approved" else "rejected"
-                                    requireActivity().tos("Absent already $aprvl by ${data.approvedBy}")
+                                    val aprvl = if (data.approved == true) "approved" else "rejected"
+                                    requireActivity().tos("Absent already $aprvl by ${data.approvedBy?.name}")
                                 }
                             }
                         }
@@ -61,6 +64,10 @@ class TodayAbsentFragment : BaseFragment<FragmentTodayAbsentBinding>(R.layout.fr
 
         binding?.swipeRefresh?.setOnRefreshListener {
             viewModel.listAllAbsent()
+            if (!isOnline(requireContext())) {
+                NoInternetDialog().show(childFragmentManager, "no_internet")
+                binding?.swipeRefresh?.isRefreshing = false
+            }
         }
     }
 

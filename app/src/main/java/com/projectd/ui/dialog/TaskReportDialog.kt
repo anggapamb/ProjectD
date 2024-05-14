@@ -15,6 +15,7 @@ import com.crocodic.core.extension.tos
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.projectd.R
 import com.projectd.api.ApiService
+import com.projectd.base.observe.BaseObserver
 import com.projectd.base.viewmodel.BaseViewModel
 import com.projectd.data.model.Task
 import com.projectd.databinding.DialogTaskReportBinding
@@ -80,13 +81,13 @@ class TaskReportDialog(val task: Task?, private val onSuccess: () -> Unit): Bott
         }
     }
 
-    class TaskReportViewModel(private val apiService: ApiService): BaseViewModel() {
+    class TaskReportViewModel(private val apiService: ApiService, private val observer: BaseObserver): BaseViewModel() {
 
         fun updateStatus(idTask: String?, status: String?, description: String?) = viewModelScope.launch {
             if (idTask.isNullOrEmpty() || status.isNullOrEmpty() || description.isNullOrEmpty()) {
                 _apiResponse.send(ApiResponse(ApiStatus.ERROR, message = "Please complete from."))
             } else {
-                ApiObserver(
+                observer(
                     block = {apiService.updateTask(idTask, status, description)},
                     toast = false,
                     responseListener = object : ApiObserver.ResponseListener {

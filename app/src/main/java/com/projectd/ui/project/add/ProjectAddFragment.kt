@@ -15,21 +15,23 @@ import com.google.android.material.datepicker.MaterialDatePicker
 import com.projectd.R
 import com.projectd.base.fragment.BaseFragment
 import com.projectd.data.Cons
+import com.projectd.data.Session
 import com.projectd.data.model.Project
 import com.projectd.databinding.FragmentProjectAddBinding
 import com.projectd.ui.dialog.ManagerChooserDialog
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.*
 
 class ProjectAddFragment : BaseFragment<FragmentProjectAddBinding>(R.layout.fragment_project_add), View.OnClickListener {
 
     private val viewModel: ProjectAddViewModel by viewModel()
-
+    private val session: Session by inject()
     private var difficult: String? = null
     private var selectedStartDate: String? = null
     private var selectedEndDate: String? = null
-    private var pdShortName: String? = ""
+    private var idProjectManager: Int? = null
 
     var project: Project? = null
 
@@ -51,7 +53,7 @@ class ProjectAddFragment : BaseFragment<FragmentProjectAddBinding>(R.layout.frag
         if (project != null) {
             selectedStartDate = project?.startDate
             selectedEndDate = project?.endDate
-            pdShortName = project?.projectDirector
+            idProjectManager = project?.projectDirector?.id
         }
 
         binding?.etStartDate?.setOnFocusChangeListener { _, b ->
@@ -93,7 +95,7 @@ class ProjectAddFragment : BaseFragment<FragmentProjectAddBinding>(R.layout.frag
 
     private fun showManager() {
         ManagerChooserDialog(manager, {
-            pdShortName = it?.shortName()
+            idProjectManager = it?.id
             binding?.etPd?.setText(it?.name)
         }) { clearFocus() }.show(childFragmentManager, "manager")
     }
@@ -106,11 +108,15 @@ class ProjectAddFragment : BaseFragment<FragmentProjectAddBinding>(R.layout.frag
 
         dateRangePicker.addOnPositiveButtonClickListener {
             val startDate = Calendar.getInstance().apply {
-                timeInMillis = it.first
+                if (it.first != null) {
+                    timeInMillis = it.first!!
+                }
             }
 
             val endDate = Calendar.getInstance().apply {
-                timeInMillis = it.second
+                if (it.second != null) {
+                    timeInMillis = it.second!!
+                }
             }
 
             selectedStartDate = DateTimeHelper().fromDate(startDate.time)
@@ -136,10 +142,10 @@ class ProjectAddFragment : BaseFragment<FragmentProjectAddBinding>(R.layout.frag
     private fun addProject() {
         if (project == null) {
             viewModel.addProject(null, binding?.etProjectName?.textOf(), binding?.etDescription?.textOf(), selectedStartDate, selectedEndDate,
-                pdShortName, difficult, viewModel.user?.shortName(), null)
+                idProjectManager.toString(), difficult, session.getUser()?.shortName(), null)
         } else {
             viewModel.addProject(project?.id.toString(),binding?.etProjectName?.textOf(), binding?.etDescription?.textOf(), selectedStartDate, selectedEndDate,
-                pdShortName, difficult, viewModel.user?.shortName(), project?.progress)
+                idProjectManager.toString(), difficult, session.getUser()?.shortName(), "${project?.progress}")
         }
     }
 

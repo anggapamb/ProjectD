@@ -30,7 +30,7 @@
                 android:layout_width="72dp"
                 android:layout_height="72dp"
                 android:background="@drawable/bg_circle_placeholder"
-                app:imgCircleUrl='@{task.photo}'
+                app:imgCircleUrl='@{task.createdBy.photo}'
                 android:contentDescription="@string/cd_photo_user" />
 
             <LinearLayout
@@ -42,7 +42,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text='@{task.createdBy}'
+                    android:text='@{task.createdBy.name}'
                     android:textColor="@color/brand_75"
                     android:textSize="@dimen/text_default"
                     android:textStyle="bold"
@@ -51,7 +51,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text='@{" · " + task.devision}'
+                    android:text='@{" · " + task.createdBy.devision.devisionName}'
                     android:textColor="@color/brand_75"
                     android:textSize="@dimen/text_small"
                     tools:text=" · engineer" />
@@ -94,6 +94,12 @@
                     tools:text="12 May 2022" />
 
             </FrameLayout>
+
+            <ProgressBar
+                android:id="@+id/iv_loading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_task"

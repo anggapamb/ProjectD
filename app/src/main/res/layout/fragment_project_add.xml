@@ -154,7 +154,7 @@
                         android:layout_height="wrap_content"
                         android:inputType="text|textNoSuggestions"
                         android:maxLength="32"
-                        android:text='@{project.projectDirector}'
+                        android:text='@{project.projectDirector.name}'
                         android:textSize="@dimen/text_default" />
 
                 </com.google.android.material.textfield.TextInputLayout>

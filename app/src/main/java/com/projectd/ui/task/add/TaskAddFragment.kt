@@ -16,29 +16,40 @@ import com.google.android.material.datepicker.MaterialDatePicker
 import com.projectd.R
 import com.projectd.base.fragment.BaseFragment
 import com.projectd.data.Cons
+import com.projectd.data.Session
 import com.projectd.data.model.Task
 import com.projectd.databinding.FragmentTaskAddBinding
 import com.projectd.ui.dialog.ProjectChooserDialog
 import com.projectd.ui.dialog.TaskChooserDialog
+import com.projectd.util.setNavigationResult
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.*
 
 class TaskAddFragment : BaseFragment<FragmentTaskAddBinding>(R.layout.fragment_task_add), View.OnClickListener {
 
     private val viewModel: TaskAddViewModel by viewModel()
+    private val session: Session by inject()
     private var selectedStartDate: String? = null
     private var selectedEndDate: String? = null
     private var load: String? = null
     private var timelineIsFilled = false
+    private var idProject: Int? = null
+    private var selectedTaskDate: String? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         binding?.btnSave?.setOnClickListener(this)
 
+        selectedTaskDate = arguments?.getString(Cons.BUNDLE.DATA)
+
         initView()
         observe()
+
+        val bool = selectedTaskDate == DateTimeHelper().dateNow()
+        setNavigationResult(RESULT.key, bool)
     }
 
     private fun observe() {
@@ -84,18 +95,21 @@ class TaskAddFragment : BaseFragment<FragmentTaskAddBinding>(R.layout.fragment_t
                     load = LOAD.LOW
                     binding?.apply {
                         ilProject.isVisible = true
+                        vTimeline.isVisible = !timelineIsFilled
                     }
                 }
                 R.id.rb_medium_task -> {
                     load = LOAD.MEDIUM
                     binding?.apply {
                         ilProject.isVisible = true
+                        vTimeline.isVisible = !timelineIsFilled
                     }
                 }
                 R.id.rb_high_task -> {
                     load = LOAD.HIGH
                     binding?.apply {
                         ilProject.isVisible = true
+                        vTimeline.isVisible = !timelineIsFilled
                     }
                 }
             }
@@ -105,7 +119,7 @@ class TaskAddFragment : BaseFragment<FragmentTaskAddBinding>(R.layout.fragment_t
             TaskChooserDialog {
 
                 binding?.etTask?.setText(it?.taskName)
-                binding?.etProject?.setText(it?.project)
+                binding?.etProject?.setText(it?.projectDetail?.projectName)
 
                 when (it?.load) {
                     Task.STANDBY -> {
@@ -148,9 +162,22 @@ class TaskAddFragment : BaseFragment<FragmentTaskAddBinding>(R.layout.fragment_t
     }
 
     private fun showProject() {
-        ProjectChooserDialog( {
-            binding?.etProject?.setText(it?.projectName)
+        ProjectChooserDialog( { project ->
+            binding?.etProject?.setText(project?.projectName)
 
+            binding?.vTimeline?.isVisible = true
+            idProject = project?.id
+            timelineIsFilled = false
+
+            project?.timelines?.forEach { timeLine ->
+                if (timeLine?.devisionId == session.getUser()?.devision?.id) {
+                    binding?.vTimeline?.isVisible = false
+                    timelineIsFilled = true
+                    return@forEach
+                }
+            }
+
+            /*
             when (viewModel.user?.devision) {
                 Cons.DIVISION.MOBILE -> {
                     if (!it?.timeline?.mobile?.startDate.isNullOrEmpty() || !it?.timeline?.mobile?.endDate.isNullOrEmpty()) {
@@ -226,6 +253,7 @@ class TaskAddFragment : BaseFragment<FragmentTaskAddBinding>(R.layout.fragment_t
                     }
                 }
             }
+            */
 
         } , { clearFocus() }, { navigateTo(R.id.actionProjectAddFragment) }).show(childFragmentManager, "project")
     }
@@ -238,11 +266,15 @@ class TaskAddFragment : BaseFragment<FragmentTaskAddBinding>(R.layout.fragment_t
 
         dateRangePicker.addOnPositiveButtonClickListener {
             val startDate = Calendar.getInstance().apply {
-                timeInMillis = it.first
+                if (it.first != null) {
+                    timeInMillis = it.first!!
+                }
             }
 
             val endDate = Calendar.getInstance().apply {
-                timeInMillis = it.second
+                if (it.second != null) {
+                    timeInMillis = it.second!!
+                }
             }
 
             selectedStartDate = DateTimeHelper().fromDate(startDate.time)
@@ -266,8 +298,8 @@ class TaskAddFragment : BaseFragment<FragmentTaskAddBinding>(R.layout.fragment_t
     }
 
     private fun addTask() {
-        viewModel.addTask(binding?.etTask?.textOf(), binding?.etProject?.textOf(),
-            selectedStartDate, selectedEndDate, load, viewModel.user?.shortName(), viewModel.user?.photo, timelineIsFilled)
+        viewModel.addTask(binding?.etTask?.textOf(), idProject.toString(),
+            selectedStartDate, selectedEndDate, load, session.getUser()?.shortName(), session.getUser()?.photo, timelineIsFilled, "$selectedTaskDate")
     }
 
     override fun onClick(p0: View?) {
@@ -282,6 +314,10 @@ class TaskAddFragment : BaseFragment<FragmentTaskAddBinding>(R.layout.fragment_t
             const val LOW = "low"
             const val MEDIUM = "medium"
             const val HIGH = "high"
+        }
+
+        object RESULT {
+            const val key = "task_add"
         }
     }
 

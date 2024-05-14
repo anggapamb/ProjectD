@@ -5,11 +5,12 @@ import com.crocodic.core.api.ApiObserver
 import com.crocodic.core.api.ApiResponse
 import com.crocodic.core.api.ApiStatus
 import com.projectd.api.ApiService
+import com.projectd.base.observe.BaseObserver
 import com.projectd.base.viewmodel.BaseViewModel
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 
-class ProjectAddViewModel(private val apiService: ApiService): BaseViewModel() {
+class ProjectAddViewModel(private val apiService: ApiService, private val observe: BaseObserver): BaseViewModel() {
 
     fun addProject(
         idProject: String?,
@@ -23,16 +24,16 @@ class ProjectAddViewModel(private val apiService: ApiService): BaseViewModel() {
         progress: String?) = viewModelScope.launch {
 
         if (projectName.isNullOrEmpty() || description.isNullOrEmpty() || startDate.isNullOrEmpty() || endDate.isNullOrEmpty() || projectDirector.isNullOrEmpty()
-            || difficult.isNullOrEmpty() || createdBy.isNullOrEmpty()) {
+            || difficult.isNullOrEmpty()) {
             _apiResponse.send(ApiResponse(ApiStatus.ERROR, message = "Please complete from."))
         } else {
             _apiResponse.send(ApiResponse(ApiStatus.LOADING, message = "Submitting..."))
-            ApiObserver(
+            observe(
                 block = {
                         if (idProject.isNullOrEmpty()) {
-                            apiService.addProject(projectName, description, startDate, endDate, projectDirector, difficult, createdBy, null)
+                            apiService.addProject(projectName, description, startDate, endDate, projectDirector, difficult)
                         } else {
-                            apiService.updateProject(idProject,projectName, description, startDate, endDate, projectDirector, difficult, createdBy, progress)
+                            apiService.updateProject(idProject,projectName, description, startDate, endDate, projectDirector, difficult)
                         }
                 },
                 toast = true,

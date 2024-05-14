@@ -13,17 +13,21 @@ import com.crocodic.core.extension.tos
 import com.projectd.R
 import com.projectd.base.fragment.BaseFragment
 import com.projectd.data.Cons
+import com.projectd.data.Session
 import com.projectd.data.model.Task
 import com.projectd.databinding.FragmentTodayCheckListBinding
 import com.projectd.databinding.ItemUpdateBinding
+import com.projectd.ui.dialog.NoInternetDialog
 import com.projectd.ui.dialog.TaskReportDialog
 import com.projectd.ui.task.add.TaskAddFragment
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class TodayCheckListFragment : BaseFragment<FragmentTodayCheckListBinding>(R.layout.fragment_today_check_list) {
 
     private val viewModel: TodayCheckViewModel by viewModel()
+    private val session: Session by inject()
     private val listTask = ArrayList<Task?>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -62,20 +66,23 @@ class TodayCheckListFragment : BaseFragment<FragmentTodayCheckListBinding>(R.lay
                 ) {
                     val data = tasks[position]
                     holder.binding.data = data
-                    holder.binding.yourName = viewModel.user?.shortName()
+                    holder.binding.yourName = session.getUser()?.shortName()
 
-                    if (viewModel.user?.devision == Cons.DIVISION.MANAGER || viewModel.user?.devision == Cons.DIVISION.PSDM) {
-                        holder.binding.btnMore.isVisible = true
-                    } else if (viewModel.user?.isLeader == "true") {
+                    if (session.getUser()?.devision?.id == Cons.DIVISION.MANAGER) {
+                        holder.binding.btnMore.isVisible = data?.projectDetail?.idProjectDirector == session.getUser()?.id
+                    } else if (session.getUser()?.devision?.id == Cons.DIVISION.PSDM) {
+                        holder.binding.btnMore.isVisible = data?.load != TaskAddFragment.Companion.LOAD.STANDBY
+                    }
+                    else if (session.getUser()?.isLeader == true) {
                         holder.binding.btnMore.isVisible = true
                     }
 
                     holder.itemView.setOnClickListener {
-                        if (data?.idLogin == viewModel.user?.id.toString() && data.load != TaskAddFragment.Companion.LOAD.STANDBY) {
-                            if ( data.status != Task.DONE) {
+                        if (data?.createdBy?.id == session.getUser()?.id && data?.load != TaskAddFragment.Companion.LOAD.STANDBY) {
+                            if ( data?.status != Task.DONE) {
                                 TaskReportDialog(data) { viewModel.taskToday(title) }.show(childFragmentManager, "report")
                             }
-                        } else if (viewModel.user?.devision == Cons.DIVISION.MANAGER || viewModel.user?.devision == Cons.DIVISION.PSDM) {
+                        } else if (session.getUser()?.devision?.id == Cons.DIVISION.MANAGER || session.getUser()?.devision?.id == Cons.DIVISION.PSDM || session.getUser()?.devision?.id == Cons.DIVISION.SUPER_ADMIN) {
                             val bundle = bundleOf(Cons.BUNDLE.DATA to data)
                             navigateTo(R.id.actionTaskPovFragment, bundle)
                         }
@@ -88,10 +95,10 @@ class TodayCheckListFragment : BaseFragment<FragmentTodayCheckListBinding>(R.lay
                                 dialog.dismiss()
                                 when (which) {
                                     0 -> {
-                                        if (data?.verified == "0") {
-                                            viewModel.verifyTask(data.id.toString(), viewModel.user?.token) { viewModel.taskToday(title) }
+                                        if (data?.verified == false) {
+                                            viewModel.verifyTask(data.id.toString()) { viewModel.taskToday(title) }
                                         } else {
-                                            requireActivity().tos("Task has been verified by ${data?.verifiedBy}")
+                                            requireActivity().tos("Task has been verified by ${data?.verifiedBy?.name}")
                                         }
                                     }
                                 }
@@ -105,6 +112,10 @@ class TodayCheckListFragment : BaseFragment<FragmentTodayCheckListBinding>(R.lay
 
         binding?.swipeRefresh?.setOnRefreshListener {
             viewModel.taskToday(title)
+            if (!isOnline(requireContext())) {
+                NoInternetDialog().show(childFragmentManager, "no_internet")
+                binding?.swipeRefresh?.isRefreshing = false
+            }
         }
 
         viewModel.taskToday(title)

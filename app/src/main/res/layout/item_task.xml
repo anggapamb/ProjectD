@@ -7,7 +7,7 @@
 
         <variable
             name="data"
-            type="com.projectd.data.model.Task" />
+            type="com.projectd.data.model.TaskByDate" />
 
         <import type="android.view.View" />
     </data>
@@ -52,7 +52,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="12dp"
-            android:text="@{data.project}"
+            android:text="@{data.projectDetail.projectName}"
             android:textColor="@color/text_bg_green"
             android:textSize="@dimen/text_small"
             android:textStyle="bold"
@@ -66,10 +66,10 @@
             android:layout_marginTop="4dp"
             android:drawablePadding="3dp"
             android:gravity="center_vertical"
-            android:text='@{"Verified by " + data.verifiedBy}'
+            android:text='@{"Verified by " + data.verifiedBy.name}'
             android:textColor="@color/text_bg_green"
             android:textSize="@dimen/text_smallest"
-            android:visibility='@{data.verified.contains("0") ? View.GONE : View.VISIBLE}'
+            android:visibility='@{data.verified ? View.VISIBLE : View.GONE}'
             app:drawableStartCompat="@drawable/ic_baseline_verified_24"
             app:drawableTint="@color/text_bg_green"
             tools:text="Verified by Aliando" />

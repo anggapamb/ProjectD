@@ -6,8 +6,9 @@ import com.crocodic.core.api.ApiResponse
 import com.crocodic.core.extension.toList
 import com.crocodic.core.helper.DateTimeHelper
 import com.projectd.api.ApiService
+import com.projectd.base.observe.BaseObserver
 import com.projectd.base.viewmodel.BaseViewModel
-import com.projectd.data.model.Task
+import com.projectd.data.model.TaskByDate
 import com.projectd.data.model.TaskDay
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -15,7 +16,7 @@ import kotlinx.coroutines.launch
 import org.json.JSONObject
 import java.util.*
 
-class TaskViewModel(private val apiService: ApiService): BaseViewModel() {
+class TaskViewModel(private val apiService: ApiService, private val observer: BaseObserver): BaseViewModel() {
 
     fun generate30Days(): List<TaskDay?> {
         val days = ArrayList<TaskDay?>()
@@ -36,16 +37,16 @@ class TaskViewModel(private val apiService: ApiService): BaseViewModel() {
         return days
     }
 
-    private val _dataTasks: Channel<List<Task>> = Channel()
+    private val _dataTasks: Channel<List<TaskByDate>> = Channel()
     val dataTasks = _dataTasks.receiveAsFlow()
 
     fun taskByDate(date: String = DateTimeHelper().dateNow()) = viewModelScope.launch {
-        ApiObserver(
+        observer(
             block = {apiService.taskByDate(date)},
             toast = false,
             responseListener = object : ApiObserver.ResponseListener {
                 override suspend fun onSuccess(response: JSONObject) {
-                    val data = response.getJSONArray("data").toList<Task>(gson)
+                    val data = response.getJSONArray("data").toList<TaskByDate>(gson)
                     _dataTasks.send(data)
                 }
 
@@ -57,9 +58,9 @@ class TaskViewModel(private val apiService: ApiService): BaseViewModel() {
         )
     }
 
-    fun verifyTask(idTask: String?, token: String?, onResponse: () -> Unit) = viewModelScope.launch {
-        ApiObserver(
-            block = {apiService.verifyTask(idTask, token)},
+    fun verifyTask(idTask: String?, onResponse: () -> Unit) = viewModelScope.launch {
+        observer(
+            block = {apiService.verifyTask(idTask)},
             toast = false,
             responseListener = object : ApiObserver.ResponseListener {
                 override suspend fun onSuccess(response: JSONObject) {
